@@ -142,6 +142,7 @@ public class UserService implements IUserRepository {
         Role role = null;
         Set<Role> userRoles = new HashSet<>();
         User usuario = null;
+        User user = null;
 
         switch (jwtRegister.getRole()) {
             case 1:
@@ -180,24 +181,29 @@ public class UserService implements IUserRepository {
 
         }
 
-        User user = userRepository.save(usuario);
-        switch (jwtRegister.getRole()){
-            case 1:
-                sendEmail(user.getEmail(), "Bienvenido Super Admin", "Te registraron como SuperAdmin de SITILI");
-                break;
-            case 2:
-                sendEmail(user.getEmail(),  "Bienvenido Admin", "Te registraron como administrador de SITILI");
-                break;
-            case 3:
-                sendEmail(user.getEmail(), "Bienvenido Seller", "Te registraste como vendedor de SITILI, espera a que un administrador te acepte en la plataforma");
-                break;
-            case 4:
-                sendEmail(user.getEmail(), "Bienvenido User", "Te registraste como cliente de SITILI, podras ver y adquirir diversos productos en nuestra plataforma");
-                break;
-            default:
-        }
+        Optional<User> validador = userRepository.findById(usuario.getEmail());
 
-        dataUserRepository.asociarUserData(user.getEmail());
+        if(validador.isEmpty()){
+            user = userRepository.save(usuario);
+            switch (jwtRegister.getRole()){
+                case 1:
+                    sendEmail(user.getEmail(), "Bienvenido Super Admin", "Te registraron como SuperAdmin de SITILI");
+                    break;
+                case 2:
+                    sendEmail(user.getEmail(),  "Bienvenido Admin", "Te registraron como administrador de SITILI");
+                    break;
+                case 3:
+                    sendEmail(user.getEmail(), "Bienvenido Seller", "Te registraste como vendedor de SITILI, espera a que un administrador te acepte en la plataforma");
+                    break;
+                case 4:
+                    sendEmail(user.getEmail(), "Bienvenido User", "Te registraste como cliente de SITILI, podras ver y adquirir diversos productos en nuestra plataforma");
+                    break;
+                default:
+            }
+            dataUserRepository.asociarUserData(user.getEmail());
+        }else{
+            user = null;
+        }
 
         return user;
 
