@@ -40,10 +40,30 @@ public class JwtController {
 
     }
 
+    @PostMapping({"/authenticate"})
+    public ResponseEntity<JwtResponse> all(@RequestBody JwtRequest jwtRequest) throws Exception {
+        JwtResponse validador = jwtService.createJwtToken(jwtRequest);
+        if(validador.getUser().getStatus()){
+            return new ResponseEntity<>(validador, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+    }
+
     @PostMapping({"/registerNewUser"})
-    public JwtResponse registerNewUser(@RequestBody JwtRegister jwtRegister) throws Exception {
-        userService.registerNewUser(jwtRegister);
-        return jwtService.createJwtToken(new JwtRequest(jwtRegister.getEmail(), jwtRegister.getPassword()));
+    public ResponseEntity<JwtResponse> registerNewUser(@RequestBody JwtRegister jwtRegister) throws Exception {
+        User user = userService.registerNewUser(jwtRegister);
+        if(user != null){
+            JwtResponse validador = jwtService.createJwtToken(new JwtRequest(jwtRegister.getEmail(), jwtRegister.getPassword()));
+            if(validador != null){
+                return new ResponseEntity<>(validador, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        }else{
+            return new ResponseEntity<>(HttpStatus.SEE_OTHER);
+        }
     }
 
 }
