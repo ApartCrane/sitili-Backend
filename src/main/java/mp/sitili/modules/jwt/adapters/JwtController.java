@@ -40,16 +40,6 @@ public class JwtController {
 
     }
 
-    @PostMapping({"/authenticate"})
-    public ResponseEntity<JwtResponse> all(@RequestBody JwtRequest jwtRequest) throws Exception {
-        JwtResponse validador = jwtService.createJwtToken(jwtRequest);
-        if(validador.getUser().getStatus()){
-            return new ResponseEntity<>(validador, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-    }
 
     @PostMapping({"/registerNewUser"})
     public ResponseEntity<JwtResponse> registerNewUser(@RequestBody JwtRegister jwtRegister) throws Exception {
