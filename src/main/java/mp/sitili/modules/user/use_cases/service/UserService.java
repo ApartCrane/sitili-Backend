@@ -3,6 +3,7 @@ package mp.sitili.modules.user.use_cases.service;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
+import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
@@ -53,6 +54,9 @@ public class UserService implements IUserRepository {
 
     @Autowired
     private RaitingRepository raitingRepository;
+
+    @Autowired
+    private ImageProductService imageProductService;
 
     public void initRoleAndUser() {
 
@@ -121,14 +125,19 @@ public class UserService implements IUserRepository {
         categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Zapatos", true));
         categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Ropa", true));
         categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Higiene", true));
+        categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Electronicos", true));
 
         Category category = categoryRepository.getCatById(1);
         User user = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
-        productService.saveCategory("Tennis", 1200.00, 12, "Tennis chidos", category, user);
+        productService.saveProduct("Tennis", 1200.00, 12, "Tennis chidos", category, user);
+
+        Category category4 = categoryRepository.getCatById(4);
+        User user4 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
+        productService.saveProduct("Laptop", 14000.00, 5, "Laptop ASUS", category4, user4);
 
         Category category1 = categoryRepository.getCatById(3);
         User user1 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
-        productService.saveCategory("Pasta de Dientes", 30.00, 8, "Pasta dentifrica colgate", category1, user1);
+        productService.saveProduct("Pasta de Dientes", 30.00, 8, "Pasta dentifrica colgate", category1, user1);
 
         User user2 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
         Optional<Product> product = productRepository.findById(1);
@@ -136,6 +145,12 @@ public class UserService implements IUserRepository {
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product.get(), user2));
         product = productRepository.findById(2);
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product.get(), user2));
+        product = productRepository.findById(3);
+        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.3, product.get(), user2));
+
+        imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/7929bdd8-c2a7-40d1-b299-ac838404e968.jpg", 1);
+        imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 1);
+        imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 2);
     }
 
     public User registerNewUser(JwtRegister jwtRegister) throws Exception {

@@ -22,7 +22,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/list")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
     public ResponseEntity<List> obtenerTodasCategorias() {
         List<Category> categories = categoryRepository.findAll();
 
@@ -35,7 +35,7 @@ public class CategoryController {
 
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
     public ResponseEntity<String> createCategory(@RequestBody Category category) {
         Category cat = categoryRepository.save(new Category((int) categoryRepository.count() + 1, category.getName(), true));
         if(cat != null){
@@ -47,7 +47,7 @@ public class CategoryController {
 
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
     public ResponseEntity<String> actualizarCategory(@RequestBody Category category) {
         if(categoryService.getCategoryById(category.getId())){
             if(categoryService.updateCategory(category.getId(), category.getName())){
@@ -62,7 +62,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
     public ResponseEntity<String> eliminarCategory(@RequestBody Category category) {
         if (categoryService.getStatusCategory(category.getId())) {
             categoryService.deleteCategory(category.getId(), false);

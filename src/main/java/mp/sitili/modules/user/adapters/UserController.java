@@ -82,6 +82,19 @@ public class UserController {
         }
     }
 
+    @GetMapping("/totalUsers")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<Long> totalUsuarios() {
+        Long total = userRepository.count();
+
+        if(total == 0){
+            return new ResponseEntity<>(total, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(total, HttpStatus.NO_CONTENT);
+        }
+    }
+
+
     @PutMapping("/update")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<String> obtenerUsuarios(@RequestBody JwtRegister jwtRegister) {

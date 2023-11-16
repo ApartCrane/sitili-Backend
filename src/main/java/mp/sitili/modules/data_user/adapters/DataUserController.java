@@ -32,18 +32,4 @@ public class DataUserController {
         }
     }
 
-    /*
-    @PostMapping("/save")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List> guardarPorUsuario() {
-        List<User> usuarios = dataUserRepository.findAll();
-
-        if(usuarios != null){
-            return new ResponseEntity<>(usuarios, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(usuarios, HttpStatus.BAD_REQUEST);
-        }
-    }
-     */
-
 }
