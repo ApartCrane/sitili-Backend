@@ -87,7 +87,7 @@ public class UserController {
     public ResponseEntity<Long> totalUsuarios() {
         Long total = userRepository.count();
 
-        if(total == 0){
+        if(total != 0){
             return new ResponseEntity<>(total, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(total, HttpStatus.NO_CONTENT);

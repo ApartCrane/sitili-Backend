@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.PrivateKey;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/order")
@@ -70,7 +67,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping("/createOne")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<String> crearOrden(@RequestPart("productData") Map<String, Object> productData) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -118,52 +115,49 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/create2")
+    @PostMapping("/createMany")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> crearOrden2(@RequestPart("productData") Map<String, Object> productData) {
+    public ResponseEntity<String> crearOrden2(
+            @RequestPart("productData") Map<String, Object> productData,
+            @RequestPart("orderDetails") List<Map<String, Object>> orderDetailsData
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        //product_id
-        //quantity
-        //address_id
-        //user_id
+        User user = userRepository.findById(userEmail).orElse(null);
+        if (user != null) {
+            Address address = addressService.buscarDir((Integer) productData.get("address_id"), user.getEmail());
+            if (address != null) {
+                Order orden = new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", address, new Timestamp(System.currentTimeMillis()));
+                orden = orderRepository.save(orden);
 
-        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
-        Optional<Product> producto = productRepository.findById((Integer) productData.get("product_id"));
+                List<OrderDetail> validOrderDetails = new ArrayList<>();
 
-        if(user != null){
-            if(producto.isPresent() && producto.get().getStatus()){
-                if(producto.get().getStock() > 0 && (Integer) productData.get("quantity") > 0 && (Integer) productData.get("quantity") < producto.get().getStock()){
-                    Address address = addressService.buscarDir((Integer) productData.get("address_id"), user.getEmail());
-                    if(address != null){
-                        Date date = new Date();
-                        Timestamp timestamp = new Timestamp(date.getTime());
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        Timestamp dateOrder = Timestamp.valueOf(sdf.format(timestamp));
-                        Order orden = orderRepository.save(new Order((int) orderRepository.count() + 1 , user, "Pendiente","No asignado", address, dateOrder));
-                        if(orden != null){
-                            OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, producto.get(), (Integer) productData.get("quantity"), producto.get().getPrice()));
-                            if(orderDetail != null){
-                                return new ResponseEntity<>("Orden creada con exito, N. Orden " + orden.getId(), HttpStatus.OK);
-                            }else{
-                                return new ResponseEntity<>("Error al crear OrdenDetail", HttpStatus.BAD_REQUEST);
-                            }
-                        }else{
-                            return new ResponseEntity<>("Error al crear Orden", HttpStatus.BAD_REQUEST);
+                for (Map<String, Object> orderDetailData : orderDetailsData) {
+                    Integer productId = (Integer) orderDetailData.get("product_id");
+                    Integer quantity = (Integer) orderDetailData.get("quantity");
+
+                    Optional<Product> productoDetail = productRepository.findById(productId);
+                    if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
+                        if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
+                            OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                            validOrderDetails.add(orderDetail);
+                        } else {
+                            return new ResponseEntity<>("Cantidad requerida excede el stock, el producto es: " + productoDetail.get().getName(), HttpStatus.BAD_REQUEST);
                         }
-                    }else{
-                        return new ResponseEntity<>("Direccion no valida", HttpStatus.BAD_REQUEST);
+                    } else {
+                        return new ResponseEntity<>("Producto no encontrado o no disponible", HttpStatus.BAD_REQUEST);
                     }
-                }else{
-                    return new ResponseEntity<>("Cantidad no aceptable", HttpStatus.BAD_REQUEST);
                 }
-            }else{
-                return new ResponseEntity<>("Producto no disponible para compra", HttpStatus.BAD_REQUEST);
+
+                orderDetailRepository.saveAll(validOrderDetails);
+
+                return new ResponseEntity<>("Orden creada con éxito, N. Orden " + orden.getId(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Direccion no valida", HttpStatus.BAD_REQUEST);
             }
-        }else{
+        } else {
             return new ResponseEntity<>("Usuario no encontrado", HttpStatus.BAD_REQUEST);
         }
     }
-
 }
