@@ -1,5 +1,7 @@
 package mp.sitili.modules.user.use_cases.service;
 
+import mp.sitili.modules.address.entities.Address;
+import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
@@ -57,6 +59,9 @@ public class UserService implements IUserRepository {
 
     @Autowired
     private ImageProductService imageProductService;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     public void initRoleAndUser() {
 
@@ -151,6 +156,13 @@ public class UserService implements IUserRepository {
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/7929bdd8-c2a7-40d1-b299-ac838404e968.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 2);
+
+        User user5 = userRepository.findById(String.valueOf("admin@admin")).orElse(null);
+        addressRepository.save(new Address((int) addressRepository.count() + 1, user5, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
+
+        User user6 = userRepository.findById(String.valueOf("root@root")).orElse(null);
+        addressRepository.save(new Address((int) addressRepository.count() + 1, user6, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
+
     }
 
     public User registerNewUser(JwtRegister jwtRegister) throws Exception {

@@ -1,5 +1,6 @@
 package mp.sitili.modules.order.entities;
 
+import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.user.entities.User;
 
 import javax.persistence.*;
@@ -19,21 +20,27 @@ public class Order {
     @Column(name = "status", length = 255)
     private String status;
 
-    @Column(name = "total", nullable = false)
-    private Float total;
+    @Column(name = "repartidor", nullable = true)
+    private String repartidor;
+
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     @Column(name = "date_order", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp dateOrder;
 
-    public Order(Integer id, User user, String status, Float total, Timestamp dateOrder) {
+    public Order(Integer id, User user, String status, String repartidor, Address address, Timestamp dateOrder) {
         this.id = id;
         this.user = user;
         this.status = status;
-        this.total = total;
+        this.repartidor = repartidor;
+        this.address = address;
         this.dateOrder = dateOrder;
     }
 
     public Order() {
+
     }
 
     public Integer getId() {
@@ -60,12 +67,20 @@ public class Order {
         this.status = status;
     }
 
-    public Float getTotal() {
-        return total;
+    public String getRepartidor() {
+        return repartidor;
     }
 
-    public void setTotal(Float total) {
-        this.total = total;
+    public void setRepartidor(String repartidor) {
+        this.repartidor = repartidor;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public Timestamp getDateOrder() {

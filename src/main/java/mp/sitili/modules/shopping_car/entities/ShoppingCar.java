@@ -1,20 +1,20 @@
-package mp.sitili.modules.order_detail.entities;
+package mp.sitili.modules.shopping_car.entities;
 
-import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.product.entities.Product;
-
+import mp.sitili.modules.user.entities.User;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "order_details")
-public class OrderDetail {
+@Table(name = "shopping_car")
+public class ShoppingCar {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -23,21 +23,17 @@ public class OrderDetail {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "price")
-    private Double price;
-
-
-    public OrderDetail(Integer id, Order order, Product product, Integer quantity, Double price) {
+    public ShoppingCar(Integer id, User user, Product product, Integer quantity) {
         this.id = id;
-        this.order = order;
+        this.user = user;
         this.product = product;
         this.quantity = quantity;
-        this.price = price;
     }
 
-    public OrderDetail() {
+    public ShoppingCar() {
 
     }
+
 
     public Integer getId() {
         return id;
@@ -47,12 +43,12 @@ public class OrderDetail {
         this.id = id;
     }
 
-    public Order getOrder() {
-        return order;
+    public User getUser() {
+        return user;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Product getProduct() {
@@ -69,13 +65,5 @@ public class OrderDetail {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
     }
 }
