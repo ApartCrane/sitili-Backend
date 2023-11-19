@@ -7,6 +7,10 @@ import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.jwt.entities.JwtRegister;
+import mp.sitili.modules.order.entities.Order;
+import mp.sitili.modules.order.use_cases.methods.OrderRepository;
+import mp.sitili.modules.order_detail.entities.OrderDetail;
+import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
@@ -22,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -62,6 +69,12 @@ public class UserService implements IUserRepository {
 
     @Autowired
     private AddressRepository addressRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     public void initRoleAndUser() {
 
@@ -161,8 +174,15 @@ public class UserService implements IUserRepository {
         addressRepository.save(new Address((int) addressRepository.count() + 1, user5, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
 
         User user6 = userRepository.findById(String.valueOf("root@root")).orElse(null);
-        addressRepository.save(new Address((int) addressRepository.count() + 1, user6, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
+        Address address = addressRepository.save(new Address((int) addressRepository.count() + 1, user6, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
 
+        Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Timestamp dateOrder = Timestamp.valueOf(sdf.format(timestamp));
+
+        Order orden = orderRepository.save(new Order((int) orderRepository.count() + 1 , user6, "Pendiente","No asignado", address, dateOrder));
+        OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, product.get(), 1, product.get().getPrice()));
     }
 
     public User registerNewUser(JwtRegister jwtRegister) throws Exception {

@@ -111,8 +111,9 @@ public class UserController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> obtenerUsuarios(@RequestBody String email) {
-        Optional<User> usuario = userRepository.findById(email);
+    public ResponseEntity<String> obtenerUsuarios(@RequestBody User user) {
+        Optional<User> usuario = userRepository.findById(user.getEmail());
+
         if(usuario.isPresent()){
             if(usuario.get().getStatus()){
                 userRepository.bajaLogica(usuario.get().getEmail(), false);
