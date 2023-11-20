@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ public class UserController {
     private UserRepository userRepository;
 
     @PostConstruct
-    public void initRoleAndUser() {
+    public void initRoleAndUser() throws ParseException {
         userService.initRoleAndUser();
     }
 

@@ -14,8 +14,8 @@ import java.util.List;
 public interface DataUserRepository extends JpaRepository<DataUser, Integer> {
 
     @Modifying
-    @Query(value = "INSERT INTO data_users(user_id) VALUES(:email)", nativeQuery = true)
-    public void asociarUserData(@Param("email") String email);
+    @Query(value = "INSERT INTO data_users(user_id, first_name, last_name) VALUES(:email, :first_name, :last_name)", nativeQuery = true)
+    public void asociarUserData(@Param("email") String email, @Param("first_name") String first_name, @Param("last_name") String last_name);
 
 
     @Query(value = "SELECT du.company, du.first_name, du.last_name, du.phone, du.register_date, du.user_id, u.status, ur.role_id FROM data_users du INNER JOIN users u ON du.user_id = u.email INNER JOIN user_role ur ON u.email = ur.user_id", nativeQuery = true)

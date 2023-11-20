@@ -7,6 +7,9 @@ import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.service.OrderService;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
+import mp.sitili.modules.order_detail.use_cases.dto.PedidosAnualesDTO;
+import mp.sitili.modules.order_detail.use_cases.dto.VentasAnualesDTO;
+import mp.sitili.modules.order_detail.use_cases.dto.VentasDTO;
 import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
 import mp.sitili.modules.order_detail.use_cases.service.OrderDetailService;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
@@ -73,6 +76,54 @@ public class OrderController {
             return new ResponseEntity<>(ordenes, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(ordenes, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/deliveryStart")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List> contarTodasLasOrdenes() {
+        List<Order> ordenes = orderRepository.findAll();
+
+        if(ordenes != null){
+            return new ResponseEntity<>(ordenes, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(ordenes, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/saleAll")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<VentasDTO> totalVentas() {
+        VentasDTO ventas = orderDetailService.totalVentas();
+
+        if(ventas != null){
+            return new ResponseEntity<>(ventas, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(ventas, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/sales")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<VentasAnualesDTO>> totalVentasAnuales() {
+        List<VentasAnualesDTO> ventas = orderDetailService.totalVentasAnuales();
+
+        if(ventas != null){
+            return new ResponseEntity<>(ventas, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(ventas, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/salesPack")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<List<PedidosAnualesDTO>> totalPedidosAnuales() {
+        List<PedidosAnualesDTO> ventas = orderDetailService.totalPedidosAnuales();
+
+        if(ventas != null){
+            return new ResponseEntity<>(ventas, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(ventas, HttpStatus.BAD_REQUEST);
         }
     }
 

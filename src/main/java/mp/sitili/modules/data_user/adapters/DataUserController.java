@@ -1,5 +1,7 @@
 package mp.sitili.modules.data_user.adapters;
 
+import mp.sitili.modules.address.entities.Address;
+import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.user.entities.User;
@@ -24,6 +26,18 @@ public class DataUserController {
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<List<DataUserDTO>> datosPorUsuario() {
         List<DataUserDTO> usuarios = dataUserRepository.findAllDataUsers();
+
+        if(usuarios != null){
+            return new ResponseEntity<>(usuarios, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(usuarios, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('Admin') or hasRole('Seller') or hasRole('User')")
+    public ResponseEntity<DataUser> actualizarPorUsuario(@RequestBody DataUser dataUser) {
+        DataUser usuarios = dataUserRepository.save(dataUser);
 
         if(usuarios != null){
             return new ResponseEntity<>(usuarios, HttpStatus.OK);

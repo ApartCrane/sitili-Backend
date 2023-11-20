@@ -5,6 +5,14 @@ public class JwtRegister {
     private String password;
     private int role;
 
+    public JwtRegister(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    public JwtRegister() {
+    }
+
     public String getEmail() {
         return email;
     }
