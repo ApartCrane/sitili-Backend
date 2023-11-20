@@ -14,9 +14,15 @@ public class CategoryService implements ICategoryRepository {
     private CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getAllCategory() {
-        return this.categoryRepository.getAllCategory();
+    public List<Category> findAllStatus() {
+        return this.categoryRepository.findAllStatus();
     }
+
+    @Override
+    public List<Category> categoriasNombre(String name) {
+        return this.categoryRepository.categoriasNombre(name);
+    }
+
 
     @Override
     public boolean createCategory(String name) {

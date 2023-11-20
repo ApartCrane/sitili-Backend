@@ -5,6 +5,8 @@ import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
+import mp.sitili.modules.favorite.entities.Favorite;
+import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.order.entities.Order;
@@ -72,6 +74,9 @@ public class UserService implements IUserRepository {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
@@ -162,13 +167,21 @@ public class UserService implements IUserRepository {
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product.get(), user2));
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product.get(), user2));
         product = productRepository.findById(2);
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product.get()));
+
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product.get(), user2));
         product = productRepository.findById(3);
+
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.3, product.get(), user2));
 
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/7929bdd8-c2a7-40d1-b299-ac838404e968.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 2);
+
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user, product.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user, product.get()));
+
 
         User user5 = userRepository.findById(String.valueOf("admin@admin")).orElse(null);
         addressRepository.save(new Address((int) addressRepository.count() + 1, user5, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));

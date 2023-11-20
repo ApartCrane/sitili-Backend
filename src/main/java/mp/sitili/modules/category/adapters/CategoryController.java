@@ -33,6 +33,28 @@ public class CategoryController {
         }
     }
 
+    @GetMapping("/listAll")
+    public ResponseEntity<List> obtenerTodasCategoriasFree() {
+        List<Category> categories = categoryService.findAllStatus();
+
+        if(categories != null){
+            return new ResponseEntity<>(categories, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(categories, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/listCategorie")
+    public ResponseEntity<List> obtenerCategoriaFree(@RequestBody Category category) {
+        List<Category> categories = categoryService.categoriasNombre(category.getName());
+
+        if(categories != null){
+            return new ResponseEntity<>(categories, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(categories, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('Root') or hasRole('Admin')")

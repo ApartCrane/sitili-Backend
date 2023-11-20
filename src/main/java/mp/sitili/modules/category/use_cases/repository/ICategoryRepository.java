@@ -5,7 +5,10 @@ import mp.sitili.modules.category.entities.Category;
 import java.util.List;
 
 public interface ICategoryRepository {
-    List<Category> getAllCategory();
+
+    List<Category> findAllStatus();
+
+    List<Category> categoriasNombre(String name);
 
     boolean createCategory(String name);
 
