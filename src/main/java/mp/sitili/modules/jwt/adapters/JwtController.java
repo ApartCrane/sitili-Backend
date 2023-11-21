@@ -50,22 +50,25 @@ public class JwtController {
             String last_name = (String) productData.get("last_name");
             Integer role = (Integer) productData.get("role");
 
+            System.out.println(email);
+            System.out.println(password);
+            System.out.println(first_name);
+            System.out.println(last_name);
+            System.out.println(role);
+
             User user = userService.registerNewUser(email, password, first_name, last_name, role);
+            System.out.println(user);
             if(user != null){
                 JwtResponse validador = jwtService.createJwtToken(new JwtRequest(email, password));
                 if(validador != null){
-                    System.out.println("Hasta Aca cool");
                     return new ResponseEntity<>(validador, HttpStatus.OK);
                 }else{
-                    System.out.println("Erro JWT");
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             }else{
-                System.out.println("Error creandolo");
                 return new ResponseEntity<>(HttpStatus.SEE_OTHER);
             }
         }else{
-            System.out.println("Data vacia");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
