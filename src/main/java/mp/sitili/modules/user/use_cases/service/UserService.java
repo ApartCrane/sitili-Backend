@@ -288,7 +288,7 @@ public class UserService implements IUserRepository {
 
         Optional<User> validador = userRepository.findById(usuario.getEmail());
 
-        if(validador.isEmpty()){
+        if(!validador.isEmpty()){
             user = userRepository.save(usuario);
             switch (rol){
                 case 1:

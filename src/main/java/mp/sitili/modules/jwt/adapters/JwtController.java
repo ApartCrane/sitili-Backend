@@ -42,7 +42,7 @@ public class JwtController {
     }
 
     @PostMapping({"/registerNewUser"})
-    public ResponseEntity<JwtResponse> registerNewUser(@RequestPart("userData") Map<String, Object> productData) throws Exception {
+    public ResponseEntity<JwtResponse> registerNewUser(@RequestBody Map<String, Object> productData) throws Exception {
         if(!productData.isEmpty()){
             String email = (String) productData.get("email");
             String password = (String) productData.get("password");
@@ -54,14 +54,18 @@ public class JwtController {
             if(user != null){
                 JwtResponse validador = jwtService.createJwtToken(new JwtRequest(email, password));
                 if(validador != null){
+                    System.out.println("Hasta Aca cool");
                     return new ResponseEntity<>(validador, HttpStatus.OK);
                 }else{
+                    System.out.println("Erro JWT");
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             }else{
+                System.out.println("Error creandolo");
                 return new ResponseEntity<>(HttpStatus.SEE_OTHER);
             }
         }else{
+            System.out.println("Data vacia");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
