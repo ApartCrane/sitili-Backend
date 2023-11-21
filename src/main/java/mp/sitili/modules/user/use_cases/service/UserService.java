@@ -288,7 +288,7 @@ public class UserService implements IUserRepository {
 
         Optional<User> validador = userRepository.findById(usuario.getEmail());
 
-        if(!validador.isEmpty()){
+        if(validador.isPresent()){
             user = userRepository.save(usuario);
             switch (rol){
                 case 1:
@@ -307,7 +307,7 @@ public class UserService implements IUserRepository {
             }
             dataUserRepository.asociarUserData(user.getEmail(), first_name, last_name);
         }else{
-            user = null;
+            return user = null;
         }
 
         return user;
