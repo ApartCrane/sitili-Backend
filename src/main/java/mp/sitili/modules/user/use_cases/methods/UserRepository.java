@@ -26,11 +26,12 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "SELECT * FROM user_role WHERE role_id LIKE %User%", nativeQuery = true)
     List<User> findAllUsers();
 
-    @Query(value = "SELECT c.company AS \"Tienda\", concat(c.first_name, c.last_name) AS \"Vendedor\"\n" +
+    @Query(value = "SELECT c.company AS \"Tienda\", CONCAT(c.first_name, ' ', c.last_name) AS \"Vendedor\"\n" +
             "FROM data_users c\n" +
             "INNER JOIN users u ON c.user_id = u.email\n" +
             "INNER JOIN user_role ur ON u.email = ur.user_id\n" +
-            "WHERE  u.status = true && ur.role_id LIKE \"Seller\";" , nativeQuery = true)
+            "INNER JOIN role r ON ur.role_id = r.role_name\n" +
+            "WHERE u.status = true AND r.role_description LIKE '%Seller%';" , nativeQuery = true)
     public List<SelectVendedorDTO> findSellers();
 
 }

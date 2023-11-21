@@ -153,7 +153,7 @@ public class UserService implements IUserRepository {
         User vendedorUser1 = new User();
         vendedorUser1.setEmail("vend@vend");
         vendedorUser1.setPassword(getEncodedPassword("root"));
-        vendedorUser1.setStatus(false);
+        vendedorUser1.setStatus(true);
         Set<Role> vendedorRoles1 = new HashSet<>();
         vendedorRoles1.add(vendedorRole);
         vendedorUser1.setRole(vendedorRoles1);
@@ -164,6 +164,8 @@ public class UserService implements IUserRepository {
         dataUserRepository.asociarUserData("admin@admin", "Daniel", "Wong");
         dataUserRepository.asociarUserData("user@user", "Diego", "Garcia");
         dataUserRepository.asociarUserData("vendedor@vendedor", "Hector", "Marquina");
+
+        dataUserRepository.asociarUserData("vend@vend", "wongsito", "wongsito");
 
 // Crear categorías
         categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Zapatos", true));
