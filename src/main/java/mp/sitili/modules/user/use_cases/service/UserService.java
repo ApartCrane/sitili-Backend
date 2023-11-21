@@ -25,6 +25,7 @@ import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
 import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.repository.IUserRepository;
 import mp.sitili.utils.email.EmailService;
@@ -35,10 +36,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -151,6 +149,15 @@ public class UserService implements IUserRepository {
         vendedorRoles.add(vendedorRole);
         vendedorUser.setRole(vendedorRoles);
         userRepository.save(vendedorUser);
+
+        User vendedorUser1 = new User();
+        vendedorUser1.setEmail("vend@vend");
+        vendedorUser1.setPassword(getEncodedPassword("root"));
+        vendedorUser1.setStatus(false);
+        Set<Role> vendedorRoles1 = new HashSet<>();
+        vendedorRoles1.add(vendedorRole);
+        vendedorUser1.setRole(vendedorRoles1);
+        userRepository.save(vendedorUser1);
 
 // Asociar datos a usuarios
         dataUserRepository.asociarUserData("root@root", "Carlo", "Yael");
@@ -328,6 +335,11 @@ public class UserService implements IUserRepository {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public List<SelectVendedorDTO> findSellers(){
+        return userRepository.findSellers();
     }
 
 }

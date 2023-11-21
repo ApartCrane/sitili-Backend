@@ -10,7 +10,9 @@ import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
 import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
+import mp.sitili.modules.user.use_cases.service.UserService;
 import mp.sitili.utils.aws.AWSS3ServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,9 @@ public class ProductController {
 
     @Autowired
     private RaitingRepository raitingRepository;
+
+    @Autowired
+    private UserService userService;
 
 
     @GetMapping("/listAll")
@@ -95,13 +100,23 @@ public class ProductController {
     @GetMapping("/listSeller")
     public ResponseEntity<List> obtenerTodoProductosxVendedorPublico(@RequestBody User user) {
         String sellerEmail = user.getEmail();
-
         List<Map<String, Object>> products = productService.findAllxVend(sellerEmail);
 
         if(products != null){
             return new ResponseEntity<>(products, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/selectSeller")
+    public ResponseEntity<List<SelectVendedorDTO>> obtenerVendedores() {
+        List<SelectVendedorDTO> vendedores = userService.findSellers();
+
+        if(vendedores != null){
+            return new ResponseEntity<>(vendedores, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(vendedores, HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -32,7 +32,7 @@ public class RaitingController {
     private ProductRepository productRepository;
 
     @PostMapping("/rate")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> calificarProducto(@RequestBody Raiting raiting) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
