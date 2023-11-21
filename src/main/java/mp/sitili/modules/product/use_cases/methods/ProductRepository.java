@@ -29,8 +29,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
     public List<Object[]> findAllProducts();
 
-    @Query(value = "USE wongsito;\n" +
-            "SELECT p.id AS product_id, p.name AS producto,\n" +
+    @Query(value = "SELECT p.id AS product_id, p.name AS producto,\n" +
             "    p.price AS precio, p.stock AS cantidad, p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion, p.status AS estado, c.name AS categoria,\n" +
             "    u.email AS vendedor, du.first_name AS nombreVendedor, du.last_name AS apellidoVendedor,\n" +
