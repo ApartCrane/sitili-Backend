@@ -217,6 +217,7 @@ public class OrderController {
                         }
                     }
 
+                    //Bajar cantidades de productos
                     orderDetailRepository.saveAll(validOrderDetails);
 
                     return new ResponseEntity<>("Orden creada con éxito, N. Orden " + orden.getId(), HttpStatus.OK);

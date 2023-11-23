@@ -131,10 +131,12 @@ public class ProductController {
 
         if (!productData.isEmpty()) {
             String name = (String) productData.get("name");
-            Integer stock = (Integer) productData.get("stock");
-            Double price = (Double) productData.get("price");
+            int stock = (int) productData.get("stock");
+            System.out.println(productData.get("price"));
+            String price = (String) productData.get("price");
+            Double price1 = Double.valueOf(price);
             String features = (String) productData.get("features");
-            Integer categoryId = (Integer) productData.get("category_id");
+            int categoryId = (int) productData.get("category_id");
             Category category = categoryRepository.getCatById(categoryId);
             User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
             Date date = new Date();
@@ -142,8 +144,7 @@ public class ProductController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Timestamp registerProduct = Timestamp.valueOf(sdf.format(timestamp));
 
-            Product productSaved = productRepository.save(new Product(name, stock, price, features, category, user, registerProduct, true));
-
+            Product productSaved = productRepository.save(new Product(name, stock, price1, features, category, user, registerProduct, true));
             if (productSaved != null) {
                 raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 0.0, productSaved, user));
                 if (files != null && !files.isEmpty()) {
