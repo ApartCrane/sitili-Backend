@@ -44,11 +44,6 @@ public class JwtController {
     @PostMapping({"/registerNewUser"})
     public ResponseEntity<JwtResponse> registerNewUser(@RequestBody Map<String, Object> productData) throws Exception {
         if(!productData.isEmpty()){
-            String email = (String) productData.get("email");
-            String password = (String) productData.get("password");
-            String first_name = (String) productData.get("first_name");
-            String last_name = (String) productData.get("last_name");
-            Integer role = (Integer) productData.get("role");
 
             User user = userService.registerNewUser(email, password, first_name, last_name, role);
             if(user != null){
