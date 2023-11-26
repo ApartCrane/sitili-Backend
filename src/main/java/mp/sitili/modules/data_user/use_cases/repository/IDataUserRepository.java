@@ -9,6 +9,10 @@ public interface IDataUserRepository {
 
     public void asociarUserData(String email);
 
-    List<DataUserDTO> findAllDataUsers();
+    public List<DataUserDTO> findAllDataUsers();
+
+    public DataUserDTO findAllDataUser(String email);
+
+    public boolean setCompany(String userEmail, String company, String phone);
 
 }

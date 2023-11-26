@@ -12,8 +12,11 @@ import java.util.List;
 @Transactional
 public interface CategoryRepository extends JpaRepository<Category, String> {
 
-    @Query(value = "SELECT * FROM categories", nativeQuery = true)
-    public List<Category> getAllCategory();
+    @Query(value = "SELECT * FROM categories WHERE status = true", nativeQuery = true)
+    public List<Category> findAllStatus();
+
+    @Query(value = "SELECT * FROM categories WHERE status = true && name LIKE %:name%", nativeQuery = true)
+    public List<Category> categoriasNombre(@Param("name") String name);
 
     @Query(value = "SELECT id FROM categories WHERE id = :id", nativeQuery = true)
     public Integer getCategoryById(@Param("id") int id);

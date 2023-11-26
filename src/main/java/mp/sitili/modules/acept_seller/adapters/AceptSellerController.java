@@ -30,7 +30,7 @@ public class AceptSellerController {
     private UserService userService;
 
     @GetMapping("/listSellersNa")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
     public ResponseEntity<List<AceptSellerDTO>> obtenerVendedoresNa() {
         List<AceptSellerDTO> usuarios = aceptSellerRepository.findAllSellersNa();
 
@@ -43,7 +43,7 @@ public class AceptSellerController {
 
 
     @PutMapping("/acept")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
     public ResponseEntity<String> aceptarVendedor(@RequestBody User data) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String adminEmail = authentication.getName();
