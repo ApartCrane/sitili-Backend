@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package
 
 # Utiliza una imagen de Java 17 como base para la etapa de ejecución
-FROM openjdk:11.0.0-jdk
+FROM openjdk:11-jdk
 
 # Copia el archivo JAR generado desde el contenedor de compilación
 COPY --from=builder /app/target/SITILI-0.0.1-SNAPSHOT.jar /app.jar
