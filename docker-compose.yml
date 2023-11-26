@@ -1,10 +1,9 @@
-version: '3.9'
 
 services:
 
   api:
     build:
-      context: ./
+      context: ./sitili-Backend/
       dockerfile: Dockerfile
     ports:
       - "8090:8090"
@@ -20,7 +19,7 @@ services:
       - db
 
   db:
-    image: mysql:latest
+    image: mysql:8.0
     ports:
       - "3306:3306"
     environment:
