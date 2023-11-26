@@ -30,7 +30,6 @@ services:
       MYSQL_PASSWORD: root
     networks:
       - mi-red
-    hostname: db
 
 networks:
   mi-red:
