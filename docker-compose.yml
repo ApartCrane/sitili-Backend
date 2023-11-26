@@ -3,7 +3,7 @@ services:
 
   api:
     build:
-      context: ./sitili-Backend/
+      context: ./
       dockerfile: Dockerfile
     ports:
       - "8090:8090"
