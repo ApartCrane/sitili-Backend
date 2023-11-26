@@ -13,6 +13,7 @@ services:
       spring.datasource.password: root
       spring.jpa.database-platform: org.hibernate.dialect.MySQL8Dialect
       spring.sql.init.mode: always
+      spring.jpa.hibernate.ddl-auto: create
       server.port: 8090
     depends_on:
       - db
@@ -20,7 +21,7 @@ services:
   db:
     image: mysql:8.0
     ports:
-      - "3306:3306"
+      - "3000:3000"
     environment:
       MYSQL_DATABASE: WONGSITO
       MYSQL_ROOT_PASSWORD: root
