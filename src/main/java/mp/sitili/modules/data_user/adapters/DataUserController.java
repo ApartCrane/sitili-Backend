@@ -4,6 +4,7 @@ import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
+import mp.sitili.modules.data_user.use_cases.service.DataUserService;
 import mp.sitili.modules.user.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,9 @@ public class DataUserController {
 
     @Autowired
     private DataUserRepository dataUserRepository;
+
+    @Autowired
+    private DataUserService dataUserService;
 
 
     @GetMapping("/list")
@@ -61,6 +65,21 @@ public class DataUserController {
             return new ResponseEntity<>(usuarios, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(usuarios, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/updateCompany")
+    @PreAuthorize("hasRole('Admin') or hasRole('Seller')")
+    public ResponseEntity<String> actualizarCompany(@RequestBody DataUser dataUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        boolean revision = dataUserService.setCompany(userEmail, dataUser.getCompany(), dataUser.getPhone());
+
+        if(revision){
+            return new ResponseEntity<>("Compañia asociar correctamente", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("Error al asociar compañia", HttpStatus.BAD_REQUEST);
         }
     }
 

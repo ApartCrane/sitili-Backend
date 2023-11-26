@@ -4,6 +4,7 @@ import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
+import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
@@ -357,6 +358,11 @@ public class UserService implements IUserRepository {
     @Override
     public List<SelectVendedorDTO> findSellers(){
         return userRepository.findSellers();
+    }
+
+    @Override
+    public DataUser validateCompany(String user_id){
+        return userRepository.validateCompany(user_id);
     }
 
 }

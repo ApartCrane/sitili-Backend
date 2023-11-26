@@ -136,7 +136,7 @@ public class OrderController {
         //product_id
         //quantity
         //address_id
-        //user_id
+        //payment_id
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById((Integer) productData.get("product_id"));
@@ -156,6 +156,8 @@ public class OrderController {
                         if (orden != null) {
                             OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, producto.get(), (Integer) productData.get("quantity"), producto.get().getPrice()));
                             if (orderDetail != null) {
+                                producto.get().setStock(producto.get().getStock() - (Integer) productData.get("quantity"));
+                                productRepository.save(producto.get());
                                 return new ResponseEntity<>("Orden creada con exito, N. Orden " + orden.getId(), HttpStatus.OK);
                             } else {
                                 orderRepository.delete(orden);
@@ -197,6 +199,7 @@ public class OrderController {
                     orden = orderRepository.save(orden);
 
                     List<OrderDetail> validOrderDetails = new ArrayList<>();
+                    List<Product> bajarCantidades = new ArrayList<>();
 
                     for (Map<String, Object> orderDetailData : orderDetailsData) {
                         Integer productId = (Integer) orderDetailData.get("product_id");
@@ -207,6 +210,8 @@ public class OrderController {
                             if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
                                 OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
                                 validOrderDetails.add(orderDetail);
+                                productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
+                                bajarCantidades.add(productoDetail.get());
                             } else {
                                 orderRepository.delete(orden);
                                 return new ResponseEntity<>("Cantidad requerida excede el stock, el producto es: " + productoDetail.get().getName(), HttpStatus.BAD_REQUEST);
@@ -219,6 +224,7 @@ public class OrderController {
 
                     //Bajar cantidades de productos
                     orderDetailRepository.saveAll(validOrderDetails);
+                    productRepository.saveAll(bajarCantidades);
 
                     return new ResponseEntity<>("Orden creada con éxito, N. Orden " + orden.getId(), HttpStatus.OK);
                 } else {

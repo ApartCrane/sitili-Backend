@@ -63,7 +63,17 @@ public class ProductController {
         List<Map<String, Object>> products = productService.findAllProducts();
 
         if(products != null){
+            return new ResponseEntity<>(products, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @GetMapping("/listProduct")
+    public ResponseEntity<List> obtenerProducto(@RequestBody Product product) {
+        List<Map<String, Object>> products = productService.findProduct(product.getId());
+
+        if(products != null){
             return new ResponseEntity<>(products, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);

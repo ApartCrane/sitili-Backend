@@ -14,10 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -64,6 +61,30 @@ public class PaymentCCController {
                     return new ResponseEntity<>("Datos de pago cargados exitosamente", HttpStatus.OK);
                 }else{
                     return new ResponseEntity<>("Error al cargar datos de pago", HttpStatus.BAD_REQUEST);
+                }
+            }else{
+                return new ResponseEntity<>("Datos Faltantes", HttpStatus.NO_CONTENT);
+            }
+        }else {
+            return new ResponseEntity<>("Usaurio inexistente", HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> actualizarPago(@RequestBody PaymentCC paymentCC) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+
+        if(user != null){
+            if(paymentCC != null){
+                PaymentCC pago = paymentCCRepository.save(new PaymentCC(paymentCC.getId(), user, paymentCC.getCc(), paymentCC.getDay(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
+                if(pago != null){
+                    return new ResponseEntity<>("Datos de pago actualizados exitosamente", HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("Error al actualizar datos de pago", HttpStatus.BAD_REQUEST);
                 }
             }else{
                 return new ResponseEntity<>("Datos Faltantes", HttpStatus.NO_CONTENT);

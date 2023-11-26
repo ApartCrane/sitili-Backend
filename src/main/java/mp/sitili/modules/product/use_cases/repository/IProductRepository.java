@@ -12,6 +12,8 @@ public interface IProductRepository {
 
     public List<Map<String, Object>> findAllProducts();
 
+    public List<Map<String, Object>> findProduct(Integer product_id);
+
     public List<Map<String, Object>> findAllxVend(String email);
 
 }

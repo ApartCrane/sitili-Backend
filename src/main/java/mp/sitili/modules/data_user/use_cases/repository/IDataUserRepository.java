@@ -13,4 +13,6 @@ public interface IDataUserRepository {
 
     public DataUserDTO findAllDataUser(String email);
 
+    public boolean setCompany(String userEmail, String company, String phone);
+
 }

@@ -1,5 +1,6 @@
 package mp.sitili.modules.user.adapters;
 
+import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,6 +95,21 @@ public class UserController {
             return new ResponseEntity<>(total, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(total, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/validateCompany")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<DataUser> companiaNull() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        DataUser dataUser = userService.validateCompany(sellerEmail);
+
+        if(dataUser == null || dataUser.getCompany() == null){
+            return new ResponseEntity<>(dataUser, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(dataUser, HttpStatus.NO_CONTENT);
         }
     }
 

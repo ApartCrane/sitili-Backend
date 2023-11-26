@@ -62,6 +62,41 @@ public class ProductService implements IProductRepository {
     }
 
     @Override
+    public List<Map<String, Object>> findProduct(Integer product_id) {
+        List<Object[]> rawProducts = new ArrayList<>();
+        try {
+            rawProducts = productRepository.findProduct(product_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<Map<String, Object>> productList = new ArrayList<>();
+
+        for (Object[] row : rawProducts) {
+            Map<String, Object> productData = new HashMap<>();
+            productData.put("product_id", row[0]);
+            productData.put("producto", row[1]);
+            productData.put("precio", row[2]);
+            productData.put("cantidad", row[3]);
+            productData.put("comentarios", row[4]);
+            productData.put("calificacion", row[5]);
+            productData.put("estado", row[6]);
+            productData.put("categoria", row[7]);
+            productData.put("vendedor", row[8]);
+            productData.put("nombreVendedor", row[9]);
+            productData.put("apellidoVendedor", row[10]);
+            String imagenesConcatenadas = (String) row[11];
+            if(imagenesConcatenadas == null){
+                productData.put("imagenes", "Aun no cuenta con Imagenes");
+            }else{
+                List<String> listaImagenes = Arrays.asList(imagenesConcatenadas.split(","));
+                productData.put("imagenes", listaImagenes);
+            }
+            productList.add(productData);
+        }
+        return productList;
+    }
+
+    @Override
     public List<Map<String, Object>> findAllxVend(String email) {
         List<Object[]> rawProducts = new ArrayList<>();
         try {
