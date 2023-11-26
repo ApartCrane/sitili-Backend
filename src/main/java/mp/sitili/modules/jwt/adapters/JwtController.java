@@ -50,14 +50,7 @@ public class JwtController {
             String last_name = (String) productData.get("last_name");
             Integer role = (Integer) productData.get("role");
 
-            System.out.println(email);
-            System.out.println(password);
-            System.out.println(first_name);
-            System.out.println(last_name);
-            System.out.println(role);
-
             User user = userService.registerNewUser(email, password, first_name, last_name, role);
-            System.out.println(user);
             if(user != null){
                 JwtResponse validador = jwtService.createJwtToken(new JwtRequest(email, password));
                 if(validador != null){
