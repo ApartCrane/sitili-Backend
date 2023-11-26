@@ -21,6 +21,9 @@ public interface DataUserRepository extends JpaRepository<DataUser, Integer> {
     @Query(value = "SELECT du.company, du.first_name, du.last_name, du.phone, du.register_date, du.user_id, u.status, ur.role_id FROM data_users du INNER JOIN users u ON du.user_id = u.email INNER JOIN user_role ur ON u.email = ur.user_id", nativeQuery = true)
     public List<DataUserDTO> findAllDataUsers();
 
+    @Query(value = "SELECT du.company, du.first_name, du.last_name, du.phone, du.register_date, du.user_id, u.status, ur.role_id FROM data_users du INNER JOIN users u ON du.user_id = u.email INNER JOIN user_role ur ON u.email = ur.user_id && u.email = :email", nativeQuery = true)
+    public DataUserDTO findAllDataUser(@Param("email") String email);
+
 
 
 }

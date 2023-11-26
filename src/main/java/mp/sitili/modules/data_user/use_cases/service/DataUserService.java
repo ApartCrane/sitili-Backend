@@ -24,4 +24,9 @@ public class DataUserService implements IDataUserRepository {
         return this.dataUserRepository.findAllDataUsers();
     }
 
+    @Override
+    public DataUserDTO findAllDataUser(String email){
+        return this.dataUserRepository.findAllDataUser(email);
+    }
+
 }

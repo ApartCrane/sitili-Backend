@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +26,24 @@ public class DataUserController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<DataUserDTO>> datosPorUsuario() {
+    public ResponseEntity<List<DataUserDTO>> datosUsuarios() {
         List<DataUserDTO> usuarios = dataUserRepository.findAllDataUsers();
+
+        if(usuarios != null){
+            return new ResponseEntity<>(usuarios, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(usuarios, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/listu")
+    @PreAuthorize("hasRole('Admin') or hasRole('Seller') or hasRole('User')")
+    public ResponseEntity<DataUserDTO> datosPorUsuario() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        DataUserDTO usuarios = dataUserRepository.findAllDataUser(userEmail);
 
         if(usuarios != null){
             return new ResponseEntity<>(usuarios, HttpStatus.OK);
