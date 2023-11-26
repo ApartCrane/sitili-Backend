@@ -207,8 +207,10 @@ public class UserService implements IUserRepository {
 // Crear direcciones para usuarios
         User user5 = userRepository.findById(String.valueOf("admin@admin")).orElse(null);
         User user6 = userRepository.findById(String.valueOf("root@root")).orElse(null);
+        User user7 = userRepository.findById(String.valueOf("user@user")).orElse(null);
         Address address1 = addressRepository.save(new Address((int) addressRepository.count() + 1, user5, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
         Address address2 = addressRepository.save(new Address((int) addressRepository.count() + 1, user6, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
+        Address address3 = addressRepository.save(new Address((int) addressRepository.count() + 1, user7, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
 
 // Crear formas de pago para usuarios
         PaymentCC paymentCC1 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user5, "1234567891234567", "04", "08", "2002", "123"));

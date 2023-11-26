@@ -30,7 +30,7 @@ public class AddressController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/list")
+    @GetMapping("/lists")
     @PreAuthorize("hasRole('User')")
     public ResponseEntity<List<Address>> listarDireccionesxUsuario() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -41,6 +41,21 @@ public class AddressController {
             return new ResponseEntity<>(direcciones, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(direcciones, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<Address> listarDireccionActUsuario() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        Address direccion = addressRepository.dirActXusuario(userEmail);
+
+        if(direccion != null){
+            return new ResponseEntity<>(direccion, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(direccion, HttpStatus.NO_CONTENT);
         }
     }
 

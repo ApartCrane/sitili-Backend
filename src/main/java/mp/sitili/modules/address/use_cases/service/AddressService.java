@@ -20,6 +20,11 @@ public class AddressService implements IAddressRepository {
     }
 
     @Override
+    public Address dirActXusuario(String user_id){
+        return addressRepository.dirActXusuario(user_id);
+    }
+
+    @Override
     public Address buscarDir(Integer id, String user_id){
         return addressRepository.buscarDir(id, user_id);
     }
