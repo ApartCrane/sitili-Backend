@@ -8,7 +8,7 @@ services:
     ports:
       - "8090:8090"
     environment:
-      spring.datasource.url: jdbc:mysql://db:3306/WONGSITO?serverTimezone=UTC
+      spring.datasource.url: jdbc:mysql://db:3000/WONGSITO?serverTimezone=UTC
       spring.datasource.username: root
       spring.datasource.password: root
       spring.jpa.database-platform: org.hibernate.dialect.MySQL8Dialect
