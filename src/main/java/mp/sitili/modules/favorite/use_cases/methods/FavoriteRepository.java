@@ -35,4 +35,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, String> {
     @Query(value = "DELETE FROM favorities WHERE user_id = :user_id AND product_id = :product_id", nativeQuery = true)
     void deleteFav(@Param("user_id") String user_id, @Param("product_id") Integer product_id);
 
+    @Query(value = "SELECT * FROM favorities WHERE product_id = :product_id && user_id = :user_id", nativeQuery = true)
+    public Favorite validarExis(@Param("product_id") Integer product_id, @Param("user_id") String user_id);
+
 }

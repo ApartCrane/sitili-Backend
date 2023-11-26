@@ -24,6 +24,8 @@ import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
+import mp.sitili.modules.shopping_car.entities.ShoppingCar;
+import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
@@ -62,6 +64,9 @@ public class UserService implements IUserRepository {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ShoppingCarRepository shoppingCarRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -185,17 +190,25 @@ public class UserService implements IUserRepository {
         Category category3 = categoryRepository.getCatById(3);
         User user3 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
         productService.saveProduct("Pasta de Dientes", 30.00, 8, "Pasta dentífrica colgate", category3, user3);
+        User userF = userRepository.findById(String.valueOf("user@user")).orElse(null);
+
 
 // Asociar valoraciones y favoritos a productos
         User user2 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
         Optional<Product> product1 = productRepository.findById(1);
-        Optional<Product> product2 = productRepository.findById(1);
-        Optional<Product> product3 = productRepository.findById(1);
+        Optional<Product> product2 = productRepository.findById(2);
+        Optional<Product> product3 = productRepository.findById(3);
+        //ShoppingCar Integer id, User user, Product product, Integer quantity
+        shoppingCarRepository.save(new ShoppingCar((int) (shoppingCarRepository.count() + 1), userF, product1.get(), 1));
+        shoppingCarRepository.save(new ShoppingCar((int) (shoppingCarRepository.count() + 1), userF, product2.get(), 1));
+
+
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product1.get(), user2));
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product1.get(), user2));
         Optional<Product> producto1 = productRepository.findById(2);
-        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product2.get()));
-        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product2.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product1.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user3, product2.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), userF, product2.get()));
         Optional<Product> producto2 = productRepository.findById(3);
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.3, product3.get(), user2));
 

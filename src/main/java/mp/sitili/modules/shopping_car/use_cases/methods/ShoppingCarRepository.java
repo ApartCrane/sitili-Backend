@@ -36,4 +36,7 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
     @Query(value = "DELETE FROM shopping_car WHERE user_id = :user_id AND product_id = :product_id", nativeQuery = true)
     void deleteCar(@Param("user_id") String user_id, @Param("product_id") Integer product_id);
 
+    @Query(value = "SELECT * FROM shopping_car WHERE product_id = :product_id && user_id = :user_id", nativeQuery = true)
+    public ShoppingCar validarExis(@Param("product_id") Integer product_id, @Param("user_id") String user_id);
+
 }

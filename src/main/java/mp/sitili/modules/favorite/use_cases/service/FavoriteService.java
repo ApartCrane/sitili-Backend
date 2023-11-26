@@ -54,4 +54,9 @@ public class FavoriteService implements IFavoriteRepository {
             return false;
         }
     }
+
+    @Override
+    public Favorite validarExis(Integer product_id, String user_id){
+        return favoriteRepository.validarExis(product_id, user_id);
+    }
 }

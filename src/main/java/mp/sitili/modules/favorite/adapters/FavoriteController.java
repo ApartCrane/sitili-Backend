@@ -61,15 +61,21 @@ public class FavoriteController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
 
-        if(user != null && producto.isPresent()){
-            Favorite favorite = favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user, producto.get()));
-            if(favorite != null){
-                return new ResponseEntity<>("Agregado a favoritos", HttpStatus.OK);
+        Favorite favorite = favoriteService.validarExis(producto.get().getId(), userEmail);
+
+        if(favorite == null){
+            if(user != null && producto.isPresent()){
+                Favorite fav = favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user, producto.get()));
+                if(fav != null){
+                    return new ResponseEntity<>("Agregado a favoritos", HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             }else{
-                return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
             }
         }else{
-            return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Producto repetido", HttpStatus.BAD_REQUEST);
         }
 
     }

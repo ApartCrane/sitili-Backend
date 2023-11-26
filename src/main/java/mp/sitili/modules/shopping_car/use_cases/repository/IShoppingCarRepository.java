@@ -12,4 +12,6 @@ public interface IShoppingCarRepository {
 
     public Boolean deleteCar(String user_id, Integer product_id);
 
+    public ShoppingCar validarExis(Integer product_id, String user_id);
+
 }

@@ -1,5 +1,6 @@
 package mp.sitili.modules.shopping_car.adapters;
 
+import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
@@ -59,22 +60,29 @@ public class ShoppingCarController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
 
+        ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
 
 
-        if(user != null && producto.isPresent()){
-            if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
-                ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
-                if(shoppingCar != null){
-                    return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+        if(shopp == null){
+            if(user != null && producto.isPresent()){
+                if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
+                    ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
+                    if(shoppingCar != null){
+                        return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
                 }else{
-                    return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>("Cantidad excedente", HttpStatus.BAD_REQUEST);
                 }
             }else{
-                return new ResponseEntity<>("Cantidad excedente", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
             }
         }else{
-            return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Prodcuto repetido", HttpStatus.BAD_REQUEST);
         }
+
+
 
     }
 
