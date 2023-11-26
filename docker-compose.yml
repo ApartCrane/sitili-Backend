@@ -16,6 +16,8 @@ services:
       spring.sql.init.mode: always
       spring.jpa.hibernate.ddl-auto: create
       server.port: 8090
+    networks:
+      - mi-red
 
   db:
     image: mysql:8.0
@@ -26,3 +28,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: root
       MYSQL_PASSWORD: root
+    networks:
+      - mi-red
+
+networks:
+  mi-red:
+    driver: bridge
