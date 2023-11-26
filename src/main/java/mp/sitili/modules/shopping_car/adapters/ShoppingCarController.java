@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -36,16 +37,16 @@ public class ShoppingCarController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<List<ShoppingCar>> listarCarxUsuario() {
+    public ResponseEntity<List> listarCarxUsuario() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        List<ShoppingCar> carrito = shoppingCarService.carXusuario(userEmail);
+        List<Map<String, Object>> favoritos = shoppingCarService.carXusuario(userEmail);
 
-        if(carrito != null){
-            return new ResponseEntity<>(carrito, HttpStatus.OK);
+        if(favoritos != null){
+            return new ResponseEntity<>(favoritos, HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(carrito, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(favoritos, HttpStatus.NO_CONTENT);
         }
     }
 
@@ -58,12 +59,18 @@ public class ShoppingCarController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
 
-        if(user != null && producto.isPresent() && product.getStock() > producto.get().getStock() && product.getStock() > 0){
-            ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
-            if(shoppingCar != null){
-                return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+
+
+        if(user != null && producto.isPresent()){
+            if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
+                ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
+                if(shoppingCar != null){
+                    return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             }else{
-                return new ResponseEntity<>("Error al agregar o Cantidad excedente", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Cantidad excedente", HttpStatus.BAD_REQUEST);
             }
         }else{
             return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);

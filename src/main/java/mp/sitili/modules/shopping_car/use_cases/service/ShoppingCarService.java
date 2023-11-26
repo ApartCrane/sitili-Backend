@@ -9,7 +9,7 @@ import mp.sitili.modules.shopping_car.use_cases.repository.IShoppingCarRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ShoppingCarService implements IShoppingCarRepository {
@@ -18,8 +18,33 @@ public class ShoppingCarService implements IShoppingCarRepository {
     private ShoppingCarRepository shoppingCarRepository;
 
     @Override
-    public List<ShoppingCar> carXusuario(String userEmail) {
-        return shoppingCarRepository.carXusuario(userEmail);
+    public List<Map<String, Object>> carXusuario(String email) {
+        List<Object[]> rawProducts = new ArrayList<>();
+        try {
+            rawProducts = shoppingCarRepository.carXusuario(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<Map<String, Object>> productList = new ArrayList<>();
+
+        for (Object[] row : rawProducts) {
+            Map<String, Object> productData = new HashMap<>();
+            productData.put("producto", row[0]);
+            productData.put("precio", row[1]);
+            productData.put("comentarios", row[2]);
+            productData.put("calificacion", row[3]);
+            productData.put("categoria", row[4]);
+            productData.put("vendedor", row[5]);
+            String imagenesConcatenadas = (String) row[6];
+            if(imagenesConcatenadas == null){
+                productData.put("imagenes", "Aun no cuenta con Imagenes");
+            }else{
+                List<String> listaImagenes = Arrays.asList(imagenesConcatenadas.split(","));
+                productData.put("imagenes", listaImagenes);
+            }
+            productList.add(productData);
+        }
+        return productList;
     }
 
     @Override

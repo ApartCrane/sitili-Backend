@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -38,11 +39,11 @@ public class FavoriteController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<List<Favorite>> listarFavxUsuario() {
+    public ResponseEntity<List> listarFavxUsuario() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        List<Favorite> favoritos = favoriteService.favXusuario(userEmail);
+        List<Map<String, Object>> favoritos = favoriteService.favXusuario(userEmail);
 
         if(favoritos != null){
             return new ResponseEntity<>(favoritos, HttpStatus.OK);
