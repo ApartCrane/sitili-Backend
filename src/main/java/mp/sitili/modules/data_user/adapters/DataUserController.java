@@ -59,6 +59,9 @@ public class DataUserController {
     @PutMapping("/update")
     @PreAuthorize("hasRole('Admin') or hasRole('Seller') or hasRole('User')")
     public ResponseEntity<DataUser> actualizarPorUsuario(@RequestBody DataUser dataUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
         DataUser usuarios = dataUserRepository.save(dataUser);
 
         if(usuarios != null){

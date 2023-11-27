@@ -217,6 +217,7 @@ public class UserService implements IUserRepository {
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/7929bdd8-c2a7-40d1-b299-ac838404e968.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 2);
+        imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 3);
 
 // Crear direcciones para usuarios
         User user5 = userRepository.findById(String.valueOf("admin@admin")).orElse(null);
