@@ -14,7 +14,7 @@ import java.util.List;
 public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String> {
 
     @Query(value = "SELECT \n" +
-            "    p.name AS producto,\n" +
+            "    sc.id AS car_id, p.name AS producto,\n" +
             "    p.price AS precio, \n" +
             "    p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion,\n" +
@@ -29,7 +29,7 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "INNER JOIN shopping_car sc ON sc.product_id = p.id\n" +
             "WHERE sc.user_id = :email && p.status = TRUE\n" +
-            "GROUP BY p.id", nativeQuery = true)
+            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company", nativeQuery = true)
     public List<Object[]> carXusuario(@Param("email") String email);
 
     @Modifying

@@ -29,13 +29,14 @@ public class ShoppingCarService implements IShoppingCarRepository {
 
         for (Object[] row : rawProducts) {
             Map<String, Object> productData = new HashMap<>();
-            productData.put("producto", row[0]);
-            productData.put("precio", row[1]);
-            productData.put("comentarios", row[2]);
-            productData.put("calificacion", row[3]);
-            productData.put("categoria", row[4]);
-            productData.put("vendedor", row[5]);
-            String imagenesConcatenadas = (String) row[6];
+            productData.put("car_id", row[0]);
+            productData.put("producto", row[1]);
+            productData.put("precio", row[2]);
+            productData.put("comentarios", row[3]);
+            productData.put("calificacion", row[4]);
+            productData.put("categoria", row[5]);
+            productData.put("vendedor", row[6]);
+            String imagenesConcatenadas = (String) row[7];
             if(imagenesConcatenadas == null){
                 productData.put("imagenes", "Aun no cuenta con Imagenes");
             }else{
