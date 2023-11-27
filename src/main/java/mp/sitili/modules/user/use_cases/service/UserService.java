@@ -205,7 +205,8 @@ public class UserService implements IUserRepository {
 
 
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product1.get(), user2));
-        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product1.get(), user2));
+        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product2.get(), user2));
+        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product3.get(), user2));
         Optional<Product> producto1 = productRepository.findById(2);
         favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product1.get()));
         favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user3, product2.get()));
