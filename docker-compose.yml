@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8090:8090"
-    command: ["./wait-for-it.sh", "db:3306", "--", "java", "-jar", "/app.jar"]
     environment:
       spring.datasource.url: jdbc:mysql://db:3306/WONGSITO?serverTimezone=UTC
       spring.datasource.username: root
