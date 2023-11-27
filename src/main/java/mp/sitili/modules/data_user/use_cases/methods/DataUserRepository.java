@@ -17,15 +17,24 @@ public interface DataUserRepository extends JpaRepository<DataUser, Integer> {
     @Query(value = "INSERT INTO data_users(user_id, first_name, last_name) VALUES(:email, :first_name, :last_name)", nativeQuery = true)
     public void asociarUserData(@Param("email") String email, @Param("first_name") String first_name, @Param("last_name") String last_name);
 
-    @Query(value = "SELECT du.company, du.first_name, du.last_name, du.phone, du.register_date, du.user_id, u.status, ur.role_id FROM data_users du INNER JOIN users u ON du.user_id = u.email INNER JOIN user_role ur ON u.email = ur.user_id", nativeQuery = true)
+    @Query(value = "SELECT du.id, du.company, du.first_name, du.last_name, du.phone, du.register_date, du.user_id, u.status, ur.role_id FROM data_users du INNER JOIN users u ON du.user_id = u.email INNER JOIN user_role ur ON u.email = ur.user_id", nativeQuery = true)
     public List<DataUserDTO> findAllDataUsers();
 
-    @Query(value = "SELECT du.company, du.first_name, du.last_name, du.phone, du.register_date, du.user_id, u.status, ur.role_id FROM data_users du INNER JOIN users u ON du.user_id = u.email INNER JOIN user_role ur ON u.email = ur.user_id && u.email = :email", nativeQuery = true)
+    @Query(value = "SELECT du.id, du.company, du.first_name, du.last_name, du.phone, du.register_date, du.user_id, u.status, ur.role_id FROM data_users du INNER JOIN users u ON du.user_id = u.email INNER JOIN user_role ur ON u.email = ur.user_id && u.email = :email", nativeQuery = true)
     public DataUserDTO findAllDataUser(@Param("email") String email);
 
     @Modifying
     @Query(value = "UPDATE data_users SET company = :company, phone = :phone WHERE user_id = :userEmail", nativeQuery = true)
-    boolean setCompany(@Param("userEmail") String userEmail, @Param("company") String company, @Param("phone") String phone);
+    void setCompany(@Param("userEmail") String userEmail, @Param("company") String company, @Param("phone") String phone);
+
+    @Modifying
+    @Query(value = "UPDATE data_users SET company = :company, first_name = :first_name, last_name = :last_name, phone = :phone WHERE user_id = :user_id && id = :id", nativeQuery = true)
+    void update(@Param("company") String company,
+                   @Param("first_name") String first_name,
+                   @Param("last_name") String last_name,
+                   @Param("phone") String phone,
+                   @Param("id") Integer id,
+                   @Param("user_id") String user_id);
 
 
 

@@ -57,18 +57,27 @@ public class DataUserController {
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('Admin') or hasRole('Seller') or hasRole('User')")
-    public ResponseEntity<DataUser> actualizarPorUsuario(@RequestBody DataUser dataUser) {
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> actualizarPorUsuario(@RequestBody DataUser dataUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        DataUser usuarios = dataUserRepository.save(dataUser);
+        DataUserDTO usuarios = dataUserRepository.findAllDataUser(userEmail);
+
+        boolean revision = dataUserService.update("Sin Compañia", dataUser.getFirstName(),
+                dataUser.getLastName(), dataUser.getPhone(),
+                usuarios.getId(), userEmail);
 
         if(usuarios != null){
-            return new ResponseEntity<>(usuarios, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(usuarios, HttpStatus.BAD_REQUEST);
+            if(revision){
+                return new ResponseEntity<>("Usuario actualizado", HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>("Error al actualizar datos", HttpStatus.BAD_REQUEST);
+            }
+        }else{
+            return new ResponseEntity<>("No existen datos de ususario", HttpStatus.NOT_FOUND);
         }
+
     }
 
     @PutMapping("/updateCompany")
