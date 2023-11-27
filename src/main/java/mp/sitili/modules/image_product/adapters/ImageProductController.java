@@ -7,6 +7,7 @@ import mp.sitili.modules.jwt.entities.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,21 +23,18 @@ public class ImageProductController {
     @Autowired
     private ImageProductService imageProductService;
 
-    /*
     @DeleteMapping({"/delete"})
+    @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<JwtResponse> borrarImagen(@RequestBody ImageProduct imageProduct) throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String sellerEmail = authentication.getName();
 
-        boolean revision = imageProductService.deleteImage(imageProduct.getId(), imageProduct.getImageUrl());
+        boolean revision = imageProductService.deleteImage(imageProduct.getImageUrl());
 
-        if(validador.getUser().getStatus()){
-            return new ResponseEntity<>(validador, HttpStatus.OK);
+        if(revision){
+            return new ResponseEntity<>(HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
     }
 
-     */
 }

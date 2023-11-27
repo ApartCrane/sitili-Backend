@@ -3,6 +3,7 @@ package mp.sitili.modules.product.use_cases.dto;
 import java.util.List;
 
 public interface ProductDTO {
+    Integer getProduct_id();
     String getProducto();
     Double getPrecio();
     Integer getCantidad();
