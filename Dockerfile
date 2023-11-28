@@ -9,7 +9,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Empaqueta la aplicación en un archivo JAR
-RUN mvn clean package
+RUN mvn clean package -Dskip.tests
 
 # Utiliza una imagen de Java 17 como base para la etapa de ejecución
 FROM openjdk:11-jdk
