@@ -14,4 +14,6 @@ public interface IFavoriteRepository {
 
     public Favorite validarExis(Integer product_id, String user_id);
 
+    public Favorite findById1(Integer id);
+
 }

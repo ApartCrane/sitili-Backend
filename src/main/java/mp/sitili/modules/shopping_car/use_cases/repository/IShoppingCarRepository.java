@@ -14,4 +14,6 @@ public interface IShoppingCarRepository {
 
     public ShoppingCar validarExis(Integer product_id, String user_id);
 
+    public ShoppingCar findById1(Integer id);
+
 }

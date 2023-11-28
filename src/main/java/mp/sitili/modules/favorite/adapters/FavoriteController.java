@@ -1,6 +1,5 @@
 package mp.sitili.modules.favorite.adapters;
 
-import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.favorite.use_cases.service.FavoriteService;
@@ -87,17 +86,18 @@ public class FavoriteController {
         String userEmail = authentication.getName();
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
-        Optional<Product> producto = productRepository.findById(favorite.getId());
 
-        if(user != null && producto.isPresent()){
-            boolean revision = favoriteService.deleteFav(user.getEmail(), producto.get().getId());
+        Favorite favorito = favoriteService.findById1(favorite.getId());
+
+        if(user != null && favorito != null){
+            boolean revision = favoriteService.deleteFav(user.getEmail(), favorito.getId());
             if(revision == true){
                 return new ResponseEntity<>("Eliminado de favoritos", HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("Error al eliminar", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }else{
-            return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Favorito no encontrado", HttpStatus.BAD_REQUEST);
         }
 
     }

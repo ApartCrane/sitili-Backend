@@ -117,10 +117,11 @@ public class ShoppingCarController {
         String userEmail = authentication.getName();
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
-        Optional<Product> producto = productRepository.findById(shoppingCar.getProduct().getId());
 
-        if(user != null && producto.isPresent()){
-            boolean revision = shoppingCarService.deleteCar(user.getEmail(), producto.get().getId());
+        ShoppingCar shoppingCar1 = shoppingCarService.findById1(shoppingCar.getId());
+
+        if(user != null && shoppingCar1 != null){
+            boolean revision = shoppingCarService.deleteCar(user.getEmail(), shoppingCar1.getId());
             if(revision == true){
                 return new ResponseEntity<>("Eliminado de carrito de compras", HttpStatus.OK);
             }else{

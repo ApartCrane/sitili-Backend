@@ -47,9 +47,9 @@ public class FavoriteService implements IFavoriteRepository {
     }
 
     @Override
-    public Boolean deleteFav(String user_id, Integer product_id){
+    public Boolean deleteFav(String user_id, Integer fav_id){
         try{
-            favoriteRepository.deleteFav(user_id, product_id);
+            favoriteRepository.deleteFav(user_id, fav_id);
             return true;
         }catch (Exception e){
             return false;
@@ -59,5 +59,10 @@ public class FavoriteService implements IFavoriteRepository {
     @Override
     public Favorite validarExis(Integer product_id, String user_id){
         return favoriteRepository.validarExis(product_id, user_id);
+    }
+
+    @Override
+    public Favorite findById1(Integer id){
+        return favoriteRepository.findById1(id);
     }
 }

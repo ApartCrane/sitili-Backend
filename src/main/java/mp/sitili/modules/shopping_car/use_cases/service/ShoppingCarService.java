@@ -63,4 +63,9 @@ public class ShoppingCarService implements IShoppingCarRepository {
         return shoppingCarRepository.validarExis(product_id, user_id);
     }
 
+    @Override
+    public ShoppingCar findById1(Integer id){
+        return shoppingCarRepository.findById1(id);
+    }
+
 }
