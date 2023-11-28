@@ -28,7 +28,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, String> {
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "INNER JOIN favorities f ON f.product_id = p.id\n" +
             "WHERE f.user_id = :email && p.status = TRUE\n" +
-            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company", nativeQuery = true)
+            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, f.id", nativeQuery = true)
     public List<Object[]> favXusuario(@Param("email") String email);
 
     @Modifying

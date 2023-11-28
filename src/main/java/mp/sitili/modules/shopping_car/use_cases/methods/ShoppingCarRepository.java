@@ -29,7 +29,7 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "INNER JOIN shopping_car sc ON sc.product_id = p.id\n" +
             "WHERE sc.user_id = :email && p.status = TRUE\n" +
-            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company", nativeQuery = true)
+            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, sc.id", nativeQuery = true)
     public List<Object[]> carXusuario(@Param("email") String email);
 
     @Modifying
