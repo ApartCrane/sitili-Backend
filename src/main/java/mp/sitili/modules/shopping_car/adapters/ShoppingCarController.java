@@ -62,7 +62,6 @@ public class ShoppingCarController {
 
         ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
 
-
         if(shopp == null){
             if(user != null && producto.isPresent()){
                 if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
@@ -81,9 +80,34 @@ public class ShoppingCarController {
         }else{
             return new ResponseEntity<>("Prodcuto repetido", HttpStatus.BAD_REQUEST);
         }
+    }
 
 
+    @PostMapping("/createF")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> addCarxUsuariosf(@RequestBody Product product) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
 
+        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+        Optional<Product> producto = productRepository.findById(product.getId());
+
+        ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
+
+        if(shopp == null){
+            if(user != null && producto.isPresent()){
+                    ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), 1));
+                    if(shoppingCar != null){
+                        return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+            }else{
+                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
+            }
+        }else{
+            return new ResponseEntity<>("Prodcuto repetido", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/delete")
