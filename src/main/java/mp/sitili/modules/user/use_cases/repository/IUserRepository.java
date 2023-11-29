@@ -3,6 +3,7 @@ package mp.sitili.modules.user.use_cases.repository;
 
 import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
+import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 
 import java.util.List;
 
@@ -14,6 +15,6 @@ public interface IUserRepository {
 
     public List<SelectVendedorDTO> findSellers();
 
-    public DataUser validateCompany(String user_id);
+    public ValidSellerDTO validateCompany(String user_id);
 
 }

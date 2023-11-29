@@ -3,6 +3,7 @@ package mp.sitili.modules.user.adapters;
 import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,13 +101,13 @@ public class UserController {
 
     @GetMapping("/validateCompany")
     @PreAuthorize("hasRole('Seller')")
-    public ResponseEntity<DataUser> companiaNull() {
+    public ResponseEntity<ValidSellerDTO> companiaNull() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
 
-        DataUser dataUser = userService.validateCompany(sellerEmail);
+        ValidSellerDTO dataUser = userService.validateCompany(sellerEmail);
 
-        if(dataUser == null || dataUser.getCompany() == null){
+        if(dataUser.getCompany() == null){
             return new ResponseEntity<>(dataUser, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(dataUser, HttpStatus.NO_CONTENT);

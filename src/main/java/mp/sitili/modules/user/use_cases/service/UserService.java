@@ -9,7 +9,6 @@ import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
-import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
@@ -29,6 +28,7 @@ import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
+import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.repository.IUserRepository;
 import mp.sitili.utils.email.EmailService;
@@ -363,7 +363,7 @@ public class UserService implements IUserRepository {
     }
 
     @Override
-    public DataUser validateCompany(String user_id){
+    public ValidSellerDTO validateCompany(String user_id){
         return userRepository.validateCompany(user_id);
     }
 

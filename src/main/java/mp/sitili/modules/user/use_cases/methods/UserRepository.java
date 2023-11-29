@@ -3,6 +3,7 @@ package mp.sitili.modules.user.use_cases.methods;
 import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
+import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -35,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, String> {
             "WHERE u.status = true AND r.role_description LIKE '%Seller%';" , nativeQuery = true)
     public List<SelectVendedorDTO> findSellers();
 
-    @Query(value = "SELECT * FROM data_users WHERE user_id = :user_id", nativeQuery = true)
-    public DataUser validateCompany(@Param("user_id") String user_id);
+    @Query(value = "SELECT id, company, first_name, last_name, phone, user_id FROM data_users WHERE user_id = :user_id", nativeQuery = true)
+    public ValidSellerDTO validateCompany(@Param("user_id") String user_id);
 
 }
