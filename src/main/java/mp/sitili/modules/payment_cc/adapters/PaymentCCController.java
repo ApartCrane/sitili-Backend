@@ -56,7 +56,7 @@ public class PaymentCCController {
 
         if(user != null){
             if(paymentCC != null){
-                PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, paymentCC.getCc(), paymentCC.getDay(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
+                PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, paymentCC.getCc(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
                 if(pago != null){
                     return new ResponseEntity<>("Datos de pago cargados exitosamente", HttpStatus.OK);
                 }else{
@@ -80,7 +80,7 @@ public class PaymentCCController {
 
         if(user != null){
             if(paymentCC != null){
-                PaymentCC pago = paymentCCRepository.save(new PaymentCC(paymentCC.getId(), user, paymentCC.getCc(), paymentCC.getDay(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
+                PaymentCC pago = paymentCCRepository.save(new PaymentCC(paymentCC.getId(), user, paymentCC.getCc(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
                 if(pago != null){
                     return new ResponseEntity<>("Datos de pago actualizados exitosamente", HttpStatus.OK);
                 }else{

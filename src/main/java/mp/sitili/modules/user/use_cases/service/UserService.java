@@ -229,8 +229,8 @@ public class UserService implements IUserRepository {
         Address address3 = addressRepository.save(new Address((int) addressRepository.count() + 1, user7, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
 
 // Crear formas de pago para usuarios
-        PaymentCC paymentCC1 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user5, "1234567891234567", "04", "08", "2002", "123"));
-        PaymentCC paymentCC2 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user6, "1234567891234567", "06", "10", "2004", "123"));
+        PaymentCC paymentCC1 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user5, "1234567891234567","08", "2002", "123"));
+        PaymentCC paymentCC2 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user6, "1234567891234567", "10", "2004", "123"));
 
 // Crear órdenes para los usuarios
         Date date = new Date();

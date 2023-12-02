@@ -1,12 +1,15 @@
 package mp.sitili.modules.category.adapters;
 
 import mp.sitili.modules.category.entities.Category;
+import mp.sitili.modules.category.use_cases.dto.ProductosxCategoriaDTO;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -92,6 +95,18 @@ public class CategoryController {
         } else {
             categoryService.deleteCategory(category.getId(), true);
             return new ResponseEntity<>("Categoria dada de alta exitosamente", HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/catTot")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
+    public ResponseEntity<List<ProductosxCategoriaDTO>> productosPorCategoria() {
+        List<ProductosxCategoriaDTO> productos = categoryService.proXcat();
+
+        if(productos != null){
+            return new ResponseEntity<>(productos, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(productos, HttpStatus.NO_CONTENT);
         }
     }
 }

@@ -3,6 +3,7 @@ package mp.sitili.modules.data_user.adapters;
 import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
+import mp.sitili.modules.data_user.use_cases.dto.UsuariosxMesDTO;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.data_user.use_cases.service.DataUserService;
 import mp.sitili.modules.user.entities.User;
@@ -80,6 +81,30 @@ public class DataUserController {
 
     }
 
+    @PutMapping("/updateSeller")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> actualizarPorSeller(@RequestBody DataUser dataUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        DataUserDTO usuarios = dataUserRepository.findAllDataUser(userEmail);
+
+        boolean revision = dataUserService.update(dataUser.getCompany(), dataUser.getFirstName(),
+                dataUser.getLastName(), dataUser.getPhone(),
+                usuarios.getId(), userEmail);
+
+        if(usuarios != null){
+            if(revision){
+                return new ResponseEntity<>("Vendedor actualizado", HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>("Error al actualizar datos", HttpStatus.BAD_REQUEST);
+            }
+        }else{
+            return new ResponseEntity<>("No existen datos de vendedor", HttpStatus.NOT_FOUND);
+        }
+
+    }
+
     @PutMapping("/updateCompany")
     @PreAuthorize("hasRole('Admin') or hasRole('Seller')")
     public ResponseEntity<String> actualizarCompany(@RequestBody DataUser dataUser) {
@@ -92,6 +117,18 @@ public class DataUserController {
             return new ResponseEntity<>("Compañia asociar correctamente", HttpStatus.OK);
         }else {
             return new ResponseEntity<>("Error al asociar compañia", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/usuTot")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
+    public ResponseEntity<List<UsuariosxMesDTO>> usuariosPorMes() {
+        List<UsuariosxMesDTO> usuarios = dataUserService.usuXmes();
+
+        if(usuarios != null){
+            return new ResponseEntity<>(usuarios, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(usuarios, HttpStatus.NO_CONTENT);
         }
     }
 

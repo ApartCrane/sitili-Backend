@@ -2,6 +2,8 @@ package mp.sitili.modules.category.use_cases.repository;
 
 
 import mp.sitili.modules.category.entities.Category;
+import mp.sitili.modules.category.use_cases.dto.ProductosxCategoriaDTO;
+
 import java.util.List;
 
 public interface ICategoryRepository {
@@ -21,4 +23,6 @@ public interface ICategoryRepository {
     boolean deleteCategory(int id, boolean status);
 
     boolean updateCategory(int id, String name);
+
+    public List<ProductosxCategoriaDTO> proXcat();
 }

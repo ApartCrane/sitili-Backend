@@ -1,6 +1,7 @@
 package mp.sitili.modules.category.use_cases.methods;
 
 import mp.sitili.modules.category.entities.Category;
+import mp.sitili.modules.category.use_cases.dto.ProductosxCategoriaDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -42,5 +43,10 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     @Query(value = "UPDATE categories SET name = :name WHERE id = :id", nativeQuery = true)
     void updateCategory(@Param("id") int id, @Param("name") String name);
 
+    @Query(value = "SELECT c.name AS \"Categoria\", COUNT(p.id) AS \"Cantidad\"\n" +
+            "FROM categories c \n" +
+            "LEFT JOIN product p ON p.category_id = c.id\n" +
+            "GROUP BY c.id, c.name", nativeQuery = true)
+    public List<ProductosxCategoriaDTO> proXcat();
 
 }

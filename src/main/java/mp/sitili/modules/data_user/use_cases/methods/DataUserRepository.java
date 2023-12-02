@@ -2,6 +2,7 @@ package mp.sitili.modules.data_user.use_cases.methods;
 
 import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
+import mp.sitili.modules.data_user.use_cases.dto.UsuariosxMesDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,6 +37,31 @@ public interface DataUserRepository extends JpaRepository<DataUser, Integer> {
                    @Param("id") Integer id,
                    @Param("user_id") String user_id);
 
+    @Query(value = "SELECT \n" +
+            "    COUNT(data_users.register_date) AS \"Cantidad\",\n" +
+            "    meses.nombre_mes AS \"Mes\"\n" +
+            "FROM \n" +
+            "    (\n" +
+            "        SELECT 1 AS mes, 'Enero' AS nombre_mes\n" +
+            "        UNION SELECT 2 AS mes, 'Febrero' AS nombre_mes\n" +
+            "        UNION SELECT 3 AS mes, 'Marzo' AS nombre_mes\n" +
+            "        UNION SELECT 4 AS mes, 'Abril' AS nombre_mes\n" +
+            "        UNION SELECT 5 AS mes, 'Mayo' AS nombre_mes\n" +
+            "        UNION SELECT 6 AS mes, 'Junio' AS nombre_mes\n" +
+            "        UNION SELECT 7 AS mes, 'Julio' AS nombre_mes\n" +
+            "        UNION SELECT 8 AS mes, 'Agosto' AS nombre_mes\n" +
+            "        UNION SELECT 9 AS mes, 'Septiembre' AS nombre_mes\n" +
+            "        UNION SELECT 10 AS mes, 'Octubre' AS nombre_mes\n" +
+            "        UNION SELECT 11 AS mes, 'Noviembre' AS nombre_mes\n" +
+            "        UNION SELECT 12 AS mes, 'Diciembre' AS nombre_mes\n" +
+            "    ) AS meses\n" +
+            "LEFT JOIN \n" +
+            "    data_users ON MONTH(data_users.register_date) = meses.mes\n" +
+            "GROUP BY \n" +
+            "    meses.mes\n" +
+            "ORDER BY \n" +
+            "    meses.mes;", nativeQuery = true)
+    public List<UsuariosxMesDTO> usuXmes();
 
 
 }

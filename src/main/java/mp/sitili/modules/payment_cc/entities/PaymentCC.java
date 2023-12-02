@@ -17,9 +17,6 @@ public class PaymentCC {
     @Column(name = "cc", nullable = false, length = 50)
     private String cc;
 
-    @Column(name = "day", nullable = false, length = 50)
-    private String day;
-
     @Column(name = "month", nullable = false, length = 50)
     private String month;
 
@@ -29,11 +26,10 @@ public class PaymentCC {
     @Column(name = "cvv", nullable = false, length = 50)
     private String cvv;
 
-    public PaymentCC(Integer id, User user, String cc, String day, String month, String year, String cvv) {
+    public PaymentCC(Integer id, User user, String cc, String month, String year, String cvv) {
         this.id = id;
         this.user = user;
         this.cc = cc;
-        this.day = day;
         this.month = month;
         this.year = year;
         this.cvv = cvv;
@@ -65,14 +61,6 @@ public class PaymentCC {
 
     public void setCc(String cc) {
         this.cc = cc;
-    }
-
-    public String getDay() {
-        return day;
-    }
-
-    public void setDay(String day) {
-        this.day = day;
     }
 
     public String getMonth() {
