@@ -4,6 +4,8 @@ import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.service.AddressService;
 import mp.sitili.modules.order.entities.Order;
+import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
+import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.service.OrderService;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
@@ -370,6 +372,36 @@ public class OrderController {
             return new ResponseEntity<>(contador, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(contador, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/sellerSalesMonth")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<List<VentasMesDTO>> ventasAnioMonth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        List<VentasMesDTO> ventas = orderService.ventasAnioMonth(sellerEmail);
+
+        if(!ventas.isEmpty()){
+            return new ResponseEntity<>(ventas, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(ventas, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/sellerDeliveryMonth")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<List<EntregasMesDTO>> enviosAnioMonth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        List<EntregasMesDTO> ventas = orderService.enviosAnioMonth(sellerEmail);
+
+        if(!ventas.isEmpty()){
+            return new ResponseEntity<>(ventas, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(ventas, HttpStatus.NO_CONTENT);
         }
     }
 }

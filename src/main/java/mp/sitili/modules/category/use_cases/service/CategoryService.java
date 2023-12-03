@@ -85,4 +85,9 @@ public class CategoryService implements ICategoryRepository {
     public List<ProductosxCategoriaDTO> proXcat(){
         return categoryRepository.proXcat();
     }
+
+    @Override
+    public List<ProductosxCategoriaDTO> proXcatSell(String sellerEmail){
+        return categoryRepository.proXcatSell(sellerEmail);
+    }
 }

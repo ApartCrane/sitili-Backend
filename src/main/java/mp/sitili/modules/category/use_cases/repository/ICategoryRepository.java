@@ -25,4 +25,6 @@ public interface ICategoryRepository {
     boolean updateCategory(int id, String name);
 
     public List<ProductosxCategoriaDTO> proXcat();
+
+    public List<ProductosxCategoriaDTO> proXcatSell(String sellerEmail);
 }

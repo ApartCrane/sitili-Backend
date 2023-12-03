@@ -1,5 +1,7 @@
 package mp.sitili.modules.order.use_cases.service;
 
+import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
+import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.repository.IOrederRepository;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
@@ -54,6 +56,16 @@ public class OrderService implements IOrederRepository {
     @Override
     public List<ShoppingCar> buscarTodo(String userEmail){
         return orderRepository.buscarTodo(userEmail);
+    }
+
+    @Override
+    public List<VentasMesDTO> ventasAnioMonth(String sellerEmail){
+        return orderRepository.ventasAnioMonth(sellerEmail);
+    }
+
+    @Override
+    public List<EntregasMesDTO>  enviosAnioMonth(String sellerEmail){
+        return orderRepository.enviosAnioMonth(sellerEmail);
     }
 
 }

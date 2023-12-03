@@ -49,4 +49,11 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
             "GROUP BY c.id, c.name", nativeQuery = true)
     public List<ProductosxCategoriaDTO> proXcat();
 
+    @Query(value = "SELECT c.name AS \"Categoria\", COUNT(p.id) AS \"Cantidad\"\n" +
+            "FROM categories c \n" +
+            "LEFT JOIN product p ON p.category_id = c.id\n" +
+            "WHERE p.user_id = :sellerEmail\n" +
+            "GROUP BY c.id, c.name", nativeQuery = true)
+    public List<ProductosxCategoriaDTO> proXcatSell(@Param("sellerEmail") String sellerEmail);
+
 }

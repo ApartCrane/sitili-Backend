@@ -5,6 +5,7 @@ import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
+import mp.sitili.modules.raiting.use_cases.service.RaitingService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class RaitingController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private RaitingService raitingService;
+
     @PostMapping("/rate")
     @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> calificarProducto(@RequestBody Raiting raiting) {
@@ -45,6 +49,22 @@ public class RaitingController {
             return new ResponseEntity<>("Producto valorado", HttpStatus.OK);
         }else {
             return new ResponseEntity<>("Error al valorar producto", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping("/rateSeller")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<Integer> productosCalificados4() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        Integer productos = raitingService.cal4(sellerEmail);
+
+        if(productos == null){
+            return new ResponseEntity<>(productos, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(productos, HttpStatus.NO_CONTENT);
         }
     }
 }

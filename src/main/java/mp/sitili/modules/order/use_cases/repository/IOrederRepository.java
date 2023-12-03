@@ -1,5 +1,7 @@
 package mp.sitili.modules.order.use_cases.repository;
 
+import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
+import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 
 import java.util.List;
@@ -15,5 +17,9 @@ public interface IOrederRepository {
     public Double sellerSales(String sellerEmail);
 
     public List<ShoppingCar> buscarTodo(String userEmail);
+
+    List<VentasMesDTO> ventasAnioMonth(String sellerEmail);
+
+    public List<EntregasMesDTO>  enviosAnioMonth(String sellerEmail);
 
 }

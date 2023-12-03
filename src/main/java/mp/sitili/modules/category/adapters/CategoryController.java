@@ -109,4 +109,18 @@ public class CategoryController {
             return new ResponseEntity<>(productos, HttpStatus.NO_CONTENT);
         }
     }
+
+    @GetMapping("/catTotSeller")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<List<ProductosxCategoriaDTO>>  productosPorCategoriaSeller() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String adminEmail = authentication.getName();
+        List<ProductosxCategoriaDTO>  productos = categoryService.proXcatSell(adminEmail);
+
+        if(productos != null){
+            return new ResponseEntity<>(productos, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(productos, HttpStatus.NO_CONTENT);
+        }
+    }
 }
