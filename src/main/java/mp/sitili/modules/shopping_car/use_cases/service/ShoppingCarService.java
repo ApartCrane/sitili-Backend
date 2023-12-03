@@ -78,4 +78,14 @@ public class ShoppingCarService implements IShoppingCarRepository {
         return shoppingCarRepository.findById1(id);
     }
 
+    @Override
+    public Boolean deleteAllCar(String user_id){
+        try{
+            shoppingCarRepository.deleteAllCar(user_id);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
 }

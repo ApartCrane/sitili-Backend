@@ -29,6 +29,12 @@ public class PaymentCC {
     @Transient
     private String expiryDate;
 
+    @Transient
+    private Integer cc_id;
+
+    @Transient
+    private Integer address_id;
+
     public PaymentCC(Integer id, User user, String cc, String month, String year, String cvv) {
         this.id = id;
         this.user = user;
@@ -40,6 +46,22 @@ public class PaymentCC {
 
     public PaymentCC() {
 
+    }
+
+    public Integer getCc_id() {
+        return cc_id;
+    }
+
+    public void setCc_id(Integer cc_id) {
+        this.cc_id = cc_id;
+    }
+
+    public Integer getAddress_id() {
+        return address_id;
+    }
+
+    public void setAddress_id(Integer address_id) {
+        this.address_id = address_id;
     }
 
     public String getExpiryDate() {

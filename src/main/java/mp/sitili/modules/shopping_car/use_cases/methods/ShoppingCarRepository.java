@@ -46,4 +46,8 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
     @Query(value = "UPDATE shopping_car SET quantity = :quantity WHERE id = :car_id", nativeQuery = true)
     void updateCar(@Param("car_id") Integer car_id, @Param("quantity") Integer quantity);
 
+    @Modifying
+    @Query(value = "DELETE FROM shopping_car WHERE user_id = :user_id", nativeQuery = true)
+    void deleteAllCar(@Param("user_id") String user_id);
+
 }

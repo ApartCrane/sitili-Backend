@@ -72,8 +72,12 @@ public class PaymentCCController {
             String cc = paymentDTO.getCc();
             String cvv = paymentDTO.getCvv();
             String expiryDate = paymentDTO.getExpiryDate();
-            String month = expiryDate.substring(0) + expiryDate.substring(1);
-            String year = expiryDate.substring(3) + expiryDate.substring(4);
+            String[] parts = expiryDate.split("/");
+            String month = parts[0];
+            String year = parts[1];
+
+            System.out.println(month);
+            System.out.println(year);
 
             System.out.println(cc);
             System.out.println(cvv);

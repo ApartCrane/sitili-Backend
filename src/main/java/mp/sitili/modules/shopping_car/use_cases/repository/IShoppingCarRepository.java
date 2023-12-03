@@ -18,4 +18,6 @@ public interface IShoppingCarRepository {
 
     public Boolean updateCar(Integer car_id, Integer quantity);
 
+    public Boolean deleteAllCar(String user_id);
+
 }

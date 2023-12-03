@@ -18,6 +18,9 @@ import mp.sitili.modules.payment_order.entities.PaymentOrder;
 import mp.sitili.modules.payment_order.use_cases.methods.PaymentOrderRepositry;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
+import mp.sitili.modules.shopping_car.entities.ShoppingCar;
+import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
+import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +69,12 @@ public class OrderController {
 
     @Autowired
     private PaymentOrderRepositry paymentOrderRepositry;
+
+    @Autowired
+    private ShoppingCarService shoppingCarService;
+
+    @Autowired
+    private ShoppingCarRepository shoppingCarRepository;
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('Admin')")
@@ -128,7 +137,7 @@ public class OrderController {
     }
 
     @PostMapping("/createOne")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> crearOrden(@RequestPart("productData") Map<String, Object> productData) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
@@ -181,7 +190,7 @@ public class OrderController {
     }
 
     @PostMapping("/createMany")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> crearOrden2(
             @RequestPart("productData") Map<String, Object> productData,
             @RequestPart("orderDetails") List<Map<String, Object>> orderDetailsData
@@ -235,6 +244,62 @@ public class OrderController {
             }
         } else {
             return new ResponseEntity<>("Usuario no encontrado", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/saleCar")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> comprarCarrito(@RequestBody PaymentCC paymentCC) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        User user = userRepository.findById(userEmail).orElse(null);
+        List<ShoppingCar> carrito = orderService.buscarTodo(userEmail);
+        Address direccion = addressService.buscarDir(paymentCC.getAddress_id(), userEmail);
+        Optional<PaymentCC> pago = paymentCCRepository.findById(String.valueOf(paymentCC.getCc_id()));
+
+        if(!carrito.isEmpty() && user != null){
+            if(direccion != null){
+                if(pago.isPresent()){
+                    Order orden = new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", direccion, new Timestamp(System.currentTimeMillis()));
+                    orden = orderRepository.save(orden);
+
+                    List<OrderDetail> validOrderDetails = new ArrayList<>();
+                    List<Product> bajarCantidades = new ArrayList<>();
+
+                    for (ShoppingCar orderDetailData : carrito) {
+                        Integer productId = orderDetailData.getProduct().getId();
+                        Integer quantity = orderDetailData.getQuantity();
+
+                        Optional<Product> productoDetail = productRepository.findById(productId);
+                        if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
+                            if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
+                                OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                                validOrderDetails.add(orderDetail);
+                                productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
+                                bajarCantidades.add(productoDetail.get());
+                            } else {
+                                orderRepository.delete(orden);
+                                return new ResponseEntity<>("Cantidad requerida excede el stock, el producto es: " + productoDetail.get().getName(), HttpStatus.BAD_REQUEST);
+                            }
+                        } else {
+                            orderRepository.delete(orden);
+                            return new ResponseEntity<>("Producto no encontrado o no disponible", HttpStatus.BAD_REQUEST);
+                        }
+                    }
+
+                    //Bajar cantidades de productos
+                    orderDetailRepository.saveAll(validOrderDetails);
+                    productRepository.saveAll(bajarCantidades);
+                    shoppingCarRepository.deleteAllCar(userEmail);
+                    return new ResponseEntity<>("Compra Realizada", HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("Forma de pago no asociada", HttpStatus.NOT_FOUND);
+                }
+            }else{
+                return new ResponseEntity<>("Dirección no encontrada", HttpStatus.NOT_FOUND);
+            }
+        }else{
+            return new ResponseEntity<>("Carrito no encontrado o vacio", HttpStatus.NOT_FOUND);
         }
     }
 
