@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/paymentcc")
@@ -64,17 +65,28 @@ public class PaymentCCController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> asociarPago(@RequestBody PaymentCC paymentCC) {
+    public ResponseEntity<String> asociarPago(@RequestPart("productData") Map<String, Object> productData) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
 
+        String cc = (String) productData.get("cc");
+        String cvv = (String) productData.get("cvv");
+        String expiryDate = (String) productData.get("expiryDate");
+        String month = expiryDate.substring(0,1);
+        String year = expiryDate.substring(3,4);
+        System.out.println(cc);
+        System.out.println(cvv);
+        System.out.println(expiryDate);
+        System.out.println(month);
+        System.out.println(year);
+
         if(user != null){
-            if(paymentCC != null){
-                PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, paymentCC.getCc(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
+            if(productData.isEmpty()){
+                PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, cc, month, year, cvv));
                 if(pago != null){
-                    return new ResponseEntity<>("Datos de pago cargados exitosamente", HttpStatus.OK);
+                    return new ResponseEntity<>("Datos de pago cargados exitosamente: " + pago.getId(), HttpStatus.OK);
                 }else{
                     return new ResponseEntity<>("Error al cargar datos de pago", HttpStatus.BAD_REQUEST);
                 }
