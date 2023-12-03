@@ -2,6 +2,7 @@ package mp.sitili.modules.payment_cc.adapters;
 
 import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
+import mp.sitili.modules.payment_cc.use_cases.dto.PaymentDTO;
 import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
 import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
 import mp.sitili.modules.product.entities.Product;
@@ -65,38 +66,37 @@ public class PaymentCCController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> asociarPago(@RequestPart("productData") Map<String, Object> productData) {
+    public ResponseEntity<String> asociarPago(@RequestBody PaymentDTO paymentDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+        User user = userRepository.findById(userEmail).orElse(null);
 
-        String cc = (String) productData.get("cc");
-        String cvv = (String) productData.get("cvv");
-        String expiryDate = (String) productData.get("expiryDate");
-        String month = expiryDate.substring(0,1);
-        String year = expiryDate.substring(3,4);
-        System.out.println(cc);
-        System.out.println(cvv);
-        System.out.println(expiryDate);
-        System.out.println(month);
-        System.out.println(year);
+        if (user != null && paymentDTO != null) {
+            String cc = paymentDTO.getCc();
+            String cvv = paymentDTO.getCvv();
+            String expiryDate = paymentDTO.getExpiryDate();
+            String month = expiryDate.substring(0, 1);
+            String year = expiryDate.substring(3, 4);
 
-        if(user != null){
-            if(productData.isEmpty()){
-                PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, cc, month, year, cvv));
-                if(pago != null){
-                    return new ResponseEntity<>("Datos de pago cargados exitosamente: " + pago.getId(), HttpStatus.OK);
-                }else{
-                    return new ResponseEntity<>("Error al cargar datos de pago", HttpStatus.BAD_REQUEST);
-                }
-            }else{
-                return new ResponseEntity<>("Datos Faltantes", HttpStatus.NO_CONTENT);
+            System.out.println(cc);
+            System.out.println(cvv);
+            System.out.println(expiryDate);
+            System.out.println(month);
+            System.out.println(year);
+
+            PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, cc, month, year, cvv));
+
+            if (pago != null) {
+                return new ResponseEntity<>("Datos de pago cargados exitosamente: " + pago.getId(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Error al cargar datos de pago", HttpStatus.BAD_REQUEST);
             }
-        }else {
-            return new ResponseEntity<>("Usaurio inexistente", HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>("Usuario inexistente o datos faltantes", HttpStatus.NO_CONTENT);
         }
     }
+
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('User')")

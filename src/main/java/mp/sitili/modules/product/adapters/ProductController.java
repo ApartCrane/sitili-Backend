@@ -194,6 +194,7 @@ public class ProductController {
         }
     }
 
+
     @PostMapping("/update")
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<String> actualizarProductoConImagenes(@RequestPart("productData") Map<String, Object> productData,
@@ -236,6 +237,32 @@ public class ProductController {
                 return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ files.size() + " imagenes correctamente", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/deleteImages")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> eliminarImages(@RequestPart("productData") Map<String, Object> productData) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!productData.isEmpty()) {
+            Integer product_id = (Integer) productData.get("product_id");
+            String image_url = (String) productData.get("image_url");
+
+            Optional<Product> productSaved = productRepository.findById(product_id);
+            if (productSaved.isPresent() && image_url != null) {
+
+                if (imageProductService.deleteImage(image_url)) {
+                    return new ResponseEntity<>("Imagen eliminada correctamente" ,HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("No se elimino la imagen correctamente" ,HttpStatus.EXPECTATION_FAILED);
+                }
+
+            } else {
+                return new ResponseEntity<>("El producto no existe", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
