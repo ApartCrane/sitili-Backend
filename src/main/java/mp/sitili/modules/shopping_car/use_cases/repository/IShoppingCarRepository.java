@@ -16,4 +16,6 @@ public interface IShoppingCarRepository {
 
     public ShoppingCar findById1(Integer id);
 
+    public Boolean updateCar(Integer car_id, Integer quantity);
+
 }

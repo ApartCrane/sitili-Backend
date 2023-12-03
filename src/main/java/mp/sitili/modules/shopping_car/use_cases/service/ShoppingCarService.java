@@ -59,6 +59,16 @@ public class ShoppingCarService implements IShoppingCarRepository {
     }
 
     @Override
+    public Boolean updateCar(Integer car_id, Integer quantity){
+        try{
+            shoppingCarRepository.updateCar(car_id, quantity);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
     public ShoppingCar validarExis(Integer product_id, String user_id){
         return shoppingCarRepository.validarExis(product_id, user_id);
     }

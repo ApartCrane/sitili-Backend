@@ -1,12 +1,8 @@
 package mp.sitili.modules.payment_cc.adapters;
 
-import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
-import mp.sitili.modules.payment_cc.use_cases.dto.PaymentDTO;
 import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
 import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
-import mp.sitili.modules.product.entities.Product;
-import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,8 +72,8 @@ public class PaymentCCController {
             String cc = paymentDTO.getCc();
             String cvv = paymentDTO.getCvv();
             String expiryDate = paymentDTO.getExpiryDate();
-            String month = expiryDate.substring(0, 1);
-            String year = expiryDate.substring(3, 4);
+            String month = expiryDate.substring(0) + expiryDate.substring(1);
+            String year = expiryDate.substring(3) + expiryDate.substring(4);
 
             System.out.println(cc);
             System.out.println(cvv);

@@ -3,6 +3,7 @@ package mp.sitili.modules.shopping_car.adapters;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
+import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
@@ -35,6 +36,9 @@ public class ShoppingCarController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('User')")
@@ -131,5 +135,48 @@ public class ShoppingCarController {
             return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> actualizarCarrito(@RequestBody ShoppingCar shoppingCar) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+        ShoppingCar shoppingCar1 = shoppingCarService.findById1(shoppingCar.getId());
+        Product producto = (Product) productService.findProduct(shoppingCar1.getProduct().getId());
+
+        if(user != null){
+            if(shoppingCar1 != null){
+                if(producto != null){
+                    if(shoppingCar.getQuantity() < producto.getStock()){
+                        if(shoppingCar.getQuantity() == 0){
+                            boolean rev = shoppingCarService.deleteCar(userEmail, shoppingCar.getId());
+                            if(rev){
+                                return new ResponseEntity<>("Eliminado", HttpStatus.OK);
+                            }else{
+                                return new ResponseEntity<>("Error al eliminar", HttpStatus.INTERNAL_SERVER_ERROR);
+                            }
+                        }else{
+                            boolean revision =  shoppingCarService.updateCar(shoppingCar.getId(), shoppingCar.getQuantity());
+                            if(revision){
+                                return new ResponseEntity<>("Carrito actualizado", HttpStatus.OK);
+                            }else{
+                                return new ResponseEntity<>("Error al alctualizar carrito", HttpStatus.INTERNAL_SERVER_ERROR);
+                            }
+                        }
+                    }else{
+                        return new ResponseEntity<>("Cantidad excesiva", HttpStatus.NOT_ACCEPTABLE);
+                    }
+                }else{
+                    return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.NOT_FOUND);
+                }
+            }else{
+                return new ResponseEntity<>("Carrito no encontrado", HttpStatus.NOT_FOUND);
+            }
+        }else{
+            return new ResponseEntity<>("usuario no existe", HttpStatus.NOT_FOUND);
+        }
     }
 }
