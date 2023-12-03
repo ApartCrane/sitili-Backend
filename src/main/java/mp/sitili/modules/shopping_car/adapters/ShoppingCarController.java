@@ -155,21 +155,14 @@ public class ShoppingCarController {
             if(shoppingCar1 != null){
                 if(producto != null){
                     if(shoppingCar.getQuantity() < producto.getStock()){
-                        if(shoppingCar.getQuantity() == 0){
-                            boolean rev = shoppingCarService.deleteCar(userEmail, shoppingCar.getId());
-                            if(rev){
-                                return new ResponseEntity<>("Eliminado", HttpStatus.OK);
-                            }else{
-                                return new ResponseEntity<>("Error al eliminar", HttpStatus.INTERNAL_SERVER_ERROR);
-                            }
-                        }else{
+
                             boolean revision =  shoppingCarService.updateCar(shoppingCar.getId(), shoppingCar.getQuantity());
                             if(revision){
                                 return new ResponseEntity<>("Carrito actualizado", HttpStatus.OK);
                             }else{
                                 return new ResponseEntity<>("Error al alctualizar carrito", HttpStatus.INTERNAL_SERVER_ERROR);
                             }
-                        }
+
                     }else{
                         return new ResponseEntity<>("Cantidad excesiva", HttpStatus.NOT_ACCEPTABLE);
                     }
