@@ -66,7 +66,7 @@ public class PaymentCCController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> asociarPago(@RequestBody PaymentDTO paymentDTO) {
+    public ResponseEntity<String> asociarPago(@RequestBody PaymentCC paymentDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

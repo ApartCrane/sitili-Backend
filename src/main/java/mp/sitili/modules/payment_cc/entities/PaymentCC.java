@@ -26,6 +26,9 @@ public class PaymentCC {
     @Column(name = "cvv", nullable = false, length = 50)
     private String cvv;
 
+    @Transient
+    private String expiryDate;
+
     public PaymentCC(Integer id, User user, String cc, String month, String year, String cvv) {
         this.id = id;
         this.user = user;
@@ -37,6 +40,14 @@ public class PaymentCC {
 
     public PaymentCC() {
 
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public Integer getId() {
