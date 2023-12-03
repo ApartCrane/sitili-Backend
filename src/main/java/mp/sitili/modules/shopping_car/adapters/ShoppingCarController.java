@@ -143,9 +143,17 @@ public class ShoppingCarController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
+        System.out.println(shoppingCar.getQuantity());
+        System.out.println(shoppingCar.getId());
+        System.out.println(shoppingCar.getProduct());
+        System.out.println(shoppingCar.getProduct().getId());
+
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+        System.out.println(user);
         ShoppingCar shoppingCar1 = shoppingCarService.findById1(shoppingCar.getId());
+        System.out.println(shoppingCar1);
         Product producto = (Product) productService.findProduct(shoppingCar1.getProduct().getId());
+        System.out.println(producto);
 
         if(user != null){
             if(shoppingCar1 != null){
