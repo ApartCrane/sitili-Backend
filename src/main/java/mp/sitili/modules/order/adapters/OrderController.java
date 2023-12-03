@@ -16,6 +16,7 @@ import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
 import mp.sitili.modules.order_detail.use_cases.service.OrderDetailService;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
 import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
+import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
 import mp.sitili.modules.payment_order.entities.PaymentOrder;
 import mp.sitili.modules.payment_order.use_cases.methods.PaymentOrderRepositry;
 import mp.sitili.modules.product.entities.Product;
@@ -77,6 +78,9 @@ public class OrderController {
 
     @Autowired
     private ShoppingCarRepository shoppingCarRepository;
+
+    @Autowired
+    private PaymentCCService paymentCCService;
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('Admin')")
@@ -255,54 +259,60 @@ public class OrderController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         User user = userRepository.findById(userEmail).orElse(null);
-        List<ShoppingCar> carrito = orderService.buscarTodo(userEmail);
-        Address direccion = addressService.buscarDir(paymentCC.getAddress_id(), userEmail);
-        Optional<PaymentCC> pago = paymentCCRepository.findById(String.valueOf(paymentCC.getCc_id()));
 
-        if(!carrito.isEmpty() && user != null){
-            if(direccion != null){
-                if(pago.isPresent()){
-                    Order orden = new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", direccion, new Timestamp(System.currentTimeMillis()));
-                    orden = orderRepository.save(orden);
-
-                    List<OrderDetail> validOrderDetails = new ArrayList<>();
-                    List<Product> bajarCantidades = new ArrayList<>();
-
-                    for (ShoppingCar orderDetailData : carrito) {
-                        Integer productId = orderDetailData.getProduct().getId();
-                        Integer quantity = orderDetailData.getQuantity();
-
-                        Optional<Product> productoDetail = productRepository.findById(productId);
-                        if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
-                            if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
-                                OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
-                                validOrderDetails.add(orderDetail);
-                                productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
-                                bajarCantidades.add(productoDetail.get());
-                            } else {
-                                orderRepository.delete(orden);
-                                return new ResponseEntity<>("Cantidad requerida excede el stock, el producto es: " + productoDetail.get().getName(), HttpStatus.BAD_REQUEST);
-                            }
-                        } else {
-                            orderRepository.delete(orden);
-                            return new ResponseEntity<>("Producto no encontrado o no disponible", HttpStatus.BAD_REQUEST);
-                        }
-                    }
-
-                    //Bajar cantidades de productos
-                    orderDetailRepository.saveAll(validOrderDetails);
-                    productRepository.saveAll(bajarCantidades);
-                    shoppingCarRepository.deleteAllCar(userEmail);
-                    return new ResponseEntity<>("Compra Realizada", HttpStatus.OK);
-                }else{
-                    return new ResponseEntity<>("Forma de pago no asociada", HttpStatus.NOT_FOUND);
-                }
-            }else{
-                return new ResponseEntity<>("Dirección no encontrada", HttpStatus.NOT_FOUND);
-            }
-        }else{
-            return new ResponseEntity<>("Carrito no encontrado o vacio", HttpStatus.NOT_FOUND);
+        if (user == null) {
+            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
         }
+
+        List<Map<String, Object>> carrito = orderService.buscarTodo(userEmail);
+        Address direccion = addressService.buscarDir(paymentCC.getAddress_id(), userEmail);
+        PaymentCC pago = paymentCCService.findById((Integer) paymentCC.getCc_id());
+
+        if (carrito.isEmpty()) {
+            return new ResponseEntity<>("El carrito está vacío", HttpStatus.BAD_REQUEST);
+        }
+
+        if (direccion == null) {
+            return new ResponseEntity<>("Dirección no encontrada", HttpStatus.NOT_FOUND);
+        }
+
+        if (pago == null) {
+            return new ResponseEntity<>("Forma de pago no asociada", HttpStatus.NOT_FOUND);
+        }
+
+        Order orden = new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", direccion, new Timestamp(System.currentTimeMillis()));
+        orden = orderRepository.save(orden);
+
+        List<OrderDetail> validOrderDetails = new ArrayList<>();
+        List<Product> bajarCantidades = new ArrayList<>();
+
+        for (Map<String, Object> orderDetailData : carrito) {
+            Integer productId = (Integer) orderDetailData.get("product_id");
+            Integer quantity = (Integer) orderDetailData.get("quantity");
+
+            Optional<Product> productoDetail = productRepository.findById(productId);
+            if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
+                if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
+                    OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                    validOrderDetails.add(orderDetail);
+                    productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
+                    bajarCantidades.add(productoDetail.get());
+                } else {
+                    orderRepository.delete(orden);
+                    return new ResponseEntity<>("La cantidad excede el stock disponible para el producto: " + productoDetail.get().getName(), HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                orderRepository.delete(orden);
+                return new ResponseEntity<>("Producto no encontrado o no disponible", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // Guardar detalles de orden, actualizar cantidades y limpiar carrito
+        orderDetailRepository.saveAll(validOrderDetails);
+        productRepository.saveAll(bajarCantidades);
+        shoppingCarRepository.deleteAllCar(userEmail);
+
+        return new ResponseEntity<>("Compra realizada con éxito", HttpStatus.OK);
     }
 
     @PostMapping("/delivery")

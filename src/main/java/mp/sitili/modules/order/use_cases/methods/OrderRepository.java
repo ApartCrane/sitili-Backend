@@ -37,8 +37,8 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "WHERE p.user_id = :sellerEmail AND o.status IN ('Trafico', 'Entrega');", nativeQuery = true)
     public Double sellerSales(String sellerEmail);
 
-    @Query(value = "SELECT * FROM shopping_car WHERE user_id = :userEmail", nativeQuery = true)
-    public List<ShoppingCar> buscarTodo(@Param("userEmail") String userEmail);
+    @Query(value = "SELECT id, user_id, product_id, quantity FROM shopping_car WHERE user_id = :userEmail", nativeQuery = true)
+    public List<Object[]>  buscarTodo(@Param("userEmail") String userEmail);
 
     @Query(value = "SELECT \n" +
             "    MONTH(o.date_order) AS mes,\n" +

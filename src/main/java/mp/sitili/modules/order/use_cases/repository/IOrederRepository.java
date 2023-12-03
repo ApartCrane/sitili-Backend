@@ -5,6 +5,7 @@ import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IOrederRepository {
 
@@ -16,7 +17,7 @@ public interface IOrederRepository {
 
     public Double sellerSales(String sellerEmail);
 
-    public List<ShoppingCar> buscarTodo(String userEmail);
+    public List<Map<String, Object>> buscarTodo(String userEmail);
 
     List<VentasMesDTO> ventasAnioMonth(String sellerEmail);
 

@@ -9,7 +9,7 @@ import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OrderService implements IOrederRepository {
@@ -53,9 +53,26 @@ public class OrderService implements IOrederRepository {
         return orderRepository.sellerSales(sellerEmail);
     }
 
+
     @Override
-    public List<ShoppingCar> buscarTodo(String userEmail){
-        return orderRepository.buscarTodo(userEmail);
+    public List<Map<String, Object>> buscarTodo(String userEmail) {
+        List<Object[]> rawProducts = new ArrayList<>();
+        try {
+            rawProducts = orderRepository.buscarTodo(userEmail);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<Map<String, Object>> productList = new ArrayList<>();
+
+        for (Object[] row : rawProducts) {
+            Map<String, Object> productData = new HashMap<>();
+            productData.put("id", row[0]);
+            productData.put("user_id", row[1]);
+            productData.put("product_id", row[2]);
+            productData.put("quantity", row[3]);
+            productList.add(productData);
+        }
+        return productList;
     }
 
     @Override
