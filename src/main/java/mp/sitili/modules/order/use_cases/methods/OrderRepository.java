@@ -37,7 +37,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "WHERE p.user_id = :sellerEmail AND o.status IN ('Trafico', 'Entrega');", nativeQuery = true)
     public Double sellerSales(String sellerEmail);
 
-    @Query(value = "SELECT * FROM user_id = : :userEmail", nativeQuery = true)
+    @Query(value = "SELECT * FROM user_id = :userEmail", nativeQuery = true)
     public List<ShoppingCar> buscarTodo(@Param("userEmail") String userEmail);
 
     @Query(value = "SELECT \n" +
