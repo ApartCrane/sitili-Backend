@@ -1,6 +1,7 @@
 package mp.sitili.modules.product.use_cases.service;
 
 import mp.sitili.modules.category.entities.Category;
+import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.repository.IProductRepository;
@@ -134,5 +135,10 @@ public class ProductService implements IProductRepository {
     @Override
     public Integer countProSel(String sellerEmail){
         return productRepository.countProSel(sellerEmail);
+    }
+
+    @Override
+    public Product findOnlyById(Integer id){
+        return productRepository.findOnlyById(id);
     }
 }

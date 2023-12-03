@@ -81,4 +81,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     @Query(value = "SELECT COUNT(*) FROM product WHERE user_id = :sellerEmail", nativeQuery = true)
     public Integer countProSel(@Param("sellerEmail") String sellerEmail);
 
+    @Query(value = "SELECT * FROM product WHERE id = :id", nativeQuery = true)
+    public Product findOnlyById(@Param("id") Integer id);
+
 }
