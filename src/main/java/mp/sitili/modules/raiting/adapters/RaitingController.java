@@ -61,7 +61,7 @@ public class RaitingController {
 
         Integer productos = raitingService.cal4(sellerEmail);
 
-        if(productos == null){
+        if(productos != 0){
             return new ResponseEntity<>(productos, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(productos, HttpStatus.NO_CONTENT);

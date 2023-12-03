@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface RaitingRepository extends JpaRepository<Raiting, String> {
 
-    @Query(value = "SELECT COUNT(product_id) AS TotalProductos\n" +
+    @Query(value = "SELECT COUNT(product_id)  AS \"Total\" \n" +
             "FROM (\n" +
             "    SELECT p.id AS product_id, AVG(r.raiting) AS avg_rating\n" +
             "    FROM raiting r\n" +
@@ -17,7 +17,7 @@ public interface RaitingRepository extends JpaRepository<Raiting, String> {
             "    WHERE p.user_id = :sellerEmail\n" +
             "    GROUP BY p.id\n" +
             "    HAVING AVG(r.raiting) > 4\n" +
-            ") AS productos_con_rating_mayor_a_4;", nativeQuery = true)
+            ") AS productos_con_rating_mayor_a_4", nativeQuery = true)
     public Integer cal4(@Param("sellerEmail") String sellerEmail);
 
 }

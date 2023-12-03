@@ -50,7 +50,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "WHERE \n" +
             "    (DAY(o.date_order) = DAY(NOW()) OR WEEK(o.date_order) = WEEK(NOW()) OR MONTH(o.date_order) = MONTH(NOW()) OR YEAR(o.date_order) = YEAR(NOW()))\n" +
             "    AND p.user_id = :sellerEmail\n" +
-            "GROUP BY Month", nativeQuery = true)
+            "GROUP BY mes", nativeQuery = true)
     List<VentasMesDTO> ventasAnioMonth(@Param("sellerEmail") String sellerEmail);
 
     @Query(value = "SELECT \n" +
