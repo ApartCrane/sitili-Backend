@@ -62,7 +62,7 @@ public class PaymentCCController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> asociarPago(@RequestBody PaymentCC paymentDTO) {
+    public ResponseEntity<PaymentCC> asociarPago(@RequestBody PaymentCC paymentDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -88,12 +88,12 @@ public class PaymentCCController {
             PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, cc, month, year, cvv));
 
             if (pago != null) {
-                return new ResponseEntity<>("Datos de pago cargados exitosamente: " + pago.getId(), HttpStatus.OK);
+                return new ResponseEntity<>(pago, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Error al cargar datos de pago", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(pago, HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity<>("Usuario inexistente o datos faltantes", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(paymentDTO, HttpStatus.NO_CONTENT);
         }
     }
 
