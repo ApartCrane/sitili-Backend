@@ -58,7 +58,7 @@ public interface DataUserRepository extends JpaRepository<DataUser, Integer> {
             "LEFT JOIN \n" +
             "    data_users ON MONTH(data_users.register_date) = meses.mes\n" +
             "GROUP BY \n" +
-            "    meses.mes\n" +
+            "    meses.mes, meses.nombre_mes\n" +
             "ORDER BY \n" +
             "    meses.mes;", nativeQuery = true)
     public List<UsuariosxMesDTO> usuXmes();

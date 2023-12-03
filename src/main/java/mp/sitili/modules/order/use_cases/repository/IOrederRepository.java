@@ -2,8 +2,12 @@ package mp.sitili.modules.order.use_cases.repository;
 
 public interface IOrederRepository {
 
-    boolean updateDelivery(int id, String repartidor, String status);
+    public boolean updateDelivery(int id, String repartidor, String status);
 
-    boolean updateRecive(int id, String status);
+    public boolean updateRecive(int id, String status);
+
+    public Integer sellerEnvs(String sellerEmail);
+
+    public Double sellerSales(String sellerEmail);
 
 }

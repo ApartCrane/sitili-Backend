@@ -131,4 +131,8 @@ public class ProductService implements IProductRepository {
         return productList;
     }
 
+    @Override
+    public Integer countProSel(String sellerEmail){
+        return productRepository.countProSel(sellerEmail);
+    }
 }

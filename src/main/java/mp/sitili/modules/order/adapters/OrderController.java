@@ -277,4 +277,34 @@ public class OrderController {
             return new ResponseEntity<>("Orden no encontrada", HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/sellerEnvs")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<Integer> totalDeEnviosSeller() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        Integer contador = orderService.sellerEnvs(sellerEmail);
+
+        if(contador != 0){
+            return new ResponseEntity<>(contador, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(contador, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/sellerSales")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<Double> totalDeVentasSeller() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        Double contador = orderService.sellerSales(sellerEmail);
+
+        if(contador != 0.0){
+            return new ResponseEntity<>(contador, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(contador, HttpStatus.NO_CONTENT);
+        }
+    }
 }

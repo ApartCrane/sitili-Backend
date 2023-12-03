@@ -19,4 +19,9 @@ public class PaymentCCService implements IPaymentCCRepository {
     public List<PaymentCC> pagoXusuario(String userEmail) {
         return paymentCCRepository.pagoXusuario(userEmail);
     }
+
+    @Override
+    public PaymentCC tarjetaXusuario(String userEmail){
+        return paymentCCRepository.tarjetaXusuario(userEmail);
+    }
 }

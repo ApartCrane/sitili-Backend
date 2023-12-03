@@ -1,5 +1,6 @@
 package mp.sitili.modules.payment_cc.adapters;
 
+import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
 import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
 import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
@@ -31,13 +32,28 @@ public class PaymentCCController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/list")
+    @GetMapping("/lists")
     @PreAuthorize("hasRole('User')")
     public ResponseEntity<List<PaymentCC>> listarPagoxUsuario() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
         List<PaymentCC> pago = paymentCCService.pagoXusuario(userEmail);
+
+        if(pago != null){
+            return new ResponseEntity<>(pago, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(pago, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<PaymentCC> listarUnaTarjeta() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        PaymentCC pago = paymentCCService.tarjetaXusuario(userEmail);
 
         if(pago != null){
             return new ResponseEntity<>(pago, HttpStatus.OK);

@@ -33,4 +33,15 @@ public class OrderService implements IOrederRepository {
         }
     }
 
+
+    @Override
+    public Integer sellerEnvs(String sellerEmail){
+        return orderRepository.sellerEnvs(sellerEmail);
+    }
+
+    @Override
+    public Double sellerSales(String sellerEmail){
+        return orderRepository.sellerSales(sellerEmail);
+    }
+
 }

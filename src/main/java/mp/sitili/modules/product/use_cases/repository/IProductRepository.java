@@ -16,4 +16,6 @@ public interface IProductRepository {
 
     public List<Map<String, Object>> findAllxVend(String email);
 
+    public Integer countProSel(String sellerEmail);
+
 }

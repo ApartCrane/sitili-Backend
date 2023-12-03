@@ -17,4 +17,18 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Modifying
     @Query(value = "UPDATE orders SET status = :status WHERE id = :id", nativeQuery = true)
     void updateRecive(@Param("id") int id, @Param("status") String status);
+
+    @Query(value = "SELECT COUNT(o.id)\n" +
+            "FROM orders o\n" +
+            "INNER JOIN order_details od  ON o.id = od.order_id\n" +
+            "INNER JOIN product p ON od.product_id = p.id\n" +
+            "WHERE p.user_id = :sellerEmail && o.status IN(\"Trafico\", \"Entrega\")", nativeQuery = true)
+    public Integer sellerEnvs(String sellerEmail);
+
+    @Query(value = "SELECT SUM(od.price * od.quantity)\n" +
+            "FROM orders o\n" +
+            "INNER JOIN order_details od ON o.id = od.order_id\n" +
+            "INNER JOIN product p ON od.product_id = p.id\n" +
+            "WHERE p.user_id = :sellerEmail AND o.status IN ('Trafico', 'Entrega');", nativeQuery = true)
+    public Double sellerSales(String sellerEmail);
 }

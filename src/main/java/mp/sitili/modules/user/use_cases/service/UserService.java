@@ -150,7 +150,7 @@ public class UserService implements IUserRepository {
         User vendedorUser = new User();
         vendedorUser.setEmail("vendedor@vendedor");
         vendedorUser.setPassword(getEncodedPassword("root"));
-        vendedorUser.setStatus(false);
+        vendedorUser.setStatus(true);
         Set<Role> vendedorRoles = new HashSet<>();
         vendedorRoles.add(vendedorRole);
         vendedorUser.setRole(vendedorRoles);
@@ -231,6 +231,7 @@ public class UserService implements IUserRepository {
 // Crear formas de pago para usuarios
         PaymentCC paymentCC1 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user5, "1234567891234567","08", "2002", "123"));
         PaymentCC paymentCC2 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user6, "1234567891234567", "10", "2004", "123"));
+        PaymentCC paymentCC3 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user7, "1234567891234567", "10", "2004", "123"));
 
 // Crear órdenes para los usuarios
         Date date = new Date();

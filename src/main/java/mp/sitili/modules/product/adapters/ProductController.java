@@ -107,6 +107,22 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/totSeller")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<Integer> obtenerTotalProductosxVendedor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        Integer contador = productService.countProSel(sellerEmail);
+        System.out.println(contador);
+
+        if(contador != 0){
+            return new ResponseEntity<>(contador, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(contador, HttpStatus.NO_CONTENT);
+        }
+    }
+
     @GetMapping("/listSeller")
     public ResponseEntity<List> obtenerTodoProductosxVendedorPublico(@RequestBody User user) {
         String sellerEmail = user.getEmail();
