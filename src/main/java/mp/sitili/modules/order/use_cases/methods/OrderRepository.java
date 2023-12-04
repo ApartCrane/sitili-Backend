@@ -50,7 +50,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "INNER JOIN product p ON od.product_id = p.id\n" +
             "WHERE \n" +
             "    (DAY(o.date_order) = DAY(NOW()) OR WEEK(o.date_order) = WEEK(NOW()) OR MONTH(o.date_order) = MONTH(NOW()) OR YEAR(o.date_order) = YEAR(NOW()))\n" +
-            "    AND p.user_id = :sellerEmail\n" +
+            "    AND p.user_id = :sellerEmail AND o.status IN ('Trafico', 'Entrega') \n" +
             "GROUP BY mes", nativeQuery = true)
     List<VentasMesDTO> ventasAnioMonth(@Param("sellerEmail") String sellerEmail);
 
