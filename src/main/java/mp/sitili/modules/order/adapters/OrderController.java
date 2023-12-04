@@ -5,6 +5,7 @@ import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.service.AddressService;
 import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
+import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.service.OrderService;
@@ -412,6 +413,21 @@ public class OrderController {
             return new ResponseEntity<>(ventas, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(ventas, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/listUser")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<List<OrdersDTO>> listarOrdenesUsuario() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<OrdersDTO> orders = orderService.ordersPerUser(userEmail);
+
+        if(!orders.isEmpty()){
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(orders, HttpStatus.NO_CONTENT);
         }
     }
 }

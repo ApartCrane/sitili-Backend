@@ -2,6 +2,7 @@ package mp.sitili.modules.order.use_cases.methods;
 
 import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
+import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -65,4 +66,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "    AND p.user_id = :sellerEmail\n" +
             "GROUP BY mes", nativeQuery = true)
     public List<EntregasMesDTO>  enviosAnioMonth(@Param("sellerEmail") String sellerEmail);
+
+    @Query(value = "SELECT id, date_order, repartidor, status FROM orders WHERE user_id = :userEmail", nativeQuery = true)
+    public List<OrdersDTO> ordersPerUser(@Param("userEmail") String userEmail);
 }
