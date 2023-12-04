@@ -23,9 +23,9 @@ public class ImageProductService implements IImageProductRepository {
     }
 
     @Override
-    public boolean deleteImage(String image_url) {
+    public boolean deleteImage(String image_url, Integer produc_id) {
         try {
-            imageProductRepository.deleteImage(image_url);
+            imageProductRepository.deleteImage(image_url, produc_id);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

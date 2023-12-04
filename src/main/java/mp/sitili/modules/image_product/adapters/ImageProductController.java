@@ -27,7 +27,7 @@ public class ImageProductController {
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<JwtResponse> borrarImagen(@RequestBody ImageProduct imageProduct) throws Exception {
 
-        boolean revision = imageProductService.deleteImage(imageProduct.getImageUrl());
+        boolean revision = imageProductService.deleteImage(imageProduct.getImageUrl(), imageProduct.getId());
 
         if(revision){
             return new ResponseEntity<>(HttpStatus.OK);

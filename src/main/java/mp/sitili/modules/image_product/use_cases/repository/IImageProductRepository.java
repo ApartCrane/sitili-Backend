@@ -4,6 +4,6 @@ public interface IImageProductRepository {
 
     boolean saveImgs(String image_url, Integer product_id);
 
-    boolean deleteImage(String image_url);
+    boolean deleteImage(String image_url, Integer product_id);
 
 }

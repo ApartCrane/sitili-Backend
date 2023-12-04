@@ -248,14 +248,22 @@ public class ProductController {
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<String> eliminarImages(@RequestBody ImageProduct imageProduct) {
 
+        System.out.println(imageProduct);
+        System.out.println(imageProduct.getId());
+        System.out.println(imageProduct.getImageUrl());
+        System.out.println(imageProduct.getProduct());
+
         if (imageProduct != null) {
             Integer product_id = imageProduct.getId();
             String image_url = imageProduct.getImageUrl();
 
             Optional<Product> productSaved = productRepository.findById(product_id);
+            System.out.println(product_id);
+            System.out.println(image_url);
+            System.out.println(productSaved.get());
             if (productSaved.isPresent() && image_url != null) {
 
-                if (imageProductService.deleteImage(image_url)) {
+                if (imageProductService.deleteImage(image_url, product_id)) {
                     return new ResponseEntity<>("Imagen eliminada correctamente" ,HttpStatus.OK);
                 }else{
                     return new ResponseEntity<>("No se elimino la imagen correctamente" ,HttpStatus.EXPECTATION_FAILED);
