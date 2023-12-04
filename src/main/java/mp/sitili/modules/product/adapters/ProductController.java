@@ -243,10 +243,9 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/deleteImages")
+    @PutMapping("/deleteImages")
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<String> eliminarImages(@RequestPart("productData") Map<String, Object> productData) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!productData.isEmpty()) {
             Integer product_id = (Integer) productData.get("product_id");
