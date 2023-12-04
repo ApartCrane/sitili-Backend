@@ -33,5 +33,4 @@ public interface UserRepository extends JpaRepository<User, String> {
             "INNER JOIN role r ON ur.role_id = r.role_name\n" +
             "WHERE u.status = true AND r.role_description LIKE '%Seller%';" , nativeQuery = true)
     public List<SelectVendedorDTO> findSellers();
-
 }

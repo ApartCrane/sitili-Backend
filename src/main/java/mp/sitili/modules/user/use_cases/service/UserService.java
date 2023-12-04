@@ -22,6 +22,8 @@ import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
+import mp.sitili.modules.resetPassword.entities.PasswordResetToken;
+import mp.sitili.modules.resetPassword.use_cases.service.PasswordResetTokenService;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
 import mp.sitili.modules.user.entities.User;
@@ -343,5 +345,18 @@ public class UserService implements IUserRepository {
     public List<SelectVendedorDTO> findSellers(){
         return userRepository.findSellers();
     }
+    @Autowired
+    private PasswordResetTokenService tokenService;
 
+
+    public void updatePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // Elimina tokens antiguos después de cambiar la contraseña
+        tokenService.deleteToken(user);
+
+        // Envía un correo electrónico de confirmación
+        emailService.sendPasswordChangeConfirmation(user.getEmail());
+    }
 }
