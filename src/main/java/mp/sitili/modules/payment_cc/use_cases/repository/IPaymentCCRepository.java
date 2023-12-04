@@ -7,5 +7,7 @@ import java.util.List;
 public interface IPaymentCCRepository {
 
     public List<PaymentCC> pagoXusuario(String userEmail);
+    public PaymentCC tarjetaXusuario(String userEmail);
+    public PaymentCC findById(Integer id);
 
 }

@@ -3,8 +3,6 @@ package mp.sitili.modules.payment_cc.adapters;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
 import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
 import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
-import mp.sitili.modules.product.entities.Product;
-import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +12,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/paymentcc")
@@ -34,7 +30,7 @@ public class PaymentCCController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/list")
+    @GetMapping("/lists")
     @PreAuthorize("hasRole('User')")
     public ResponseEntity<List<PaymentCC>> listarPagoxUsuario() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -49,9 +45,62 @@ public class PaymentCCController {
         }
     }
 
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<PaymentCC> listarUnaTarjeta() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        PaymentCC pago = paymentCCService.tarjetaXusuario(userEmail);
+
+        if(pago != null){
+            return new ResponseEntity<>(pago, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(pago, HttpStatus.NO_CONTENT);
+        }
+    }
+
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> asociarPago(@RequestBody PaymentCC paymentCC) {
+    public ResponseEntity<PaymentCC> asociarPago(@RequestBody PaymentCC paymentDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        User user = userRepository.findById(userEmail).orElse(null);
+
+        if (user != null && paymentDTO != null) {
+            String cc = paymentDTO.getCc();
+            String cvv = paymentDTO.getCvv();
+            String expiryDate = paymentDTO.getExpiryDate();
+            String[] parts = expiryDate.split("/");
+            String month = parts[0];
+            String year = parts[1];
+
+            System.out.println(month);
+            System.out.println(year);
+
+            System.out.println(cc);
+            System.out.println(cvv);
+            System.out.println(expiryDate);
+            System.out.println(month);
+            System.out.println(year);
+
+            PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, cc, month, year, cvv));
+
+            if (pago != null) {
+                return new ResponseEntity<>(pago, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(pago, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(paymentDTO, HttpStatus.NO_CONTENT);
+        }
+    }
+
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> actualizarPago(@RequestBody PaymentCC paymentCC) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -59,11 +108,11 @@ public class PaymentCCController {
 
         if(user != null){
             if(paymentCC != null){
-                PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, paymentCC.getCc(), paymentCC.getDay(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
+                PaymentCC pago = paymentCCRepository.save(new PaymentCC(paymentCC.getId(), user, paymentCC.getCc(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
                 if(pago != null){
-                    return new ResponseEntity<>("Datos de pago cargados exitosamente", HttpStatus.OK);
+                    return new ResponseEntity<>("Datos de pago actualizados exitosamente", HttpStatus.OK);
                 }else{
-                    return new ResponseEntity<>("Error al cargar datos de pago", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("Error al actualizar datos de pago", HttpStatus.BAD_REQUEST);
                 }
             }else{
                 return new ResponseEntity<>("Datos Faltantes", HttpStatus.NO_CONTENT);

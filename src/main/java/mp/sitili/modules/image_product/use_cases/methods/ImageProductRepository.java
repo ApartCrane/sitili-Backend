@@ -15,4 +15,9 @@ public interface ImageProductRepository extends JpaRepository<ImageProduct, Stri
     @Modifying
     @Query(value = "INSERT INTO images_products (image_url, product_id) VALUES (:image_url, :product_id)", nativeQuery = true)
     void saveImgs(@Param("image_url") String image_url, @Param("product_id") Integer product_id);
+
+    @Modifying
+    @Query(value = "DELETE FROM images_products WHERE images_products = :images_products",nativeQuery = true)
+    void deleteImage(@Param("images_products") String images_products);
+
 }

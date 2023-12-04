@@ -1,7 +1,9 @@
 package mp.sitili.modules.shopping_car.adapters;
 
+import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
+import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -34,18 +37,21 @@ public class ShoppingCarController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ProductService productService;
+
     @GetMapping("/list")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<List<ShoppingCar>> listarCarxUsuario() {
+    public ResponseEntity<List> listarCarxUsuario() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        List<ShoppingCar> carrito = shoppingCarService.carXusuario(userEmail);
+        List<Map<String, Object>> favoritos = shoppingCarService.carXusuario(userEmail);
 
-        if(carrito != null){
-            return new ResponseEntity<>(carrito, HttpStatus.OK);
+        if(favoritos != null){
+            return new ResponseEntity<>(favoritos, HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(carrito, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(favoritos, HttpStatus.NO_CONTENT);
         }
     }
 
@@ -58,17 +64,54 @@ public class ShoppingCarController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
 
-        if(user != null && producto.isPresent() && product.getStock() > producto.get().getStock() && product.getStock() > 0){
-            ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
-            if(shoppingCar != null){
-                return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+        ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
+
+        if(shopp == null){
+            if(user != null && producto.isPresent()){
+                if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
+                    ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
+                    if(shoppingCar != null){
+                        return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }else{
+                    return new ResponseEntity<>("Cantidad excedente", HttpStatus.BAD_REQUEST);
+                }
             }else{
-                return new ResponseEntity<>("Error al agregar o Cantidad excedente", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
             }
         }else{
-            return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Prodcuto repetido", HttpStatus.BAD_REQUEST);
         }
+    }
 
+
+    @PostMapping("/createF")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> addCarxUsuariosf(@RequestBody Product product) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+        Optional<Product> producto = productRepository.findById(product.getId());
+
+        ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
+
+        if(shopp == null){
+            if(user != null && producto.isPresent()){
+                    ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), 1));
+                    if(shoppingCar != null){
+                        return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+            }else{
+                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
+            }
+        }else{
+            return new ResponseEntity<>("Prodcuto repetido", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/delete")
@@ -78,10 +121,11 @@ public class ShoppingCarController {
         String userEmail = authentication.getName();
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
-        Optional<Product> producto = productRepository.findById(shoppingCar.getProduct().getId());
 
-        if(user != null && producto.isPresent()){
-            boolean revision = shoppingCarService.deleteCar(user.getEmail(), producto.get().getId());
+        ShoppingCar shoppingCar1 = shoppingCarService.findById1(shoppingCar.getId());
+
+        if(user != null && shoppingCar1 != null){
+            boolean revision = shoppingCarService.deleteCar(user.getEmail(), shoppingCar1.getId());
             if(revision == true){
                 return new ResponseEntity<>("Eliminado de carrito de compras", HttpStatus.OK);
             }else{
@@ -91,5 +135,45 @@ public class ShoppingCarController {
             return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> actualizarCarrito(@RequestBody ShoppingCar shoppingCar) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        System.out.println(shoppingCar.getQuantity());
+        System.out.println(shoppingCar.getId());
+
+        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+        ShoppingCar shoppingCar1 = shoppingCarService.findById1(shoppingCar.getId());
+        Product producto = productService.findOnlyById(shoppingCar1.getProduct().getId());
+        System.out.println(producto);
+
+        if(user != null){
+            if(shoppingCar1 != null){
+                if(producto != null){
+                    if(shoppingCar.getQuantity() < producto.getStock()){
+
+                            boolean revision =  shoppingCarService.updateCar(shoppingCar.getId(), shoppingCar.getQuantity());
+                            if(revision){
+                                return new ResponseEntity<>("Carrito actualizado", HttpStatus.OK);
+                            }else{
+                                return new ResponseEntity<>("Error al alctualizar carrito", HttpStatus.INTERNAL_SERVER_ERROR);
+                            }
+
+                    }else{
+                        return new ResponseEntity<>("Cantidad excesiva", HttpStatus.NOT_ACCEPTABLE);
+                    }
+                }else{
+                    return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.NOT_FOUND);
+                }
+            }else{
+                return new ResponseEntity<>("Carrito no encontrado", HttpStatus.NOT_FOUND);
+            }
+        }else{
+            return new ResponseEntity<>("usuario no existe", HttpStatus.NOT_FOUND);
+        }
     }
 }

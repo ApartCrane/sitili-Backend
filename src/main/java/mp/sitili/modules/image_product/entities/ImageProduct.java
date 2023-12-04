@@ -23,7 +23,7 @@ public class ImageProduct {
         this.product = product;
     }
 
-    public ImageProduct(String key, Product productSaved) {
+    public ImageProduct() {
 
     }
 

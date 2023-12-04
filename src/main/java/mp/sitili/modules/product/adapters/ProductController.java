@@ -63,7 +63,17 @@ public class ProductController {
         List<Map<String, Object>> products = productService.findAllProducts();
 
         if(products != null){
+            return new ResponseEntity<>(products, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @GetMapping("/listProduct")
+    public ResponseEntity<List> obtenerProducto(@RequestBody Product product) {
+        List<Map<String, Object>> products = productService.findProduct(product.getId());
+
+        if(products != null){
             return new ResponseEntity<>(products, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
@@ -94,6 +104,22 @@ public class ProductController {
             return new ResponseEntity<>(products, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/totSeller")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<Integer> obtenerTotalProductosxVendedor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        Integer contador = productService.countProSel(sellerEmail);
+        System.out.println(contador);
+
+        if(contador != 0){
+            return new ResponseEntity<>(contador, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(contador, HttpStatus.NO_CONTENT);
         }
     }
 
@@ -162,6 +188,81 @@ public class ProductController {
                 return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ files.size() + " imagenes correctamente", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> actualizarProductoConImagenes(@RequestPart("productData") Map<String, Object> productData,
+                                                             @RequestPart(name = "files", required = false) List<MultipartFile> files) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+        Integer contador = 0;
+
+        if (!productData.isEmpty()) {
+            Integer product_id = (Integer) productData.get("product_id");
+            String name = (String) productData.get("name");
+            int stock = (int) productData.get("stock");
+            System.out.println(productData.get("price"));
+            String price = (String) productData.get("price");
+            Double price1 = Double.valueOf(price);
+            String features = (String) productData.get("features");
+            int categoryId = (int) productData.get("category_id");
+            Category category = categoryRepository.getCatById(categoryId);
+            User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
+            Date date = new Date();
+            Timestamp timestamp = new Timestamp(date.getTime());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Timestamp registerProduct = Timestamp.valueOf(sdf.format(timestamp));
+
+            Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, category, user, registerProduct, true));
+            if (productSaved != null) {
+
+                if (files != null && !files.isEmpty()) {
+
+                    for (MultipartFile file : files) {
+
+                        String key = awss3ServiceImp.uploadFile(file);
+                        String url = awss3ServiceImp.getObjectUrl(key);
+                        if(imageProductService.saveImgs(url, productSaved.getId())){
+                            contador++;
+                        }
+
+                    }
+                }
+                return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ files.size() + " imagenes correctamente", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/deleteImages")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> eliminarImages(@RequestPart("productData") Map<String, Object> productData) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!productData.isEmpty()) {
+            Integer product_id = (Integer) productData.get("product_id");
+            String image_url = (String) productData.get("image_url");
+
+            Optional<Product> productSaved = productRepository.findById(product_id);
+            if (productSaved.isPresent() && image_url != null) {
+
+                if (imageProductService.deleteImage(image_url)) {
+                    return new ResponseEntity<>("Imagen eliminada correctamente" ,HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("No se elimino la imagen correctamente" ,HttpStatus.EXPECTATION_FAILED);
+                }
+
+            } else {
+                return new ResponseEntity<>("El producto no existe", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);

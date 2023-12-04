@@ -4,11 +4,11 @@ import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
+import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
-import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
@@ -26,8 +26,11 @@ import mp.sitili.modules.resetPassword.entities.PasswordResetToken;
 import mp.sitili.modules.resetPassword.use_cases.service.PasswordResetTokenService;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
+import mp.sitili.modules.shopping_car.entities.ShoppingCar;
+import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
+import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.repository.IUserRepository;
 import mp.sitili.utils.email.EmailService;
@@ -64,6 +67,9 @@ public class UserService implements IUserRepository {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ShoppingCarRepository shoppingCarRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -146,7 +152,7 @@ public class UserService implements IUserRepository {
         User vendedorUser = new User();
         vendedorUser.setEmail("vendedor@vendedor");
         vendedorUser.setPassword(getEncodedPassword("root"));
-        vendedorUser.setStatus(false);
+        vendedorUser.setStatus(true);
         Set<Role> vendedorRoles = new HashSet<>();
         vendedorRoles.add(vendedorRole);
         vendedorUser.setRole(vendedorRoles);
@@ -187,17 +193,26 @@ public class UserService implements IUserRepository {
         Category category3 = categoryRepository.getCatById(3);
         User user3 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
         productService.saveProduct("Pasta de Dientes", 30.00, 8, "Pasta dentífrica colgate", category3, user3);
+        User userF = userRepository.findById(String.valueOf("user@user")).orElse(null);
+
 
 // Asociar valoraciones y favoritos a productos
         User user2 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
         Optional<Product> product1 = productRepository.findById(1);
-        Optional<Product> product2 = productRepository.findById(1);
-        Optional<Product> product3 = productRepository.findById(1);
+        Optional<Product> product2 = productRepository.findById(2);
+        Optional<Product> product3 = productRepository.findById(3);
+        //ShoppingCar Integer id, User user, Product product, Integer quantity
+        shoppingCarRepository.save(new ShoppingCar((int) (shoppingCarRepository.count() + 1), userF, product1.get(), 1));
+        shoppingCarRepository.save(new ShoppingCar((int) (shoppingCarRepository.count() + 1), userF, product2.get(), 1));
+
+
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product1.get(), user2));
-        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product1.get(), user2));
+        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product2.get(), user2));
+        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product3.get(), user2));
         Optional<Product> producto1 = productRepository.findById(2);
-        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product2.get()));
-        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product2.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user2, product1.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user3, product2.get()));
+        favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), userF, product2.get()));
         Optional<Product> producto2 = productRepository.findById(3);
         raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.3, product3.get(), user2));
 
@@ -205,16 +220,20 @@ public class UserService implements IUserRepository {
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/7929bdd8-c2a7-40d1-b299-ac838404e968.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 1);
         imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 2);
+        imageProductService.saveImgs("https://sitili-e-commerce.s3.amazonaws.com/11216399-552f-4ae2-afe2-a1a5bd6cc9e1.jpg", 3);
 
 // Crear direcciones para usuarios
         User user5 = userRepository.findById(String.valueOf("admin@admin")).orElse(null);
         User user6 = userRepository.findById(String.valueOf("root@root")).orElse(null);
+        User user7 = userRepository.findById(String.valueOf("user@user")).orElse(null);
         Address address1 = addressRepository.save(new Address((int) addressRepository.count() + 1, user5, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
         Address address2 = addressRepository.save(new Address((int) addressRepository.count() + 1, user6, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
+        Address address3 = addressRepository.save(new Address((int) addressRepository.count() + 1, user7, "Japan", "Ozaka", "Okinawa", 60280, "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka", "Taka taka, taka taka"));
 
 // Crear formas de pago para usuarios
-        PaymentCC paymentCC1 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user5, "1234567891234567", "04", "08", "2002", "123"));
-        PaymentCC paymentCC2 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user6, "1234567891234567", "06", "10", "2004", "123"));
+        PaymentCC paymentCC1 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user5, "1234567891234567","08", "2002", "123"));
+        PaymentCC paymentCC2 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user6, "1234567891234567", "10", "2004", "123"));
+        PaymentCC paymentCC3 = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user7, "1234567891234567", "10", "2004", "123"));
 
 // Crear órdenes para los usuarios
         Date date = new Date();
@@ -359,4 +378,10 @@ public class UserService implements IUserRepository {
         // Envía un correo electrónico de confirmación
         emailService.sendPasswordChangeConfirmation(user.getEmail());
     }
+  
+    @Override
+    public ValidSellerDTO validateCompany(String user_id){
+        return userRepository.validateCompany(user_id);
+    }
+
 }

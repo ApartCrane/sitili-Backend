@@ -56,6 +56,18 @@ public class Product {
         this.status = status;
     }
 
+    public Product(Integer id, String name, Integer stock, Double price, String features, Category category, User user, Timestamp registerProduct, Boolean status) {
+        this.id = id;
+        this.name = name;
+        this.stock = stock;
+        this.price = price;
+        this.features = features;
+        this.category = category;
+        this.user = user;
+        this.registerProduct = registerProduct;
+        this.status = status;
+    }
+
     public Product(String name, Integer stock, Double price, String features, Category category, User user, List<Raiting> raiting) {
         this.name = name;
         this.stock = stock;
