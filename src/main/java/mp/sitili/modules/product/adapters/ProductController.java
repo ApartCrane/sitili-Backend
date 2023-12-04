@@ -3,6 +3,7 @@ package mp.sitili.modules.product.adapters;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.service.CategoryService;
+import mp.sitili.modules.image_product.entities.ImageProduct;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
@@ -245,11 +246,11 @@ public class ProductController {
 
     @PutMapping("/deleteImages")
     @PreAuthorize("hasRole('Seller')")
-    public ResponseEntity<String> eliminarImages(@RequestPart("productData") Map<String, Object> productData) {
+    public ResponseEntity<String> eliminarImages(@RequestBody ImageProduct imageProduct) {
 
-        if (!productData.isEmpty()) {
-            Integer product_id = (Integer) productData.get("product_id");
-            String image_url = (String) productData.get("image_url");
+        if (imageProduct != null) {
+            Integer product_id = imageProduct.getId();
+            String image_url = imageProduct.getImageUrl();
 
             Optional<Product> productSaved = productRepository.findById(product_id);
             if (productSaved.isPresent() && image_url != null) {
