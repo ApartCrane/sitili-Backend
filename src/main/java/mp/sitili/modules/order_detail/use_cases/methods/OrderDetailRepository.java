@@ -1,11 +1,13 @@
 package mp.sitili.modules.order_detail.use_cases.methods;
 
 import mp.sitili.modules.order_detail.entities.OrderDetail;
+import mp.sitili.modules.order_detail.use_cases.dto.DetailsDTO;
 import mp.sitili.modules.order_detail.use_cases.dto.PedidosAnualesDTO;
 import mp.sitili.modules.order_detail.use_cases.dto.VentasAnualesDTO;
 import mp.sitili.modules.order_detail.use_cases.dto.VentasDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -54,4 +56,12 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "    (DAY(o.date_order) = DAY(NOW()) OR WEEK(o.date_order) = WEEK(NOW()) OR MONTH(o.date_order) = MONTH(NOW()) OR YEAR(o.date_order) = YEAR(NOW()))\n" +
             "GROUP BY Day, Week, Month, Anio;", nativeQuery = true)
     public List<PedidosAnualesDTO> totalPedidosAnuales();
+
+    @Query(value = "SELECT od.quantity, od.price, p.name, SUM(od.quantity * od.price) AS total\n" +
+            "FROM order_details od\n" +
+            "INNER JOIN product p ON p.id = od.product_id\n" +
+            "INNER JOIN orders o ON o.id = od.order_id\n" +
+            "WHERE o.user_id = :userEmail AND o.id = :id\n" +
+            "GROUP BY od.id, p.name, od.quantity, od.price", nativeQuery = true)
+    public List<DetailsDTO> details(@Param("userEmail")String userEmail, @Param("id") Integer id);
 }

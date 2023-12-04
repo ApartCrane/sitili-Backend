@@ -1,5 +1,6 @@
 package mp.sitili.modules.order_detail.use_cases.service;
 
+import mp.sitili.modules.order_detail.use_cases.dto.DetailsDTO;
 import mp.sitili.modules.order_detail.use_cases.dto.PedidosAnualesDTO;
 import mp.sitili.modules.order_detail.use_cases.dto.VentasAnualesDTO;
 import mp.sitili.modules.order_detail.use_cases.dto.VentasDTO;
@@ -29,6 +30,11 @@ public class OrderDetailService implements IOrderDetailRepository {
     @Override
     public List<PedidosAnualesDTO> totalPedidosAnuales(){
         return orderDetailRepository.totalPedidosAnuales();
+    }
+
+    @Override
+    public List<DetailsDTO> details(String userEmail, Integer id){
+        return orderDetailRepository.details(userEmail, id);
     }
 
 }
