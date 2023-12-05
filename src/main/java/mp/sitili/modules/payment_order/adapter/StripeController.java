@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,6 +34,7 @@ public class StripeController {
      * }
      */
     @PostMapping("/paymentintent")
+    @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> payment(@RequestBody List<PaymentIntentDto> paymentIntentDtoList)
             throws StripeException {
         List<PaymentIntent> paymentIntents = paymentService.paymentIntents(paymentIntentDtoList);
@@ -52,6 +54,7 @@ public class StripeController {
      * }
      */
     @PostMapping("/confirm")
+    @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> confirm(@RequestBody List<String> paymentIntentIds) throws StripeException {
         List<PaymentIntent> confirmedPaymentIntents = paymentService.confirmPaymentIntents(paymentIntentIds);
         List<String> paymentStrList = confirmedPaymentIntents.stream()
@@ -70,6 +73,7 @@ public class StripeController {
      * }
      */
     @PostMapping("/cancel")
+    @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> cancel(@RequestBody List<String> paymentIntentIds) throws StripeException {
         List<PaymentIntent> cancelledPaymentIntents = paymentService.cancelPaymentIntents(paymentIntentIds);
         List<String> paymentStrList = cancelledPaymentIntents.stream()

@@ -312,6 +312,7 @@ public class OrderController {
         orderDetailRepository.saveAll(validOrderDetails);
         productRepository.saveAll(bajarCantidades);
         shoppingCarRepository.deleteAllCar(userEmail);
+        paymentOrderRepositry.save(new PaymentOrder(paymentCCRepository.count() + 1, orden, pago));
 
         return new ResponseEntity<>("Compra realizada con éxito", HttpStatus.OK);
     }
