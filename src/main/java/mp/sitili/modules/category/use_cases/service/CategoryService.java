@@ -1,6 +1,7 @@
 package mp.sitili.modules.category.use_cases.service;
 
 import mp.sitili.modules.category.entities.Category;
+import mp.sitili.modules.category.use_cases.dto.ProductosxCategoriaDTO;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,15 @@ public class CategoryService implements ICategoryRepository {
     private CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getAllCategory() {
-        return this.categoryRepository.getAllCategory();
+    public List<Category> findAllStatus() {
+        return this.categoryRepository.findAllStatus();
     }
+
+    @Override
+    public List<Category> categoriasNombre(String name) {
+        return this.categoryRepository.categoriasNombre(name);
+    }
+
 
     @Override
     public boolean createCategory(String name) {
@@ -72,5 +79,15 @@ public class CategoryService implements ICategoryRepository {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public List<ProductosxCategoriaDTO> proXcat(){
+        return categoryRepository.proXcat();
+    }
+
+    @Override
+    public List<ProductosxCategoriaDTO> proXcatSell(String sellerEmail){
+        return categoryRepository.proXcatSell(sellerEmail);
     }
 }

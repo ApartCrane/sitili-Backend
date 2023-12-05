@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -40,19 +41,28 @@ public class JwtController {
 
     }
 
-
     @PostMapping({"/registerNewUser"})
-    public ResponseEntity<JwtResponse> registerNewUser(@RequestBody JwtRegister jwtRegister) throws Exception {
-        User user = userService.registerNewUser(jwtRegister);
-        if(user != null){
-            JwtResponse validador = jwtService.createJwtToken(new JwtRequest(jwtRegister.getEmail(), jwtRegister.getPassword()));
-            if(validador != null){
-                return new ResponseEntity<>(validador, HttpStatus.OK);
+    public ResponseEntity<JwtResponse> registerNewUser(@RequestBody Map<String, Object> productData) throws Exception {
+        if(!productData.isEmpty()){
+            String email = (String) productData.get("email");
+            String password = (String) productData.get("password");
+            String first_name = (String) productData.get("first_name");
+            String last_name = (String) productData.get("last_name");
+            Integer role = (Integer) productData.get("role");
+
+            User user = userService.registerNewUser(email, password, first_name, last_name, role);
+            if(user != null){
+                JwtResponse validador = jwtService.createJwtToken(new JwtRequest(email, password));
+                if(validador != null){
+                    return new ResponseEntity<>(validador, HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                }
             }else{
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(HttpStatus.SEE_OTHER);
             }
         }else{
-            return new ResponseEntity<>(HttpStatus.SEE_OTHER);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 

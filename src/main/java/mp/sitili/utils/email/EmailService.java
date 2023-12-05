@@ -1,5 +1,6 @@
 package mp.sitili.utils.email;
 
+import mp.sitili.modules.user.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,6 +12,14 @@ public class EmailService {
     private JavaMailSender mailSender;
 
 
+    public void sendPasswordResetEmail(User user, String token) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Recuperación de Contraseña");
+        mailMessage.setText(token);
+        mailSender.send(mailMessage);
+    }
+
     public String sendMail(String to, String subject, String body)
     {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -21,4 +30,11 @@ public class EmailService {
         return "OK";
     }
 
+    public void sendPasswordChangeConfirmation(String email) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+        mailMessage.setSubject("Contraseña cambiada con éxito");
+        mailMessage.setText("Tu contraseña se ha cambiado con éxito.");
+        mailSender.send(mailMessage);
+    }
 }

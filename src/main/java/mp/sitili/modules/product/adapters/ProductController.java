@@ -3,11 +3,17 @@ package mp.sitili.modules.product.adapters;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.service.CategoryService;
-import mp.sitili.modules.product.use_cases.dto.ProductDTO;
+import mp.sitili.modules.image_product.entities.ImageProduct;
+import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
+import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
+import mp.sitili.modules.raiting.entities.Raiting;
+import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
 import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
+import mp.sitili.modules.user.use_cases.service.UserService;
 import mp.sitili.utils.aws.AWSS3ServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +23,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/product")
@@ -42,38 +49,57 @@ public class ProductController {
     @Autowired
     private AWSS3ServiceImp awss3ServiceImp;
 
+    @Autowired
+    private ImageProductService imageProductService;
+
+    @Autowired
+    private RaitingRepository raitingRepository;
+
+    @Autowired
+    private UserService userService;
+
 
     @GetMapping("/listAll")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<ProductDTO>> obtenerTodoProductos() {
-        List<ProductDTO> products = productRepository.findAllProducts();
+    public ResponseEntity<List> obtenerTodoProductos() {
+        List<Map<String, Object>> products = productService.findAllProducts();
 
         if(products != null){
             return new ResponseEntity<>(products, HttpStatus.OK);
-        }else {
+        } else {
             return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/listUp")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<ProductDTO>> obtenerTodoProductosActivos() {
-        List<ProductDTO> products = productRepository.findAllByStatusEquals();
+    @GetMapping("/listProduct")
+    public ResponseEntity<List> obtenerProducto(@RequestBody Product product) {
+        List<Map<String, Object>> products = productService.findProduct(product.getId());
 
         if(products != null){
             return new ResponseEntity<>(products, HttpStatus.OK);
-        }else {
+        } else {
             return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/totalProducts")
+    @PreAuthorize("hasRole('Root') or hasRole('Admin')")
+    public ResponseEntity<Long> totalProductos() {
+        Long total = productRepository.count();
+
+        if(total == 0){
+            return new ResponseEntity<>(total, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(total, HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/listAllVend")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<ProductDTO>> obtenerTodoProductosxVendedor() {
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<List> obtenerTodoProductosxVendedor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
 
-        List<ProductDTO> products = productRepository.findAllxVend(sellerEmail);
+        List<Map<String, Object>> products = productService.findAllxVend(sellerEmail);
 
         if(products != null){
             return new ResponseEntity<>(products, HttpStatus.OK);
@@ -82,13 +108,26 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/listUpVend")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<List<ProductDTO>> obtenerTodoProductosxVendedorUp() {
+    @GetMapping("/totSeller")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<Integer> obtenerTotalProductosxVendedor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
 
-        List<ProductDTO> products = productRepository.findAllUpxVend(sellerEmail);
+        Integer contador = productService.countProSel(sellerEmail);
+        System.out.println(contador);
+
+        if(contador != 0){
+            return new ResponseEntity<>(contador, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(contador, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/listSeller")
+    public ResponseEntity<List> obtenerTodoProductosxVendedorPublico(@RequestBody User user) {
+        String sellerEmail = user.getEmail();
+        List<Map<String, Object>> products = productService.findAllxVend(sellerEmail);
 
         if(products != null){
             return new ResponseEntity<>(products, HttpStatus.OK);
@@ -96,57 +135,146 @@ public class ProductController {
             return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/selectSeller")
+    public ResponseEntity<List<SelectVendedorDTO>> obtenerVendedores() {
+        List<SelectVendedorDTO> vendedores = userService.findSellers();
+
+        if(vendedores != null){
+            return new ResponseEntity<>(vendedores, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(vendedores, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> guardarProducto(@RequestBody Map<String, Object> productData) {
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> guardarProductoConImagenes(@RequestPart("productData") Map<String, Object> productData,
+                                                             @RequestPart(name = "files", required = false) List<MultipartFile> files) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
+        Integer contador = 0;
 
-        //Falta recivir y cargar imagen
-        //Lógica
-        //public void cargarImagenS3(@RequestPart(required = false) MultipartFile file){
-        //Cargar imagen
-        //String key = awss3ServiceImp.uploadFile(file);
-        //Recuperar String Imagen
-        //String url = awss3ServiceImp.getObjectUrl(key);
+        if (!productData.isEmpty()) {
+            String name = (String) productData.get("name");
+            int stock = (int) productData.get("stock");
+            System.out.println(productData.get("price"));
+            String price = (String) productData.get("price");
+            Double price1 = Double.valueOf(price);
+            String features = (String) productData.get("features");
+            int categoryId = (int) productData.get("category_id");
+            Category category = categoryRepository.getCatById(categoryId);
+            User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
+            Date date = new Date();
+            Timestamp timestamp = new Timestamp(date.getTime());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Timestamp registerProduct = Timestamp.valueOf(sdf.format(timestamp));
 
-        String name = (String) productData.get("name");
-        Integer stock = (Integer) productData.get("stock");
-        Double price = (Double) productData.get("price");
-        String features = (String) productData.get("features");
-        Integer categoryId = (Integer) productData.get("category_id");
-        Category category = categoryRepository.getCatById(categoryId);
-        User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
+            Product productSaved = productRepository.save(new Product(name, stock, price1, features, category, user, registerProduct, true));
+            if (productSaved != null) {
+                raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 0.0, productSaved, user));
+                if (files != null && !files.isEmpty()) {
 
-        boolean revision =  productService.saveCategory(name, price, stock, features, category, user);
+                    for (MultipartFile file : files) {
 
-        if(revision){
-            return new ResponseEntity<>("Producto creado exitosamente", HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
+                        String key = awss3ServiceImp.uploadFile(file);
+                        String url = awss3ServiceImp.getObjectUrl(key);
+                        if(imageProductService.saveImgs(url, productSaved.getId())){
+                            contador++;
+                        }
+
+                    }
+                }
+                return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ files.size() + " imagenes correctamente", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
         }
-
     }
 
-    @PostMapping("/image")
-    public ResponseEntity<String> guardarImagen(@RequestPart(required = false) MultipartFile file) {
+
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> actualizarProductoConImagenes(@RequestPart("productData") Map<String, Object> productData,
+                                                             @RequestPart(name = "files", required = false) List<MultipartFile> files) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
+        Integer contador = 0;
 
-        //Cargar imagen
-        String key = awss3ServiceImp.uploadFile(file);
-        System.out.println(key);
-        //Recuperar String Imagen
-        String url = awss3ServiceImp.getObjectUrl(key);
-        System.out.println(url);
+        if (!productData.isEmpty()) {
+            Integer product_id = (Integer) productData.get("product_id");
+            String name = (String) productData.get("name");
+            int stock = (int) productData.get("stock");
+            System.out.println(productData.get("price"));
+            String price = (String) productData.get("price");
+            Double price1 = Double.valueOf(price);
+            String features = (String) productData.get("features");
+            int categoryId = (int) productData.get("category_id");
+            Category category = categoryRepository.getCatById(categoryId);
+            User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
+            Date date = new Date();
+            Timestamp timestamp = new Timestamp(date.getTime());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Timestamp registerProduct = Timestamp.valueOf(sdf.format(timestamp));
 
-        if(url != null){
-            return new ResponseEntity<>("Imagen Cargada con exito " + url, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>("Error al cargar Imagen", HttpStatus.INTERNAL_SERVER_ERROR);
+            Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, category, user, registerProduct, true));
+            if (productSaved != null) {
+
+                if (files != null && !files.isEmpty()) {
+
+                    for (MultipartFile file : files) {
+
+                        String key = awss3ServiceImp.uploadFile(file);
+                        String url = awss3ServiceImp.getObjectUrl(key);
+                        if(imageProductService.saveImgs(url, productSaved.getId())){
+                            contador++;
+                        }
+
+                    }
+                }
+                return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ files.size() + " imagenes correctamente", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
         }
+    }
 
+    @PutMapping("/deleteImages")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> eliminarImages(@RequestBody ImageProduct imageProduct) {
+
+        System.out.println(imageProduct);
+        System.out.println(imageProduct.getId());
+        System.out.println(imageProduct.getImageUrl());
+        System.out.println(imageProduct.getProduct());
+
+        if (imageProduct != null) {
+            Integer product_id = imageProduct.getId();
+            String image_url = imageProduct.getImageUrl();
+
+            Optional<Product> productSaved = productRepository.findById(product_id);
+            System.out.println(product_id);
+            System.out.println(image_url);
+            System.out.println(productSaved.get());
+            if (productSaved.isPresent() && image_url != null) {
+
+                if (imageProductService.deleteImage(image_url, product_id)) {
+                    return new ResponseEntity<>("Imagen eliminada correctamente" ,HttpStatus.OK);
+                }else{
+                    return new ResponseEntity<>("No se elimino la imagen correctamente" ,HttpStatus.EXPECTATION_FAILED);
+                }
+
+            } else {
+                return new ResponseEntity<>("El producto no existe", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
