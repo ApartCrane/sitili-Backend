@@ -32,6 +32,25 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, sc.id", nativeQuery = true)
     public List<Object[]> carXusuario(@Param("email") String email);
 
+    @Query(value = "SELECT \n" +
+            "    sc.id AS car_id, sc.quantity AS cantidad , p.name AS producto,\n" +
+            "    p.price AS precio, \n" +
+            "    p.features AS comentarios,\n" +
+            "    AVG(r.raiting) AS calificacion,\n" +
+            "    c.name AS categoria,\n" +
+            "    du.company AS vendedor, \n" +
+            "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes\n" +
+            "FROM product p\n" +
+            "INNER JOIN categories c ON p.category_id = c.id\n" +
+            "INNER JOIN users u ON u.email = p.user_id\n" +
+            "LEFT JOIN raiting r ON p.id = r.product_id\n" +
+            "INNER JOIN data_users du ON u.email = du.user_id\n" +
+            "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
+            "INNER JOIN shopping_car sc ON sc.product_id = p.id\n" +
+            "WHERE sc.user_id = :email && p.status = TRUE\n" +
+            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, sc.id", nativeQuery = true)
+    public List<Object[]> carXusuariob(@Param("email") String email);
+
     @Modifying
     @Query(value = "DELETE FROM shopping_car WHERE user_id = :user_id AND id = :product_id", nativeQuery = true)
     void deleteCar(@Param("user_id") String user_id, @Param("product_id") Integer product_id);

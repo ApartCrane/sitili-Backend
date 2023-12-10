@@ -5,6 +5,7 @@ import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.dto.ProductosxCategoriaDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ICategoryRepository {
 
@@ -27,4 +28,6 @@ public interface ICategoryRepository {
     public List<ProductosxCategoriaDTO> proXcat();
 
     public List<ProductosxCategoriaDTO> proXcatSell(String sellerEmail);
+
+    public List<Map<String, Object>> findAllProducts(Integer id);
 }

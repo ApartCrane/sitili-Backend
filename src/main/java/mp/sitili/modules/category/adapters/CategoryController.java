@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/categories")
@@ -50,6 +51,17 @@ public class CategoryController {
     @GetMapping("/listCategorie")
     public ResponseEntity<List> obtenerCategoriaFree(@RequestBody Category category) {
         List<Category> categories = categoryService.categoriasNombre(category.getName());
+
+        if(categories != null){
+            return new ResponseEntity<>(categories, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(categories, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/proxcat")
+    public ResponseEntity<List> productosPorCategoria(@RequestBody Category category) {
+        List<Map<String, Object>> categories = categoryService.findAllProducts(category.getId());
 
         if(categories != null){
             return new ResponseEntity<>(categories, HttpStatus.OK);

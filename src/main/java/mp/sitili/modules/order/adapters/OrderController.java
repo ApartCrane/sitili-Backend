@@ -198,7 +198,7 @@ public class OrderController {
 
     @PostMapping("/createMany")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> crearOrden2(
+    public ResponseEntity<String> crearOrdenes(
             @RequestPart("productData") Map<String, Object> productData,
             @RequestPart("orderDetails") List<Map<String, Object>> orderDetailsData
     ) {
