@@ -212,15 +212,14 @@ public class ProductController {
             String price = (String) productData.get("price");
             Double price1 = Double.valueOf(price);
             String features = (String) productData.get("features");
-            int categoryId = (int) productData.get("category_id");
-            Category category = categoryRepository.getCatById(categoryId);
+            Optional<Product> prod = productRepository.findById(product_id);
             User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
             Date date = new Date();
             Timestamp timestamp = new Timestamp(date.getTime());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Timestamp registerProduct = Timestamp.valueOf(sdf.format(timestamp));
 
-            Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, category, user, registerProduct, true));
+            Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, prod.get().getCategory(), user, registerProduct, true));
             if (productSaved != null) {
 
                 if (files != null && !files.isEmpty()) {
@@ -275,6 +274,29 @@ public class ProductController {
         } else {
             return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> bajaLogica(@RequestBody Product product) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        Optional<Product> productSaved = productRepository.findById(product.getId());
+
+        if(productSaved.isPresent()){
+            if(productSaved.get().getStatus()){
+                productRepository.bajaLogica(productSaved.get().getId(), false, sellerEmail);
+                return new ResponseEntity<>("Usuario dado de Baja", HttpStatus.OK);
+            }else{
+                productRepository.bajaLogica(productSaved.get().getId(), true, sellerEmail);
+                return new ResponseEntity<>("Usuario dado de Alta", HttpStatus.OK);
+            }
+        }else{
+            return new ResponseEntity<>("Producto no encontrado", HttpStatus.NOT_FOUND);
+        }
+
+
     }
 
 }

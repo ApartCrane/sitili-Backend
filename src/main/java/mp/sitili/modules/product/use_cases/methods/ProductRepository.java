@@ -84,4 +84,10 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     @Query(value = "SELECT * FROM product WHERE id = :id", nativeQuery = true)
     public Product findOnlyById(@Param("id") Integer id);
 
+    @Modifying
+    @Query(value = "UPDATE product SET status = :status WHERE user_id = :sellerEmail && id = :id", nativeQuery = true)
+    void bajaLogica(@Param("id") Integer id,
+                    @Param("status") boolean status,
+                    @Param("sellerEmail") String sellerEmail);
+
 }
