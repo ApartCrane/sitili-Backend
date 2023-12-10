@@ -22,6 +22,3 @@ EXPOSE 8090
 
 # Comando para ejecutar la aplicación con espera para la base de datos
 CMD ["sh", "-c", "sleep 20 && java -jar /app.jar"]
-
-# Agrega el comando mvn verify sonar:sonar al final
-RUN mvn verify sonar:sonar -Dsonar.projectKey=sitili_back -Dsonar.projectName='sitili_back' -Dsonar.host.url=http://3.219.197.64:9000 -Dsonar.token=sqp_d0a12bb474391abd9d325b6f1bf65ad10ca79efb
