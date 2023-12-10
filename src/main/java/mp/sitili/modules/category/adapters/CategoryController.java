@@ -59,7 +59,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/proxcat")
+    @PostMapping("/proxcat")
     public ResponseEntity<List> productosPorCategoria(@RequestBody Category category) {
         List<Map<String, Object>> categories = categoryService.findAllProducts(category.getId());
 
