@@ -56,4 +56,27 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
             "GROUP BY c.id, c.name", nativeQuery = true)
     public List<ProductosxCategoriaDTO> proXcatSell(@Param("sellerEmail") String sellerEmail);
 
+    @Query(value = "SELECT \n" +
+            "    p.id AS product_id, \n" +
+            "    p.name AS producto,\n" +
+            "    p.price AS precio, \n" +
+            "    p.stock AS cantidad, \n" +
+            "    p.features AS comentarios,\n" +
+            "    AVG(r.raiting) AS calificacion, \n" +
+            "    p.status AS estado, \n" +
+            "    c.name AS categoria,\n" +
+            "    u.email AS vendedor, \n" +
+            "    du.first_name AS nombreVendedor, \n" +
+            "    du.last_name AS apellidoVendedor,\n" +
+            "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes\n" +
+            "FROM product p\n" +
+            "INNER JOIN categories c ON p.category_id = c.id\n" +
+            "INNER JOIN users u ON u.email = p.user_id\n" +
+            "LEFT JOIN raiting r ON p.id = r.product_id\n" +
+            "INNER JOIN data_users du ON u.email = du.user_id\n" +
+            "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
+            "WHERE p.category_id = :id\n" +
+            "GROUP BY p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
+    public List<Object[]> findAllProducts(@Param("id") Integer id);
+
 }

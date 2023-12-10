@@ -196,7 +196,7 @@ public class ProductController {
     }
 
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<String> actualizarProductoConImagenes(@RequestPart("productData") Map<String, Object> productData,
                                                              @RequestPart(name = "files", required = false) List<MultipartFile> files) {

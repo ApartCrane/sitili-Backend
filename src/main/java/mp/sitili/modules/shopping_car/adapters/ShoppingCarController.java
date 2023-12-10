@@ -55,6 +55,21 @@ public class ShoppingCarController {
         }
     }
 
+    @GetMapping("/listb")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<List> listarCarxUsuariob() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<Map<String, Object>> favoritos = shoppingCarService.carXusuariob(userEmail);
+
+        if(favoritos != null){
+            return new ResponseEntity<>(favoritos, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(favoritos, HttpStatus.NO_CONTENT);
+        }
+    }
+
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> addCarxUsuarios(@RequestBody Product product) {

@@ -10,6 +10,8 @@ public interface IShoppingCarRepository {
 
     public List<Map<String, Object>> carXusuario(String email);
 
+    public List<Map<String, Object>> carXusuariob(String email);
+
     public Boolean deleteCar(String user_id, Integer product_id);
 
     public ShoppingCar validarExis(Integer product_id, String user_id);
