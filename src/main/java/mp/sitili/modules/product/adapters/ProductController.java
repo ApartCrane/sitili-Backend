@@ -3,6 +3,7 @@ package mp.sitili.modules.product.adapters;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.service.CategoryService;
+import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.image_product.entities.ImageProduct;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.product.entities.Product;
@@ -10,6 +11,7 @@ import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
+import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
@@ -48,6 +50,12 @@ public class ProductController {
 
     @Autowired
     private AWSS3ServiceImp awss3ServiceImp;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private ShoppingCarRepository shoppingCarRepository;
 
     @Autowired
     private ImageProductService imageProductService;
@@ -286,11 +294,13 @@ public class ProductController {
 
         if(productSaved.isPresent()){
             if(productSaved.get().getStatus()){
+                favoriteRepository.deleteTodos(productSaved.get().getId());
+                shoppingCarRepository.deleteTodos(productSaved.get().getId());
                 productRepository.bajaLogica(productSaved.get().getId(), false, sellerEmail);
-                return new ResponseEntity<>("Usuario dado de Baja", HttpStatus.OK);
+                return new ResponseEntity<>("Producto dado de Baja", HttpStatus.OK);
             }else{
                 productRepository.bajaLogica(productSaved.get().getId(), true, sellerEmail);
-                return new ResponseEntity<>("Usuario dado de Alta", HttpStatus.OK);
+                return new ResponseEntity<>("Producto dado de Alta", HttpStatus.OK);
             }
         }else{
             return new ResponseEntity<>("Producto no encontrado", HttpStatus.NOT_FOUND);

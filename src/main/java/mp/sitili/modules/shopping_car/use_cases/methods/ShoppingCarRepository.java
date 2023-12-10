@@ -69,4 +69,8 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
     @Query(value = "DELETE FROM shopping_car WHERE user_id = :user_id", nativeQuery = true)
     void deleteAllCar(@Param("user_id") String user_id);
 
+    @Modifying
+    @Query(value = "DELETE FROM shopping_car WHERE product_id = :product_id", nativeQuery = true)
+    void deleteTodos(@Param("product_id") Integer product_id);
+
 }
