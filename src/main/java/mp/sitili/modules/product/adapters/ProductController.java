@@ -238,6 +238,7 @@ public class ProductController {
             Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, prod.get().getCategory(), user, registerProduct, true));
 
             if (productSaved != null) {
+                System.out.println(files);
                 if (files != null && !files.isEmpty()) {
                     for (MultipartFile file : files) {
                         String key = awss3ServiceImp.uploadFile(file);
