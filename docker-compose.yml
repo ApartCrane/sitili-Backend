@@ -11,6 +11,7 @@ services:
       - db
     networks:
       - mi-red
+    command: bash -c "mvn verify sonar:sonar -Dsonar.projectKey=sitili_back -Dsonar.projectName='sitili_back' -Dsonar.host.url=http://3.219.197.64:9000 -Dsonar.token=sqp_d0a12bb474391abd9d325b6f1bf65ad10ca79efb && sleep infinity"
   db:
     image: mysql:8.0
     ports:
