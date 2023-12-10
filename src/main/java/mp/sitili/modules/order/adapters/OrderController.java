@@ -170,7 +170,7 @@ public class OrderController {
 
                         Order orden = orderRepository.save(new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", address, dateOrder));
                         if (orden != null) {
-                            OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, producto.get(), (Integer) productData.get("quantity"), producto.get().getPrice()));
+                            OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, producto.get(), (Integer) productData.get("quantity"), producto.get().getPrice(), "Pendiente"));
                             if (orderDetail != null) {
                                 producto.get().setStock(producto.get().getStock() - (Integer) productData.get("quantity"));
                                 productRepository.save(producto.get());
@@ -224,7 +224,7 @@ public class OrderController {
                         Optional<Product> productoDetail = productRepository.findById(productId);
                         if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
                             if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
-                                OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                                OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice(), "Pendiente");
                                 validOrderDetails.add(orderDetail);
                                 productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
                                 bajarCantidades.add(productoDetail.get());
@@ -294,7 +294,7 @@ public class OrderController {
             Optional<Product> productoDetail = productRepository.findById(productId);
             if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
                 if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
-                    OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                    OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice(), "Prendiente");
                     validOrderDetails.add(orderDetail);
                     productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
                     bajarCantidades.add(productoDetail.get());

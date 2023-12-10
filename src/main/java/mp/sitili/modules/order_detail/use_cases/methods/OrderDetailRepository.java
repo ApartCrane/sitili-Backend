@@ -1,11 +1,9 @@
 package mp.sitili.modules.order_detail.use_cases.methods;
 
 import mp.sitili.modules.order_detail.entities.OrderDetail;
-import mp.sitili.modules.order_detail.use_cases.dto.DetailsDTO;
-import mp.sitili.modules.order_detail.use_cases.dto.PedidosAnualesDTO;
-import mp.sitili.modules.order_detail.use_cases.dto.VentasAnualesDTO;
-import mp.sitili.modules.order_detail.use_cases.dto.VentasDTO;
+import mp.sitili.modules.order_detail.use_cases.dto.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,4 +62,29 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "WHERE o.user_id = :userEmail AND o.id = :id\n" +
             "GROUP BY od.id, p.name, od.quantity, od.price", nativeQuery = true)
     public List<DetailsDTO> details(@Param("userEmail")String userEmail, @Param("id") Integer id);
+
+    @Query(value = "SELECT o.id AS orden, od.id AS detalles, p.name AS producto, od.quantity AS cantidad, od.status AS estado\n" +
+            "FROM orders o\n" +
+            "INNER JOIN order_details od ON o.id = od.order_id\n" +
+            "INNER JOIN product p ON p.id = od.product_id\n" +
+            "WHERE p.user_id = :sellerEmail", nativeQuery = true)
+    public List<DetallesSellerDTO> detalle(@Param("sellerEmail") String sellerEmail);
+
+    @Modifying
+    @Query(value = "UPDATE order_details SET status = :estado WHERE id = :id", nativeQuery = true)
+    void detalleUpdate(@Param("estado") String estado, @Param("id") int id);
+
+    @Query(value = "SELECT o.id AS orden\n" +
+            "FROM orders o\n" +
+            "INNER JOIN order_details od ON o.id = od.order_id\n" +
+            "INNER JOIN product p ON p.id = od.product_id\n" +
+            "WHERE od.id = :id", nativeQuery = true)
+    Integer validarOrden(@Param("id") Integer id);
+
+    @Query(value = "SELECT COUNT(od.id) AS entregas\n" +
+            "FROM orders o\n" +
+            "INNER JOIN order_details od ON o.id = od.order_id\n" +
+            "INNER JOIN product p ON p.id = od.product_id\n" +
+            "WHERE o.id = :order_id && od.status = \"Pendiente\"", nativeQuery = true)
+    RevisionpendientesDTO revisarPendientes(@Param("order_id") Integer order_id);
 }

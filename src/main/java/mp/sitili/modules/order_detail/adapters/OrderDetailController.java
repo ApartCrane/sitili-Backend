@@ -1,9 +1,14 @@
 package mp.sitili.modules.order_detail.adapters;
 
 import mp.sitili.modules.order.entities.Order;
+import mp.sitili.modules.order.use_cases.methods.OrderRepository;
+import mp.sitili.modules.order.use_cases.service.OrderService;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
 import mp.sitili.modules.order_detail.use_cases.dto.DetailsDTO;
+import mp.sitili.modules.order_detail.use_cases.dto.DetallesSellerDTO;
+import mp.sitili.modules.order_detail.use_cases.dto.RevisionpendientesDTO;
 import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
+import mp.sitili.modules.order_detail.use_cases.service.OrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +16,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Controller
 @RequestMapping("/orderDetail")
@@ -24,6 +28,16 @@ public class OrderDetailController {
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private OrderDetailService orderDetailService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('Admin')")
@@ -51,4 +65,53 @@ public class OrderDetailController {
             return new ResponseEntity<>(detalles, HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping("/listOrderDetails")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<List<DetallesSellerDTO>> listarDetallesOrdenesSeller() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<DetallesSellerDTO> detalles = orderDetailService.detalle(userEmail);
+
+        if(!detalles.isEmpty()){
+            return new ResponseEntity<>(detalles, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(detalles, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/statusOrderDetails")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> cambiarEstadoOrderDetails(@RequestBody OrderDetail orderDetail) {
+        List<String> shippingCompanies = new ArrayList<>();
+
+        shippingCompanies.add("UPS");
+        shippingCompanies.add("FedEx");
+        shippingCompanies.add("DHL");
+        shippingCompanies.add("USPS");
+        shippingCompanies.add("Amazon Logistics");
+        shippingCompanies.add("Shopify Shipping");
+        shippingCompanies.add("ShipStation");
+        shippingCompanies.add("WappiCorpsDelivery");
+
+        Boolean detalles = orderDetailService.detalleUpdate("Trafico", orderDetail.getId());
+
+        Integer order_id = orderDetailService.validarOrden(orderDetail.getId());
+        RevisionpendientesDTO orden = orderDetailService.revisarPendientes(order_id);
+        if(orden.getEntregas() == 0){
+            Random random = new Random();
+            int indiceAleatorio = random.nextInt(shippingCompanies.size());
+            String empresaRepartoAleatoria = shippingCompanies.get(indiceAleatorio);
+            orderService.updateDelivery(order_id, empresaRepartoAleatoria, "Trafico");
+        }
+
+        if(detalles){
+            return new ResponseEntity<>("Estado de detalle modificado", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("Error en modificar el estado del detalle", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

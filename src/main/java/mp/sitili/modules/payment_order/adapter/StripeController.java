@@ -108,12 +108,6 @@ public class StripeController {
         return new ResponseEntity<>(paymentStrList.toString(), HttpStatus.OK);
     }
 
-    @PostMapping("paymentStripe")
-    @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> pagoStripe() throws StripeException{
-        return new ResponseEntity<>("Hola", HttpStatus.OK);
-    }
-
     /*
      * @PostMapping("/confirm/{id}")
      * public ResponseEntity<String> confirm(@PathVariable("id") String id) throws
@@ -123,15 +117,6 @@ public class StripeController {
      * return new ResponseEntity<String>(paymentStr, HttpStatus.OK);
      * }
      */
-    @PostMapping("/confirm")
-    @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> confirm(@RequestBody List<String> paymentIntentIds) throws StripeException {
-        List<PaymentIntent> confirmedPaymentIntents = paymentService.confirmPaymentIntents(paymentIntentIds);
-        List<String> paymentStrList = confirmedPaymentIntents.stream()
-                .map(PaymentIntent::toJson)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(paymentStrList.toString(), HttpStatus.OK);
-    }
 
     /*
      * @PostMapping("/cancel/{id}")
@@ -147,6 +132,16 @@ public class StripeController {
     public ResponseEntity<String> cancel(@RequestBody List<String> paymentIntentIds) throws StripeException {
         List<PaymentIntent> cancelledPaymentIntents = paymentService.cancelPaymentIntents(paymentIntentIds);
         List<String> paymentStrList = cancelledPaymentIntents.stream()
+                .map(PaymentIntent::toJson)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(paymentStrList.toString(), HttpStatus.OK);
+    }
+
+    @PostMapping("/confirm")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> confirm(@RequestBody List<String> paymentIntentIds) throws StripeException {
+        List<PaymentIntent> confirmedPaymentIntents = paymentService.confirmPaymentIntents(paymentIntentIds);
+        List<String> paymentStrList = confirmedPaymentIntents.stream()
                 .map(PaymentIntent::toJson)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(paymentStrList.toString(), HttpStatus.OK);
@@ -192,7 +187,7 @@ public class StripeController {
             Optional<Product> productoDetail = productRepository.findById(productId);
             if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
                 if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
-                    OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                    OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice(), "Pendiente");
                     validOrderDetails.add(orderDetail);
                     productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
                     bajarCantidades.add(productoDetail.get());

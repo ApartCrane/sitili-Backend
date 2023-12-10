@@ -251,12 +251,12 @@ public class UserService implements IUserRepository {
         Order orden3 = orderRepository.save(new Order((int) orderRepository.count() + 1, user6, "Entrega", "FEDEX", address2, fecha2));
 
 // Crear detalles de órdenes asociados a productos y órdenes
-        OrderDetail orderDetail1 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto1.get(), 1, producto1.get().getPrice()));
-        OrderDetail orderDetail2 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto2.get(), 2, producto2.get().getPrice()));
-        OrderDetail orderDetail3 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden2, producto1.get(), 3, producto1.get().getPrice()));
-        OrderDetail orderDetail4 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto1.get(), 4, producto1.get().getPrice()));
-        OrderDetail orderDetail5 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 5, producto2.get().getPrice()));
-        OrderDetail orderDetail6 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 6, producto2.get().getPrice()));
+        OrderDetail orderDetail1 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto1.get(), 1, producto1.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail2 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto2.get(), 2, producto2.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail3 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden2, producto1.get(), 3, producto1.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail4 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto1.get(), 4, producto1.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail5 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 5, producto2.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail6 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 6, producto2.get().getPrice(), "Pendiente"));
 
 // Crear relaciones entre órdenes y formas de pago
         paymentOrderRepositry.save(new PaymentOrder((long) ((int) paymentOrderRepositry.count() + 1), orden1, paymentCC1));
