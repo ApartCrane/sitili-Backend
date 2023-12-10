@@ -25,6 +25,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "LEFT JOIN raiting r ON p.id = r.product_id\n" +
             "INNER JOIN data_users du ON u.email = du.user_id\n" +
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
+            "WHERE p.status = true \n" +
             "GROUP BY \n" +
             "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
     public List<Object[]> findAllProducts();
