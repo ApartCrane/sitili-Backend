@@ -1,7 +1,6 @@
 package mp.sitili.modules.raiting.adapters;
 
 import mp.sitili.modules.product.entities.Product;
-import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
@@ -16,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController

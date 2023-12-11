@@ -1,10 +1,7 @@
 package mp.sitili.modules.data_user.use_cases.repository;
 
-import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
 import mp.sitili.modules.data_user.use_cases.dto.UsuariosxMesDTO;
-
-import javax.xml.crypto.Data;
 import java.util.List;
 
 public interface IDataUserRepository {

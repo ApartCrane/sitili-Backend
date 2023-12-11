@@ -2,7 +2,6 @@ package mp.sitili.modules.product.use_cases.methods;
 
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.product.entities.Product;
-import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.user.entities.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -6,7 +6,6 @@ import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.data_user.use_cases.repository.IDataUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service

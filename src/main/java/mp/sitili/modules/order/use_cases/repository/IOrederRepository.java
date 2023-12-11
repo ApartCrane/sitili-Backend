@@ -3,7 +3,6 @@ package mp.sitili.modules.order.use_cases.repository;
 import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
 import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
-import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 
 import java.util.List;
 import java.util.Map;

@@ -1,6 +1,5 @@
 package mp.sitili.modules.shopping_car.use_cases.repository;
 
-import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 
 import java.util.List;

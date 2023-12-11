@@ -1,6 +1,5 @@
 package mp.sitili.modules.shopping_car.adapters;
 
-import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;

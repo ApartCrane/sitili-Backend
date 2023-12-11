@@ -1,7 +1,6 @@
 package mp.sitili.modules.order_detail.adapters;
 
 import mp.sitili.modules.order.entities.Order;
-import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.service.OrderService;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
 import mp.sitili.modules.order_detail.use_cases.dto.DetailsDTO;
@@ -34,9 +33,6 @@ public class OrderDetailController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
 
     @GetMapping("/list")

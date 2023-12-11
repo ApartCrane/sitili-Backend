@@ -1,6 +1,5 @@
 package mp.sitili.modules.shopping_car.use_cases.methods;
 
-import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

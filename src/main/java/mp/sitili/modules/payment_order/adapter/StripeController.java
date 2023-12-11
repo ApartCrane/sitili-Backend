@@ -1,6 +1,5 @@
 package mp.sitili.modules.payment_order.adapter;
 
-import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 
@@ -62,12 +61,6 @@ public class StripeController {
     private ProductRepository productRepository;
 
     @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
-    private OrderDetailService orderDetailService;
-
-    @Autowired
     private AddressService addressService;
 
     @Autowired
@@ -78,9 +71,6 @@ public class StripeController {
 
     @Autowired
     private PaymentOrderRepositry paymentOrderRepositry;
-
-    @Autowired
-    private ShoppingCarService shoppingCarService;
 
     @Autowired
     private ShoppingCarRepository shoppingCarRepository;

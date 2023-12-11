@@ -2,7 +2,6 @@ package mp.sitili.modules.product.adapters;
 
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
-import mp.sitili.modules.category.use_cases.service.CategoryService;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.image_product.entities.ImageProduct;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
@@ -38,9 +37,6 @@ public class ProductController {
 
     @Autowired
     private CategoryRepository categoryRepository;
-
-    @Autowired
-    private CategoryService categoryService;
 
     @Autowired
     private ProductService productService;

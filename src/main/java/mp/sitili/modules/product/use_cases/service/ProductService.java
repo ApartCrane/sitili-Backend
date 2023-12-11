@@ -2,7 +2,6 @@ package mp.sitili.modules.product.use_cases.service;
 
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.product.entities.Product;
-import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.repository.IProductRepository;
 import mp.sitili.modules.user.entities.User;

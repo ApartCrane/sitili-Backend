@@ -1,8 +1,6 @@
 package mp.sitili.modules.image_product.use_cases.methods;
 
-import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.image_product.entities.ImageProduct;
-import mp.sitili.modules.user.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

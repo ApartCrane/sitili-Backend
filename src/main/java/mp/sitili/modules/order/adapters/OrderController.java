@@ -22,9 +22,7 @@ import mp.sitili.modules.payment_order.entities.PaymentOrder;
 import mp.sitili.modules.payment_order.use_cases.methods.PaymentOrderRepositry;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
-import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
-import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -57,9 +54,6 @@ public class OrderController {
     private ProductRepository productRepository;
 
     @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
     private OrderDetailService orderDetailService;
 
     @Autowired
@@ -73,9 +67,6 @@ public class OrderController {
 
     @Autowired
     private PaymentOrderRepositry paymentOrderRepositry;
-
-    @Autowired
-    private ShoppingCarService shoppingCarService;
 
     @Autowired
     private ShoppingCarRepository shoppingCarRepository;

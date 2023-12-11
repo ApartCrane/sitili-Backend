@@ -1,7 +1,6 @@
 package mp.sitili.modules.address.entities;
 
 import mp.sitili.modules.user.entities.User;
-
 import javax.persistence.*;
 
 @Entity
