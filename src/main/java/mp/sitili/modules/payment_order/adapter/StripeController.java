@@ -87,16 +87,6 @@ public class StripeController {
      * return new ResponseEntity<String>(paymentStr, HttpStatus.OK);
      * }
      */
-    @PostMapping("/paymentintent")
-    @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> payment(@RequestBody List<PaymentIntentDto> paymentIntentDtoList)
-            throws StripeException {
-        List<PaymentIntent> paymentIntents = paymentService.paymentIntents(paymentIntentDtoList);
-        List<String> paymentStrList = paymentIntents.stream()
-                .map(PaymentIntent::toJson)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(paymentStrList.toString(), HttpStatus.OK);
-    }
 
     /*
      * @PostMapping("/confirm/{id}")
@@ -117,6 +107,18 @@ public class StripeController {
      * return new ResponseEntity<String>(paymentStr, HttpStatus.OK);
      * }
      */
+
+    @PostMapping("/paymentintent")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> payment(@RequestBody List<PaymentIntentDto> paymentIntentDtoList)
+            throws StripeException {
+        List<PaymentIntent> paymentIntents = paymentService.paymentIntents(paymentIntentDtoList);
+        List<String> paymentStrList = paymentIntents.stream()
+                .map(PaymentIntent::toJson)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(paymentStrList.toString(), HttpStatus.OK);
+    }
+
     @PostMapping("/cancel")
     @PreAuthorize("hasRole('User')")
     public ResponseEntity<String> cancel(@RequestBody List<String> paymentIntentIds) throws StripeException {
@@ -137,31 +139,29 @@ public class StripeController {
         return new ResponseEntity<>(paymentStrList.toString(), HttpStatus.OK);
     }
 
-    @PostMapping("/saleCar")
+    @GetMapping("/saleCar")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> comprarCarrito(@RequestBody PaymentCC paymentCC) {
+    public ResponseEntity<String> compraWeb() throws StripeException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         User user = userRepository.findById(userEmail).orElse(null);
-
-        if (user == null) {
-            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+        if(user == null){
+            return new ResponseEntity<>("Error al encontrar al usuario", HttpStatus.NOT_FOUND);
         }
 
         List<Map<String, Object>> carrito = orderService.buscarTodo(userEmail);
-        Address direccion = addressService.buscarDir(paymentCC.getAddress_id(), userEmail);
-        PaymentCC pago = paymentCCService.findById((Integer) paymentCC.getCc_id());
-
-        if (carrito.isEmpty()) {
-            return new ResponseEntity<>("El carrito está vacío", HttpStatus.BAD_REQUEST);
+        if(carrito == null){
+            return new ResponseEntity<>("Error al encontrar el carrito", HttpStatus.NOT_FOUND);
         }
 
-        if (direccion == null) {
-            return new ResponseEntity<>("Dirección no encontrada", HttpStatus.NOT_FOUND);
+        Address direccion = addressService.dirActXusuario(userEmail);
+        if(direccion == null){
+            return new ResponseEntity<>("Error al encontrar la direccion", HttpStatus.NOT_FOUND);
         }
 
-        if (pago == null) {
-            return new ResponseEntity<>("Forma de pago no asociada", HttpStatus.NOT_FOUND);
+        PaymentCC pago = paymentCCService.tarjetaXusuario(userEmail);
+        if(pago == null){
+            return new ResponseEntity<>("Error al encontrar el metodo de pago", HttpStatus.NOT_FOUND);
         }
 
         Order orden = new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", direccion, new Timestamp(System.currentTimeMillis()));
@@ -169,6 +169,7 @@ public class StripeController {
 
         List<OrderDetail> validOrderDetails = new ArrayList<>();
         List<Product> bajarCantidades = new ArrayList<>();
+        List<PaymentIntentDto> stripeIntent = new ArrayList<>();
 
         for (Map<String, Object> orderDetailData : carrito) {
             Integer productId = (Integer) orderDetailData.get("product_id");
@@ -181,6 +182,13 @@ public class StripeController {
                     validOrderDetails.add(orderDetail);
                     productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
                     bajarCantidades.add(productoDetail.get());
+
+                    PaymentIntentDto paymentIntent = new PaymentIntentDto();
+                    paymentIntent.setDescription(productoDetail.get().getName());
+                    paymentIntent.setAmount((int) (productoDetail.get().getPrice() * 100));
+                    paymentIntent.setCurrency(PaymentIntentDto.Currency.mxn);
+
+                    stripeIntent.add(paymentIntent);
                 } else {
                     orderRepository.delete(orden);
                     return new ResponseEntity<>("La cantidad excede el stock disponible para el producto: " + productoDetail.get().getName(), HttpStatus.BAD_REQUEST);
@@ -191,13 +199,36 @@ public class StripeController {
             }
         }
 
-        // Guardar detalles de orden, actualizar cantidades y limpiar carrito
-        orderDetailRepository.saveAll(validOrderDetails);
-        productRepository.saveAll(bajarCantidades);
-        shoppingCarRepository.deleteAllCar(userEmail);
-        paymentOrderRepositry.save(new PaymentOrder(paymentCCRepository.count() + 1, orden, pago));
+        List<PaymentIntent> paymentIntents = paymentService.paymentIntents(stripeIntent);
 
-        return new ResponseEntity<>("Compra realizada con éxito", HttpStatus.OK);
+        if (!paymentIntents.isEmpty()) {
+            List<String> paymentIntentIds = new ArrayList<>();
+
+            for (PaymentIntent paymentIntent : paymentIntents) {
+                paymentIntentIds.add(paymentIntent.getId());
+            }
+
+            List<PaymentIntent> confirmedPaymentIntents = paymentService.confirmPaymentIntents(paymentIntentIds);
+
+            if(!confirmedPaymentIntents.isEmpty()){
+                List<String> paymentStrList = confirmedPaymentIntents.stream().map(PaymentIntent::toJson).collect(Collectors.toList());
+
+                orderDetailRepository.saveAll(validOrderDetails);
+                productRepository.saveAll(bajarCantidades);
+                shoppingCarRepository.deleteAllCar(userEmail);
+                paymentOrderRepositry.save(new PaymentOrder(paymentCCRepository.count() + 1, orden, pago));
+                return new ResponseEntity<>("Compra realizada con exitoso", HttpStatus.OK);
+            }else{
+                List<PaymentIntent> cancelledPaymentIntents = paymentService.cancelPaymentIntents(paymentIntentIds);
+                orderRepository.delete(orden);
+                return new ResponseEntity<>("Error al comprobar el pago", HttpStatus.OK);
+            }
+
+        } else {
+            orderRepository.delete(orden);
+            return new ResponseEntity<>("Error al comprobar el pago", HttpStatus.OK);
+        }
+
     }
 
 }
