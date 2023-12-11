@@ -1,6 +1,5 @@
 package mp.sitili.modules.user.use_cases.methods;
 
-import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;

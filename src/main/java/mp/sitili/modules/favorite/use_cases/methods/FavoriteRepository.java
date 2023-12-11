@@ -40,4 +40,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, String> {
 
     @Query(value = "SELECT * FROM favorities WHERE id = :id", nativeQuery = true)
     public Favorite findById1(@Param("id") Integer id);
+
+    @Modifying
+    @Query(value = "DELETE FROM favorities WHERE product_id = :product_id", nativeQuery = true)
+    void deleteTodos(@Param("product_id") Integer product_id);
 }

@@ -2,7 +2,6 @@ package mp.sitili.modules.favorite.entities;
 
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.user.entities.User;
-
 import javax.persistence.*;
 
 @Entity

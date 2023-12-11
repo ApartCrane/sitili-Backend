@@ -1,9 +1,6 @@
 package mp.sitili.modules.order_detail.use_cases.service;
 
-import mp.sitili.modules.order_detail.use_cases.dto.DetailsDTO;
-import mp.sitili.modules.order_detail.use_cases.dto.PedidosAnualesDTO;
-import mp.sitili.modules.order_detail.use_cases.dto.VentasAnualesDTO;
-import mp.sitili.modules.order_detail.use_cases.dto.VentasDTO;
+import mp.sitili.modules.order_detail.use_cases.dto.*;
 import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
 import mp.sitili.modules.order_detail.use_cases.repository.IOrderDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,32 @@ public class OrderDetailService implements IOrderDetailRepository {
     @Override
     public List<DetailsDTO> details(String userEmail, Integer id){
         return orderDetailRepository.details(userEmail, id);
+    }
+
+    @Override
+    public  List<DetallesSellerDTO> detalle(String sellerEmail){
+        return orderDetailRepository.detalle(sellerEmail);
+    }
+
+    @Override
+    public boolean detalleUpdate(String estado, int id) {
+        try {
+            orderDetailRepository.detalleUpdate(estado, id);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Integer validarOrden(Integer id){
+        return orderDetailRepository.validarOrden(id);
+    }
+
+    @Override
+    public RevisionpendientesDTO revisarPendientes(Integer order_id){
+        return orderDetailRepository.revisarPendientes( order_id);
     }
 
 }

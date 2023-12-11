@@ -1,6 +1,5 @@
 package mp.sitili.modules.shopping_car.use_cases.methods;
 
-import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -68,5 +67,9 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
     @Modifying
     @Query(value = "DELETE FROM shopping_car WHERE user_id = :user_id", nativeQuery = true)
     void deleteAllCar(@Param("user_id") String user_id);
+
+    @Modifying
+    @Query(value = "DELETE FROM shopping_car WHERE product_id = :product_id", nativeQuery = true)
+    void deleteTodos(@Param("product_id") Integer product_id);
 
 }

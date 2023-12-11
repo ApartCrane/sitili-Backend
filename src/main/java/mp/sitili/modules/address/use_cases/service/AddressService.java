@@ -5,7 +5,6 @@ import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.repository.IAddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service

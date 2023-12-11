@@ -2,7 +2,7 @@ package mp.sitili.modules.product.adapters;
 
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
-import mp.sitili.modules.category.use_cases.service.CategoryService;
+import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.image_product.entities.ImageProduct;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.product.entities.Product;
@@ -10,6 +10,7 @@ import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
+import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
@@ -38,9 +39,6 @@ public class ProductController {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
     private ProductService productService;
 
     @Autowired
@@ -48,6 +46,12 @@ public class ProductController {
 
     @Autowired
     private AWSS3ServiceImp awss3ServiceImp;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private ShoppingCarRepository shoppingCarRepository;
 
     @Autowired
     private ImageProductService imageProductService;
@@ -199,7 +203,7 @@ public class ProductController {
     @PutMapping("/update")
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<String> actualizarProductoConImagenes(@RequestPart("productData") Map<String, Object> productData,
-                                                             @RequestPart(name = "files", required = false) List<MultipartFile> files) {
+                                                                @RequestPart(name = "files", required = false) List<MultipartFile> files) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
         Integer contador = 0;
@@ -208,41 +212,49 @@ public class ProductController {
             Integer product_id = (Integer) productData.get("product_id");
             String name = (String) productData.get("name");
             int stock = (int) productData.get("stock");
-            System.out.println(productData.get("price"));
-            String price = (String) productData.get("price");
-            Double price1 = Double.valueOf(price);
+            Object priceObject = productData.get("price");
+            Double price1 = null;
+            if (priceObject instanceof Integer) {
+                Integer priceInt = (Integer) priceObject;
+                String priceStr = String.valueOf(priceInt);
+                price1 = Double.valueOf(priceStr);
+            } else if (priceObject instanceof String) {
+                String priceStr = (String) priceObject;
+                price1 = Double.valueOf(priceStr);
+            }
             String features = (String) productData.get("features");
-            int categoryId = (int) productData.get("category_id");
-            Category category = categoryRepository.getCatById(categoryId);
+            Optional<Product> prod = productRepository.findById(product_id);
             User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
+
             Date date = new Date();
             Timestamp timestamp = new Timestamp(date.getTime());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Timestamp registerProduct = Timestamp.valueOf(sdf.format(timestamp));
 
-            Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, category, user, registerProduct, true));
+            Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, prod.get().getCategory(), user, registerProduct, true));
+
             if (productSaved != null) {
-
+                System.out.println(files);
                 if (files != null && !files.isEmpty()) {
-
                     for (MultipartFile file : files) {
-
                         String key = awss3ServiceImp.uploadFile(file);
                         String url = awss3ServiceImp.getObjectUrl(key);
-                        if(imageProductService.saveImgs(url, productSaved.getId())){
+                        if (imageProductService.saveImgs(url, productSaved.getId())) {
                             contador++;
                         }
-
                     }
+                    return new ResponseEntity<>("Producto actualizado exitosamente, se cargaron " + contador + " de " + files.size() + " imagenes correctamente", HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("Producto actualizado sin imagenes", HttpStatus.OK);
                 }
-                return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ files.size() + " imagenes correctamente", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Error al actualizar producto", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PutMapping("/deleteImages")
     @PreAuthorize("hasRole('Seller')")
@@ -275,6 +287,31 @@ public class ProductController {
         } else {
             return new ResponseEntity<>("Los datos del producto son inválidos", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<String> bajaLogica(@RequestBody Product product) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        Optional<Product> productSaved = productRepository.findById(product.getId());
+
+        if(productSaved.isPresent()){
+            if(productSaved.get().getStatus()){
+                favoriteRepository.deleteTodos(productSaved.get().getId());
+                shoppingCarRepository.deleteTodos(productSaved.get().getId());
+                productRepository.bajaLogica(productSaved.get().getId(), false, sellerEmail);
+                return new ResponseEntity<>("Producto dado de Baja", HttpStatus.OK);
+            }else{
+                productRepository.bajaLogica(productSaved.get().getId(), true, sellerEmail);
+                return new ResponseEntity<>("Producto dado de Alta", HttpStatus.OK);
+            }
+        }else{
+            return new ResponseEntity<>("Producto no encontrado", HttpStatus.NOT_FOUND);
+        }
+
+
     }
 
 }

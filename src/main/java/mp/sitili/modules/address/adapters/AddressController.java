@@ -3,7 +3,6 @@ package mp.sitili.modules.address.adapters;
 import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.service.AddressService;
-import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

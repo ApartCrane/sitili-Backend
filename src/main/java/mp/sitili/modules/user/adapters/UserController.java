@@ -1,6 +1,5 @@
 package mp.sitili.modules.user.adapters;
 
-import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;

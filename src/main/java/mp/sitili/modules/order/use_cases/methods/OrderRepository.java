@@ -4,7 +4,6 @@ import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
 import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
-import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

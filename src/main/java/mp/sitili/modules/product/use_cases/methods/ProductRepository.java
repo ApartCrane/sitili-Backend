@@ -2,7 +2,6 @@ package mp.sitili.modules.product.use_cases.methods;
 
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.product.entities.Product;
-import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.user.entities.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +24,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "LEFT JOIN raiting r ON p.id = r.product_id\n" +
             "INNER JOIN data_users du ON u.email = du.user_id\n" +
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
+            "WHERE p.status = true \n" +
             "GROUP BY \n" +
             "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
     public List<Object[]> findAllProducts();
@@ -83,5 +83,11 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
 
     @Query(value = "SELECT * FROM product WHERE id = :id", nativeQuery = true)
     public Product findOnlyById(@Param("id") Integer id);
+
+    @Modifying
+    @Query(value = "UPDATE product SET status = :status WHERE user_id = :sellerEmail && id = :id", nativeQuery = true)
+    void bajaLogica(@Param("id") Integer id,
+                    @Param("status") boolean status,
+                    @Param("sellerEmail") String sellerEmail);
 
 }

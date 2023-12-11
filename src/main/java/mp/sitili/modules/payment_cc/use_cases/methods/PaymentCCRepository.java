@@ -1,12 +1,10 @@
 package mp.sitili.modules.payment_cc.use_cases.methods;
 
-import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Transactional

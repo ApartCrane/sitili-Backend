@@ -22,9 +22,7 @@ import mp.sitili.modules.payment_order.entities.PaymentOrder;
 import mp.sitili.modules.payment_order.use_cases.methods.PaymentOrderRepositry;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
-import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
-import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -57,9 +54,6 @@ public class OrderController {
     private ProductRepository productRepository;
 
     @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
     private OrderDetailService orderDetailService;
 
     @Autowired
@@ -73,9 +67,6 @@ public class OrderController {
 
     @Autowired
     private PaymentOrderRepositry paymentOrderRepositry;
-
-    @Autowired
-    private ShoppingCarService shoppingCarService;
 
     @Autowired
     private ShoppingCarRepository shoppingCarRepository;
@@ -170,7 +161,7 @@ public class OrderController {
 
                         Order orden = orderRepository.save(new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", address, dateOrder));
                         if (orden != null) {
-                            OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, producto.get(), (Integer) productData.get("quantity"), producto.get().getPrice()));
+                            OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, producto.get(), (Integer) productData.get("quantity"), producto.get().getPrice(), "Pendiente"));
                             if (orderDetail != null) {
                                 producto.get().setStock(producto.get().getStock() - (Integer) productData.get("quantity"));
                                 productRepository.save(producto.get());
@@ -224,7 +215,7 @@ public class OrderController {
                         Optional<Product> productoDetail = productRepository.findById(productId);
                         if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
                             if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
-                                OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                                OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice(), "Pendiente");
                                 validOrderDetails.add(orderDetail);
                                 productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
                                 bajarCantidades.add(productoDetail.get());
@@ -294,7 +285,7 @@ public class OrderController {
             Optional<Product> productoDetail = productRepository.findById(productId);
             if (productoDetail.isPresent() && productoDetail.get().getStatus()) {
                 if (productoDetail.get().getStock() > 0 && quantity > 0 && quantity <= productoDetail.get().getStock()) {
-                    OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice());
+                    OrderDetail orderDetail = new OrderDetail(null, orden, productoDetail.get(), quantity, productoDetail.get().getPrice(), "Prendiente");
                     validOrderDetails.add(orderDetail);
                     productoDetail.get().setStock(productoDetail.get().getStock() - quantity);
                     bajarCantidades.add(productoDetail.get());

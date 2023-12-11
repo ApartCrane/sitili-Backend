@@ -4,7 +4,6 @@ import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
-import mp.sitili.modules.data_user.entities.DataUser;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
@@ -22,7 +21,6 @@ import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.raiting.entities.Raiting;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
-import mp.sitili.modules.resetPassword.entities.PasswordResetToken;
 import mp.sitili.modules.resetPassword.use_cases.service.PasswordResetTokenService;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
@@ -251,12 +249,12 @@ public class UserService implements IUserRepository {
         Order orden3 = orderRepository.save(new Order((int) orderRepository.count() + 1, user6, "Entrega", "FEDEX", address2, fecha2));
 
 // Crear detalles de órdenes asociados a productos y órdenes
-        OrderDetail orderDetail1 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto1.get(), 1, producto1.get().getPrice()));
-        OrderDetail orderDetail2 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto2.get(), 2, producto2.get().getPrice()));
-        OrderDetail orderDetail3 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden2, producto1.get(), 3, producto1.get().getPrice()));
-        OrderDetail orderDetail4 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto1.get(), 4, producto1.get().getPrice()));
-        OrderDetail orderDetail5 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 5, producto2.get().getPrice()));
-        OrderDetail orderDetail6 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 6, producto2.get().getPrice()));
+        OrderDetail orderDetail1 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto1.get(), 1, producto1.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail2 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden1, producto2.get(), 2, producto2.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail3 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden2, producto1.get(), 3, producto1.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail4 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto1.get(), 4, producto1.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail5 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 5, producto2.get().getPrice(), "Pendiente"));
+        OrderDetail orderDetail6 = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden3, producto2.get(), 6, producto2.get().getPrice(), "Pendiente"));
 
 // Crear relaciones entre órdenes y formas de pago
         paymentOrderRepositry.save(new PaymentOrder((long) ((int) paymentOrderRepositry.count() + 1), orden1, paymentCC1));

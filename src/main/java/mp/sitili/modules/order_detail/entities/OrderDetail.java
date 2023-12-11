@@ -26,17 +26,29 @@ public class OrderDetail {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "status")
+    private String status;
 
-    public OrderDetail(Integer id, Order order, Product product, Integer quantity, Double price) {
+
+    public OrderDetail(Integer id, Order order, Product product, Integer quantity, Double price, String status) {
         this.id = id;
         this.order = order;
         this.product = product;
         this.quantity = quantity;
         this.price = price;
+        this.status = status;
     }
 
     public OrderDetail() {
 
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Integer getId() {

@@ -1,8 +1,5 @@
 package mp.sitili.modules.shopping_car.use_cases.service;
 
-
-import mp.sitili.modules.favorite.entities.Favorite;
-import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.repository.IShoppingCarRepository;
