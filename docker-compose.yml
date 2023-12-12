@@ -11,6 +11,7 @@ services:
       - db
     networks:
       - mi-red
+
   db:
     image: mysql:8.0
     ports:
@@ -21,7 +22,13 @@ services:
     hostname: db
     networks:
       - mi-red
+    volumes:
+      - db_data:/var/lib/mysql
 
 networks:
   mi-red:
     driver: bridge
+
+volumes:
+  db_data:
+    driver: local
