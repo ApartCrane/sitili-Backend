@@ -8,7 +8,6 @@ import mp.sitili.modules.order_detail.use_cases.dto.DetallesSellerDTO;
 import mp.sitili.modules.order_detail.use_cases.dto.RevisionpendientesDTO;
 import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
 import mp.sitili.modules.order_detail.use_cases.service.OrderDetailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -25,14 +23,17 @@ import java.util.Random;
 @RequestMapping("/orderDetail")
 public class OrderDetailController {
 
-    @Autowired
-    private OrderDetailRepository orderDetailRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
-    @Autowired
-    private OrderDetailService orderDetailService;
+    private final OrderDetailService orderDetailService;
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderDetailController(OrderDetailRepository orderDetailRepository, OrderDetailService orderDetailService, OrderService orderService) {
+        this.orderDetailRepository = orderDetailRepository;
+        this.orderDetailService = orderDetailService;
+        this.orderService = orderService;
+    }
 
 
     @GetMapping("/list")
@@ -92,7 +93,7 @@ public class OrderDetailController {
         shippingCompanies.add("ShipStation");
         shippingCompanies.add("WappiCorpsDelivery");
 
-        Boolean detalles = orderDetailService.detalleUpdate("Trafico", orderDetail.getId());
+        boolean detalles = orderDetailService.detalleUpdate("Trafico", orderDetail.getId());
 
         Integer order_id = orderDetailService.validarOrden(orderDetail.getId());
         RevisionpendientesDTO orden = orderDetailService.revisarPendientes(order_id);

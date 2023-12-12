@@ -29,7 +29,7 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "INNER JOIN shopping_car sc ON sc.product_id = p.id\n" +
             "WHERE sc.user_id = :email && p.status = TRUE\n" +
             "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, sc.id", nativeQuery = true)
-    public List<Object[]> carXusuario(@Param("email") String email);
+     List<Object[]> carXusuario(@Param("email") String email);
 
     @Query(value = "SELECT \n" +
             "    sc.id AS car_id, sc.quantity AS cantidad , p.name AS producto,\n" +
@@ -48,17 +48,17 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "INNER JOIN shopping_car sc ON sc.product_id = p.id\n" +
             "WHERE sc.user_id = :email && p.status = TRUE\n" +
             "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, sc.id", nativeQuery = true)
-    public List<Object[]> carXusuariob(@Param("email") String email);
+     List<Object[]> carXusuariob(@Param("email") String email);
 
     @Modifying
     @Query(value = "DELETE FROM shopping_car WHERE user_id = :user_id AND id = :product_id", nativeQuery = true)
     void deleteCar(@Param("user_id") String user_id, @Param("product_id") Integer product_id);
 
     @Query(value = "SELECT * FROM shopping_car WHERE product_id = :product_id && user_id = :user_id", nativeQuery = true)
-    public ShoppingCar validarExis(@Param("product_id") Integer product_id, @Param("user_id") String user_id);
+     ShoppingCar validarExis(@Param("product_id") Integer product_id, @Param("user_id") String user_id);
 
     @Query(value = "SELECT * FROM shopping_car WHERE id = :id", nativeQuery = true)
-    public ShoppingCar findById1(@Param("id") Integer id);
+     ShoppingCar findById1(@Param("id") Integer id);
 
     @Modifying
     @Query(value = "UPDATE shopping_car SET quantity = :quantity WHERE id = :car_id", nativeQuery = true)

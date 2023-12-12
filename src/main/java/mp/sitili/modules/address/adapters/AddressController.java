@@ -5,7 +5,6 @@ import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.service.AddressService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,21 +12,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Controller
 @RequestMapping("/address")
 public class AddressController {
 
-    @Autowired
-    private AddressService addressService;
+    private final AddressService addressService;
 
-    @Autowired
-    private AddressRepository addressRepository;
+    private final AddressRepository addressRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public AddressController(AddressService addressService, AddressRepository addressRepository, UserRepository userRepository) {
+        this.addressService = addressService;
+        this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
+    }
 
     @GetMapping("/lists")
     @PreAuthorize("hasRole('User')")
@@ -39,7 +40,7 @@ public class AddressController {
         if(direcciones != null){
             return new ResponseEntity<>(direcciones, HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(direcciones, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 
@@ -54,7 +55,7 @@ public class AddressController {
         if(direccion != null){
             return new ResponseEntity<>(direccion, HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(direccion, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 
@@ -113,7 +114,7 @@ public class AddressController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         if(user != null){
             Boolean revision = addressService.deleteAddress(address.getId(), user.getEmail());
-            if(revision != true){
+            if(revision){
                 return new ResponseEntity<>("Direccion eliminada correctamente ", HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("Error al aliminar Direccion", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -16,7 +16,6 @@ import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.service.UserService;
 import mp.sitili.utils.aws.AWSS3ServiceImp;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,35 +31,38 @@ import java.util.*;
 @RequestMapping("/product")
 public class ProductController {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private AWSS3ServiceImp awss3ServiceImp;
+    private final AWSS3ServiceImp awss3ServiceImp;
 
-    @Autowired
-    private FavoriteRepository favoriteRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    @Autowired
-    private ShoppingCarRepository shoppingCarRepository;
+    private final ShoppingCarRepository shoppingCarRepository;
 
-    @Autowired
-    private ImageProductService imageProductService;
+    private final ImageProductService imageProductService;
 
-    @Autowired
-    private RaitingRepository raitingRepository;
+    private final RaitingRepository raitingRepository;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public ProductController(ProductRepository productRepository, CategoryRepository categoryRepository, ProductService productService, UserRepository userRepository, AWSS3ServiceImp awss3ServiceImp, FavoriteRepository favoriteRepository, ShoppingCarRepository shoppingCarRepository, ImageProductService imageProductService, RaitingRepository raitingRepository, UserService userService) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.productService = productService;
+        this.userRepository = userRepository;
+        this.awss3ServiceImp = awss3ServiceImp;
+        this.favoriteRepository = favoriteRepository;
+        this.shoppingCarRepository = shoppingCarRepository;
+        this.imageProductService = imageProductService;
+        this.raitingRepository = raitingRepository;
+        this.userService = userService;
+    }
 
 
     @GetMapping("/listAll")
@@ -103,13 +105,7 @@ public class ProductController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
 
-        List<Map<String, Object>> products = productService.findAllxVend(sellerEmail);
-
-        if(products != null){
-            return new ResponseEntity<>(products, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(products, HttpStatus.BAD_REQUEST);
-        }
+        return getListResponseEntity(sellerEmail);
     }
 
     @GetMapping("/totSeller")
@@ -131,6 +127,10 @@ public class ProductController {
     @GetMapping("/listSeller")
     public ResponseEntity<List> obtenerTodoProductosxVendedorPublico(@RequestBody User user) {
         String sellerEmail = user.getEmail();
+        return getListResponseEntity(sellerEmail);
+    }
+
+    private ResponseEntity<List> getListResponseEntity(String sellerEmail) {
         List<Map<String, Object>> products = productService.findAllxVend(sellerEmail);
 
         if(products != null){
@@ -158,7 +158,7 @@ public class ProductController {
                                                              @RequestPart(name = "files", required = false) List<MultipartFile> files) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
-        Integer contador = 0;
+        int contador = 0;
 
         if (!productData.isEmpty()) {
             String name = (String) productData.get("name");
@@ -206,7 +206,7 @@ public class ProductController {
                                                                 @RequestPart(name = "files", required = false) List<MultipartFile> files) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
-        Integer contador = 0;
+        int contador = 0;
 
         if (!productData.isEmpty()) {
             Integer product_id = (Integer) productData.get("product_id");
@@ -224,6 +224,9 @@ public class ProductController {
             }
             String features = (String) productData.get("features");
             Optional<Product> prod = productRepository.findById(product_id);
+            if(prod.isEmpty()){
+                return new ResponseEntity<>("Producto no encontrado", HttpStatus.NOT_FOUND);
+            }
             User user = userRepository.findById(String.valueOf(sellerEmail)).orElse(null);
 
             Date date = new Date();
@@ -259,20 +262,12 @@ public class ProductController {
     @PutMapping("/deleteImages")
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<String> eliminarImages(@RequestBody ImageProduct imageProduct) {
-
-        System.out.println(imageProduct);
-        System.out.println(imageProduct.getId());
-        System.out.println(imageProduct.getImageUrl());
-        System.out.println(imageProduct.getProduct());
-
         if (imageProduct != null) {
             Integer product_id = imageProduct.getId();
             String image_url = imageProduct.getImageUrl();
 
             Optional<Product> productSaved = productRepository.findById(product_id);
-            System.out.println(product_id);
-            System.out.println(image_url);
-            System.out.println(productSaved.get());
+
             if (productSaved.isPresent() && image_url != null) {
 
                 if (imageProductService.deleteImage(image_url, product_id)) {

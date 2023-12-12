@@ -33,9 +33,9 @@ public interface UserRepository extends JpaRepository<User, String> {
             "INNER JOIN user_role ur ON u.email = ur.user_id\n" +
             "INNER JOIN role r ON ur.role_id = r.role_name\n" +
             "WHERE u.status = true AND r.role_description LIKE '%Seller%';" , nativeQuery = true)
-    public List<SelectVendedorDTO> findSellers();
+    List<SelectVendedorDTO> findSellers();
 
     @Query(value = "SELECT id, company, first_name, last_name, phone, user_id FROM data_users WHERE user_id = :user_id", nativeQuery = true)
-    public ValidSellerDTO validateCompany(@Param("user_id") String user_id);
+    ValidSellerDTO validateCompany(@Param("user_id") String user_id);
 
 }

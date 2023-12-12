@@ -12,21 +12,17 @@ public interface ICategoryRepository {
 
     List<Category> categoriasNombre(String name);
 
-    boolean createCategory(String name);
-
     boolean getCategoryById(int id);
-
-    Category getNameCategoryById(int id);
 
     boolean getStatusCategory(int id);
 
-    boolean deleteCategory(int id, boolean status);
+    void deleteCategory(int id, boolean status);
 
     boolean updateCategory(int id, String name);
 
-    public List<ProductosxCategoriaDTO> proXcat();
+     List<ProductosxCategoriaDTO> proXcat();
 
-    public List<ProductosxCategoriaDTO> proXcatSell(String sellerEmail);
+     List<ProductosxCategoriaDTO> proXcatSell(String sellerEmail);
 
-    public List<Map<String, Object>> findAllProducts(Integer id);
+     List<Map<String, Object>> findAllProducts(Integer id);
 }

@@ -29,17 +29,17 @@ public interface FavoriteRepository extends JpaRepository<Favorite, String> {
             "INNER JOIN favorities f ON f.product_id = p.id\n" +
             "WHERE f.user_id = :email && p.status = TRUE\n" +
             "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, f.id", nativeQuery = true)
-    public List<Object[]> favXusuario(@Param("email") String email);
+     List<Object[]> favXusuario(@Param("email") String email);
 
     @Modifying
     @Query(value = "DELETE FROM favorities WHERE user_id = :user_id AND id = :fav_id", nativeQuery = true)
     void deleteFav(@Param("user_id") String user_id, @Param("fav_id") Integer fav_id);
 
     @Query(value = "SELECT * FROM favorities WHERE product_id = :product_id && user_id = :user_id", nativeQuery = true)
-    public Favorite validarExis(@Param("product_id") Integer product_id, @Param("user_id") String user_id);
+     Favorite validarExis(@Param("product_id") Integer product_id, @Param("user_id") String user_id);
 
     @Query(value = "SELECT * FROM favorities WHERE id = :id", nativeQuery = true)
-    public Favorite findById1(@Param("id") Integer id);
+     Favorite findById1(@Param("id") Integer id);
 
     @Modifying
     @Query(value = "DELETE FROM favorities WHERE product_id = :product_id", nativeQuery = true)

@@ -9,20 +9,20 @@ import java.util.Map;
 
 public interface IOrederRepository {
 
-    public boolean updateDelivery(int id, String repartidor, String status);
+     boolean updateDelivery(int id, String repartidor, String status);
 
-    public boolean updateRecive(int id, String status);
+     boolean updateRecive(int id, String status);
 
-    public Integer sellerEnvs(String sellerEmail);
+     Integer sellerEnvs(String sellerEmail);
 
-    public Double sellerSales(String sellerEmail);
+     Double sellerSales(String sellerEmail);
 
-    public List<Map<String, Object>> buscarTodo(String userEmail);
+     List<Map<String, Object>> buscarTodo(String userEmail);
 
     List<VentasMesDTO> ventasAnioMonth(String sellerEmail);
 
-    public List<EntregasMesDTO>  enviosAnioMonth(String sellerEmail);
+     List<EntregasMesDTO>  enviosAnioMonth(String sellerEmail);
 
-    public List<OrdersDTO> ordersPerUser(String userEmail);
+     List<OrdersDTO> ordersPerUser(String userEmail);
 
 }

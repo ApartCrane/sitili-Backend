@@ -2,7 +2,7 @@ package mp.sitili.modules.payment_order.use_cases.http;
 
 public class PaymentIntentDto {
     public enum Currency{
-        usd, mxn;
+        usd, mxn
     }
 
     private String description;

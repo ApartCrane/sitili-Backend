@@ -13,22 +13,22 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, String> {
 
     @Query(value = "SELECT * FROM categories WHERE status = true", nativeQuery = true)
-    public List<Category> findAllStatus();
+     List<Category> findAllStatus();
 
     @Query(value = "SELECT * FROM categories WHERE status = true && name LIKE %:name%", nativeQuery = true)
-    public List<Category> categoriasNombre(@Param("name") String name);
+     List<Category> categoriasNombre(@Param("name") String name);
 
     @Query(value = "SELECT id FROM categories WHERE id = :id", nativeQuery = true)
-    public Integer getCategoryById(@Param("id") int id);
+     Integer getCategoryById(@Param("id") int id);
 
     @Query(value = "SELECT * FROM categories WHERE id = :id", nativeQuery = true)
-    public Category getCatById(@Param("id") int id);
+     Category getCatById(@Param("id") int id);
 
     @Query(value = "SELECT * FROM categories WHERE id = :id", nativeQuery = true)
-    public Category getNameCategoryById(@Param("id") int id);
+     Category getNameCategoryById(@Param("id") int id);
 
     @Query(value = "SELECT status FROM categories WHERE id = :id", nativeQuery = true)
-    public boolean getStatusCategory(@Param("id") int id);
+     boolean getStatusCategory(@Param("id") int id);
 
     @Modifying
     @Query(value = "INSERT INTO categories (name, status) VALUES (:name, true)", nativeQuery = true)
@@ -46,14 +46,14 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
             "FROM categories c \n" +
             "LEFT JOIN product p ON p.category_id = c.id\n" +
             "GROUP BY c.id, c.name", nativeQuery = true)
-    public List<ProductosxCategoriaDTO> proXcat();
+     List<ProductosxCategoriaDTO> proXcat();
 
     @Query(value = "SELECT c.name AS \"Categoria\", COUNT(p.id) AS \"Cantidad\"\n" +
             "FROM categories c \n" +
             "LEFT JOIN product p ON p.category_id = c.id\n" +
             "WHERE p.user_id = :sellerEmail\n" +
             "GROUP BY c.id, c.name", nativeQuery = true)
-    public List<ProductosxCategoriaDTO> proXcatSell(@Param("sellerEmail") String sellerEmail);
+     List<ProductosxCategoriaDTO> proXcatSell(@Param("sellerEmail") String sellerEmail);
 
     @Query(value = "SELECT \n" +
             "    p.id AS product_id, \n" +
@@ -76,6 +76,6 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "WHERE p.category_id = :id\n" +
             "GROUP BY p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
-    public List<Object[]> findAllProducts(@Param("id") Integer id);
+     List<Object[]> findAllProducts(@Param("id") Integer id);
 
 }

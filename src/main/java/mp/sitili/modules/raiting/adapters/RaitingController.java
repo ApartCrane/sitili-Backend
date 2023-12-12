@@ -7,7 +7,6 @@ import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
 import mp.sitili.modules.raiting.use_cases.service.RaitingService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,17 +20,20 @@ import java.util.Optional;
 @RequestMapping("/raiting")
 public class RaitingController {
 
-    @Autowired
-    private RaitingRepository raitingRepository;
+    private final RaitingRepository raitingRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private RaitingService raitingService;
+    private final RaitingService raitingService;
+
+    public RaitingController(RaitingRepository raitingRepository, UserRepository userRepository, ProductRepository productRepository, RaitingService raitingService) {
+        this.raitingRepository = raitingRepository;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.raitingService = raitingService;
+    }
 
     @PostMapping("/rate")
     @PreAuthorize("hasRole('User')")
@@ -41,6 +43,11 @@ public class RaitingController {
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> product = productRepository.findById(raiting.getId());
+
+        if(product.isEmpty()){
+            return new ResponseEntity<>("Producto no encontrado", HttpStatus.NOT_FOUND);
+        }
+
         Raiting rate = raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, raiting.getRaiting(), product.get(), user));
 
         if(rate != null && user != null && product.isPresent()){

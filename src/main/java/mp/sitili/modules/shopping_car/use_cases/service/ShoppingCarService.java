@@ -3,16 +3,17 @@ package mp.sitili.modules.shopping_car.use_cases.service;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.repository.IShoppingCarRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
 public class ShoppingCarService implements IShoppingCarRepository {
 
-    @Autowired
-    private ShoppingCarRepository shoppingCarRepository;
+    private final ShoppingCarRepository shoppingCarRepository;
+
+    public ShoppingCarService(ShoppingCarRepository shoppingCarRepository) {
+        this.shoppingCarRepository = shoppingCarRepository;
+    }
 
     @Override
     public List<Map<String, Object>> carXusuario(String email) {
@@ -107,14 +108,5 @@ public class ShoppingCarService implements IShoppingCarRepository {
         return shoppingCarRepository.findById1(id);
     }
 
-    @Override
-    public Boolean deleteAllCar(String user_id){
-        try{
-            shoppingCarRepository.deleteAllCar(user_id);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
-    }
 
 }

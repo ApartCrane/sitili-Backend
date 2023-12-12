@@ -4,7 +4,6 @@ package mp.sitili.modules.favorite.use_cases.service;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.favorite.use_cases.repository.IFavoriteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,8 +11,11 @@ import java.util.*;
 @Service
 public class FavoriteService implements IFavoriteRepository {
 
-    @Autowired
-    private FavoriteRepository favoriteRepository;
+    private final FavoriteRepository favoriteRepository;
+
+    public FavoriteService(FavoriteRepository favoriteRepository) {
+        this.favoriteRepository = favoriteRepository;
+    }
 
     @Override
     public List<Map<String, Object>> favXusuario(String email) {

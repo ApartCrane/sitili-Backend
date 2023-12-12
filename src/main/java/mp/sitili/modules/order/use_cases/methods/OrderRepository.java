@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Transactional
@@ -28,17 +27,17 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "INNER JOIN order_details od  ON o.id = od.order_id\n" +
             "INNER JOIN product p ON od.product_id = p.id\n" +
             "WHERE p.user_id = :sellerEmail && o.status IN(\"Trafico\", \"Entrega\")", nativeQuery = true)
-    public Integer sellerEnvs(String sellerEmail);
+     Integer sellerEnvs(String sellerEmail);
 
     @Query(value = "SELECT SUM(od.price * od.quantity)\n" +
             "FROM orders o\n" +
             "INNER JOIN order_details od ON o.id = od.order_id\n" +
             "INNER JOIN product p ON od.product_id = p.id\n" +
             "WHERE p.user_id = :sellerEmail AND o.status IN ('Trafico', 'Entrega');", nativeQuery = true)
-    public Double sellerSales(String sellerEmail);
+     Double sellerSales(String sellerEmail);
 
     @Query(value = "SELECT id, user_id, product_id, quantity FROM shopping_car WHERE user_id = :userEmail", nativeQuery = true)
-    public List<Object[]>  buscarTodo(@Param("userEmail") String userEmail);
+     List<Object[]>  buscarTodo(@Param("userEmail") String userEmail);
 
     @Query(value = "SELECT \n" +
             "    MONTH(o.date_order) AS mes,\n" +
@@ -64,8 +63,8 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "    (DAY(o.date_order) = DAY(NOW()) OR WEEK(o.date_order) = WEEK(NOW()) OR MONTH(o.date_order) = MONTH(NOW()) OR YEAR(o.date_order) = YEAR(NOW()))\n" +
             "    AND p.user_id = :sellerEmail\n" +
             "GROUP BY mes", nativeQuery = true)
-    public List<EntregasMesDTO>  enviosAnioMonth(@Param("sellerEmail") String sellerEmail);
+     List<EntregasMesDTO>  enviosAnioMonth(@Param("sellerEmail") String sellerEmail);
 
     @Query(value = "SELECT id, date_order, repartidor, status FROM orders WHERE user_id = :userEmail", nativeQuery = true)
-    public List<OrdersDTO> ordersPerUser(@Param("userEmail") String userEmail);
+     List<OrdersDTO> ordersPerUser(@Param("userEmail") String userEmail);
 }

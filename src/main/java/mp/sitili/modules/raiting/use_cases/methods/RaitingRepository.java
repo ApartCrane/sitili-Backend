@@ -18,6 +18,6 @@ public interface RaitingRepository extends JpaRepository<Raiting, String> {
             "    GROUP BY p.id\n" +
             "    HAVING AVG(r.raiting) > 4\n" +
             ") AS productos_con_rating_mayor_a_4", nativeQuery = true)
-    public Integer cal4(@Param("sellerEmail") String sellerEmail);
+     Integer cal4(@Param("sellerEmail") String sellerEmail);
 
 }

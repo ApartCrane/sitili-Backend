@@ -27,7 +27,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "WHERE p.status = true \n" +
             "GROUP BY \n" +
             "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
-    public List<Object[]> findAllProducts();
+     List<Object[]> findAllProducts();
 
     @Query(value = "SELECT \n" +
             "    p.id AS product_id, \n" +
@@ -50,7 +50,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "WHERE p.id = :product_id\n" +
             "GROUP BY p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
-    public List<Object[]> findProduct(@Param("product_id") Integer product_id);
+     List<Object[]> findProduct(@Param("product_id") Integer product_id);
 
     @Query(value = "SELECT p.id AS product_id, p.name AS producto,\n" +
             "    p.price AS precio, p.stock AS cantidad, p.features AS comentarios,\n" +
@@ -66,7 +66,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "WHERE p.user_id = :email\n" +
             "GROUP BY \n" +
             "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
-    public List<Object[]> findAllxVend(@Param("email") String email);
+     List<Object[]> findAllxVend(@Param("email") String email);
 
     @Modifying
     @Query(value = "INSERT INTO product(name, price, stock, features, status, category_id, user_id) " +
@@ -79,10 +79,10 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
                       @Param("user") User user );
 
     @Query(value = "SELECT COUNT(*) FROM product WHERE user_id = :sellerEmail", nativeQuery = true)
-    public Integer countProSel(@Param("sellerEmail") String sellerEmail);
+     Integer countProSel(@Param("sellerEmail") String sellerEmail);
 
     @Query(value = "SELECT * FROM product WHERE id = :id", nativeQuery = true)
-    public Product findOnlyById(@Param("id") Integer id);
+     Product findOnlyById(@Param("id") Integer id);
 
     @Modifying
     @Query(value = "UPDATE product SET status = :status WHERE user_id = :sellerEmail && id = :id", nativeQuery = true)

@@ -5,10 +5,7 @@ import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.repository.IOrederRepository;
-import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,11 +14,11 @@ import java.util.Map;
 @Service
 public class OrderService implements IOrederRepository {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private ShoppingCarRepository shoppingCarRepository;
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     @Override
     public boolean updateDelivery(int id, String repartidor, String status) {
