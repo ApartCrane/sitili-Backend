@@ -76,7 +76,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/listProduct")
+    @PostMapping("/listProduct")
     public ResponseEntity<List> obtenerProducto(@RequestBody Product product) {
         List<Map<String, Object>> products = productService.findProduct(product.getId());
 
