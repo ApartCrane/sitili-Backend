@@ -8,7 +8,6 @@ import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,20 +23,23 @@ import java.util.Optional;
 @RequestMapping("/shoppingCar")
 public class ShoppingCarController {
 
-    @Autowired
-    private ShoppingCarService shoppingCarService;
+    private final ShoppingCarService shoppingCarService;
 
-    @Autowired
-    private ShoppingCarRepository shoppingCarRepository;
+    private final ShoppingCarRepository shoppingCarRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ShoppingCarController(ShoppingCarService shoppingCarService, ShoppingCarRepository shoppingCarRepository, UserRepository userRepository, ProductRepository productRepository, ProductService productService) {
+        this.shoppingCarService = shoppingCarService;
+        this.shoppingCarRepository = shoppingCarRepository;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.productService = productService;
+    }
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('User')")
@@ -78,6 +80,10 @@ public class ShoppingCarController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
 
+        if(producto.isEmpty()){
+            return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.NOT_FOUND);
+        }
+
         ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
 
         if(shopp == null){
@@ -93,7 +99,7 @@ public class ShoppingCarController {
                     return new ResponseEntity<>("Cantidad excedente", HttpStatus.BAD_REQUEST);
                 }
             }else{
-                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.NOT_FOUND);
             }
         }else{
             return new ResponseEntity<>("Prodcuto repetido", HttpStatus.BAD_REQUEST);
@@ -109,6 +115,10 @@ public class ShoppingCarController {
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
+
+        if(producto.isEmpty()){
+            return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.NOT_FOUND);
+        }
 
         ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
 
@@ -140,7 +150,7 @@ public class ShoppingCarController {
 
         if(user != null && shoppingCar1 != null){
             boolean revision = shoppingCarService.deleteCar(user.getEmail(), shoppingCar1.getId());
-            if(revision == true){
+            if(revision){
                 return new ResponseEntity<>("Eliminado de carrito de compras", HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("Error al eliminar", HttpStatus.INTERNAL_SERVER_ERROR);

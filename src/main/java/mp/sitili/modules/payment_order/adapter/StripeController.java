@@ -2,16 +2,13 @@ package mp.sitili.modules.payment_order.adapter;
 
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
-
 import mp.sitili.modules.address.entities.Address;
-import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.service.AddressService;
 import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.service.OrderService;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
 import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
-import mp.sitili.modules.order_detail.use_cases.service.OrderDetailService;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
 import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
 import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
@@ -19,21 +16,17 @@ import mp.sitili.modules.payment_order.entities.PaymentOrder;
 import mp.sitili.modules.payment_order.use_cases.http.PaymentIntentDto;
 import mp.sitili.modules.payment_order.use_cases.methods.PaymentOrderRepositry;
 import mp.sitili.modules.payment_order.use_cases.service.PaymentService;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
-import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,38 +38,41 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/stripe")
 public class StripeController {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private AddressService addressService;
+    private final AddressService addressService;
 
-    @Autowired
-    private OrderDetailRepository orderDetailRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
-    @Autowired
-    private PaymentCCRepository paymentCCRepository;
+    private final PaymentCCRepository paymentCCRepository;
 
-    @Autowired
-    private PaymentOrderRepositry paymentOrderRepositry;
+    private final PaymentOrderRepositry paymentOrderRepositry;
 
-    @Autowired
-    private ShoppingCarRepository shoppingCarRepository;
+    private final ShoppingCarRepository shoppingCarRepository;
 
-    @Autowired
-    private PaymentCCService paymentCCService;
+    private final PaymentCCService paymentCCService;
+
+    public StripeController(OrderService orderService, PaymentService paymentService, OrderRepository orderRepository, UserRepository userRepository, ProductRepository productRepository, AddressService addressService, OrderDetailRepository orderDetailRepository, PaymentCCRepository paymentCCRepository, PaymentOrderRepositry paymentOrderRepositry, ShoppingCarRepository shoppingCarRepository, PaymentCCService paymentCCService) {
+        this.orderService = orderService;
+        this.paymentService = paymentService;
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.addressService = addressService;
+        this.orderDetailRepository = orderDetailRepository;
+        this.paymentCCRepository = paymentCCRepository;
+        this.paymentOrderRepositry = paymentOrderRepositry;
+        this.shoppingCarRepository = shoppingCarRepository;
+        this.paymentCCService = paymentCCService;
+    }
 
     /*
      * @PostMapping("/paymentintent")
@@ -211,19 +207,16 @@ public class StripeController {
             List<PaymentIntent> confirmedPaymentIntents = paymentService.confirmPaymentIntents(paymentIntentIds);
 
             if(!confirmedPaymentIntents.isEmpty()){
-                List<String> paymentStrList = confirmedPaymentIntents.stream().map(PaymentIntent::toJson).collect(Collectors.toList());
-
                 orderDetailRepository.saveAll(validOrderDetails);
                 productRepository.saveAll(bajarCantidades);
                 shoppingCarRepository.deleteAllCar(userEmail);
                 paymentOrderRepositry.save(new PaymentOrder(paymentCCRepository.count() + 1, orden, pago));
                 return new ResponseEntity<>("Compra realizada con exitoso", HttpStatus.OK);
             }else{
-                List<PaymentIntent> cancelledPaymentIntents = paymentService.cancelPaymentIntents(paymentIntentIds);
+                paymentService.cancelPaymentIntents(paymentIntentIds);
                 orderRepository.delete(orden);
                 return new ResponseEntity<>("Error al comprobar el pago", HttpStatus.OK);
             }
-
         } else {
             orderRepository.delete(orden);
             return new ResponseEntity<>("Error al comprobar el pago", HttpStatus.OK);

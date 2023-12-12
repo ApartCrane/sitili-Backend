@@ -5,7 +5,6 @@ import mp.sitili.modules.jwt.entities.JwtResponse;
 import mp.sitili.modules.jwt.use_cases.service.JwtService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +14,14 @@ import java.util.Map;
 @CrossOrigin
 public class JwtController {
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public JwtController(JwtService jwtService, UserService userService) {
+        this.jwtService = jwtService;
+        this.userService = userService;
+    }
 
     @PostMapping({"/authenticate"})
     public ResponseEntity<JwtResponse> createJwtToken(@RequestBody JwtRequest jwtRequest) throws Exception {

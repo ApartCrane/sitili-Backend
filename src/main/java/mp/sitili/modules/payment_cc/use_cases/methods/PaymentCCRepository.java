@@ -18,9 +18,9 @@ public interface PaymentCCRepository extends JpaRepository<PaymentCC, String> {
             "WHERE user_id = :userEmail \n" +
             "ORDER BY id DESC\n" +
             "LIMIT 1;", nativeQuery = true)
-    public PaymentCC tarjetaXusuario(@Param("userEmail") String userEmail);
+    PaymentCC tarjetaXusuario(@Param("userEmail") String userEmail);
 
     @Query(value = "SELECT * FROM payments_cc WHERE id = :id", nativeQuery = true)
-    public PaymentCC findById(@Param("id") Integer id);
+    PaymentCC findById(@Param("id") Integer id);
 
 }

@@ -4,7 +4,6 @@ import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.dto.ProductosxCategoriaDTO;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,11 +17,14 @@ import java.util.Map;
 @RequestMapping("/categories")
 public class CategoryController {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
+
+    public CategoryController(CategoryRepository categoryRepository, CategoryService categoryService) {
+        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
+    }
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('Root') or hasRole('Admin')")
@@ -117,7 +119,7 @@ public class CategoryController {
         if(productos != null){
             return new ResponseEntity<>(productos, HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(productos, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 
@@ -131,7 +133,7 @@ public class CategoryController {
         if(productos != null){
             return new ResponseEntity<>(productos, HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(productos, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 }

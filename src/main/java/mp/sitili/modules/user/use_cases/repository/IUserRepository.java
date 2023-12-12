@@ -9,8 +9,6 @@ public interface IUserRepository {
 
     String sendEmail(String username, String title, String bob);
 
-    boolean bajaLogica(String email, boolean status);
-
     public List<SelectVendedorDTO> findSellers();
 
     public ValidSellerDTO validateCompany(String user_id);

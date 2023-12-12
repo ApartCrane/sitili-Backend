@@ -2,14 +2,16 @@ package mp.sitili.modules.image_product.use_cases.service;
 
 import mp.sitili.modules.image_product.use_cases.methods.ImageProductRepository;
 import mp.sitili.modules.image_product.use_cases.repository.IImageProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ImageProductService implements IImageProductRepository {
 
-    @Autowired
-    private ImageProductRepository imageProductRepository;
+    private final ImageProductRepository imageProductRepository;
+
+    public ImageProductService(ImageProductRepository imageProductRepository) {
+        this.imageProductRepository = imageProductRepository;
+    }
 
     @Override
     public boolean saveImgs(String image_url, Integer product_id) {

@@ -6,7 +6,6 @@ import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.service.UserService;
 import mp.sitili.utils.email.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,16 +19,19 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/resetPassword")
 public class ResetPasswordController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordResetTokenService tokenService;
+    private final PasswordResetTokenService tokenService;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
+
+    public ResetPasswordController(UserService userService, UserRepository userRepository, PasswordResetTokenService tokenService, EmailService emailService) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        this.emailService = emailService;
+    }
 
     @PostMapping("/request")
     public ResponseEntity<String> resetPasswordRequest(@RequestParam("email") String userEmail) {

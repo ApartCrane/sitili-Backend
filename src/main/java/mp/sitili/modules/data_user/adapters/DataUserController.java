@@ -5,7 +5,6 @@ import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
 import mp.sitili.modules.data_user.use_cases.dto.UsuariosxMesDTO;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
 import mp.sitili.modules.data_user.use_cases.service.DataUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,11 +18,14 @@ import java.util.List;
 @RequestMapping("/dataUser")
 public class DataUserController {
 
-    @Autowired
-    private DataUserRepository dataUserRepository;
+    private final DataUserRepository dataUserRepository;
 
-    @Autowired
-    private DataUserService dataUserService;
+    private final DataUserService dataUserService;
+
+    public DataUserController(DataUserRepository dataUserRepository, DataUserService dataUserService) {
+        this.dataUserRepository = dataUserRepository;
+        this.dataUserService = dataUserService;
+    }
 
 
     @GetMapping("/list")

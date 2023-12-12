@@ -2,7 +2,6 @@ package mp.sitili.modules.order.entities;
 
 import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.user.entities.User;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 

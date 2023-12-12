@@ -7,7 +7,6 @@ import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,17 +22,20 @@ import java.util.Optional;
 @RequestMapping("/favorite")
 public class FavoriteController {
 
-    @Autowired
-    private FavoriteRepository favoriteRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    @Autowired
-    private FavoriteService favoriteService;
+    private final FavoriteService favoriteService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    public FavoriteController(FavoriteRepository favoriteRepository, FavoriteService favoriteService, UserRepository userRepository, ProductRepository productRepository) {
+        this.favoriteRepository = favoriteRepository;
+        this.favoriteService = favoriteService;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+    }
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('User')")
@@ -58,6 +60,10 @@ public class FavoriteController {
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
+
+        if(producto.isEmpty()){
+            return new ResponseEntity<>("Producto no encontrado", HttpStatus.BAD_REQUEST);
+        }
 
         Favorite favorite = favoriteService.validarExis(producto.get().getId(), userEmail);
 
@@ -90,7 +96,7 @@ public class FavoriteController {
 
         if(user != null && favorito != null){
             boolean revision = favoriteService.deleteFav(user.getEmail(), favorito.getId());
-            if(revision == true){
+            if(revision){
                 return new ResponseEntity<>("Eliminado de favoritos", HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("Error al eliminar", HttpStatus.INTERNAL_SERVER_ERROR);

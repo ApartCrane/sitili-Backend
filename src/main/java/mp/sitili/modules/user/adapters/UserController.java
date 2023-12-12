@@ -5,7 +5,6 @@ import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,14 +23,17 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserController(PasswordEncoder passwordEncoder, UserService userService, UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
+        this.userRepository = userRepository;
+    }
 
     @PostConstruct
     public void initRoleAndUser() throws ParseException {

@@ -3,19 +3,15 @@ package mp.sitili.modules.address.use_cases.service;
 import mp.sitili.modules.address.entities.Address;
 import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.repository.IAddressRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class AddressService implements IAddressRepository {
 
-    @Autowired
-    private AddressRepository addressRepository;
+    private final AddressRepository addressRepository;
 
-    @Override
-    public List<Address> dirXusuario(String user_id){
-        return addressRepository.dirXusuario(user_id);
+    public AddressService(AddressRepository addressRepository) {
+        this.addressRepository = addressRepository;
     }
 
     @Override

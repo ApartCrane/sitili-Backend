@@ -1,7 +1,6 @@
 package mp.sitili.modules.order.adapters;
 
 import mp.sitili.modules.address.entities.Address;
-import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.service.AddressService;
 import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
@@ -25,7 +24,6 @@ import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,38 +39,41 @@ import java.util.*;
 @RequestMapping("/order")
 public class OrderController {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private OrderDetailService orderDetailService;
+    private final OrderDetailService orderDetailService;
 
-    @Autowired
-    private AddressService addressService;
+    private final AddressService addressService;
 
-    @Autowired
-    private OrderDetailRepository orderDetailRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
-    @Autowired
-    private PaymentCCRepository paymentCCRepository;
+    private final PaymentCCRepository paymentCCRepository;
 
-    @Autowired
-    private PaymentOrderRepositry paymentOrderRepositry;
+    private final PaymentOrderRepositry paymentOrderRepositry;
 
-    @Autowired
-    private ShoppingCarRepository shoppingCarRepository;
+    private final ShoppingCarRepository shoppingCarRepository;
 
-    @Autowired
-    private PaymentCCService paymentCCService;
+    private final PaymentCCService paymentCCService;
+
+    public OrderController(OrderRepository orderRepository, OrderService orderService, UserRepository userRepository, ProductRepository productRepository, OrderDetailService orderDetailService, AddressService addressService, OrderDetailRepository orderDetailRepository, PaymentCCRepository paymentCCRepository, PaymentOrderRepositry paymentOrderRepositry, ShoppingCarRepository shoppingCarRepository, PaymentCCService paymentCCService) {
+        this.orderRepository = orderRepository;
+        this.orderService = orderService;
+        this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.orderDetailService = orderDetailService;
+        this.addressService = addressService;
+        this.orderDetailRepository = orderDetailRepository;
+        this.paymentCCRepository = paymentCCRepository;
+        this.paymentOrderRepositry = paymentOrderRepositry;
+        this.shoppingCarRepository = shoppingCarRepository;
+        this.paymentCCService = paymentCCService;
+    }
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('Admin')")
@@ -258,7 +259,7 @@ public class OrderController {
 
         List<Map<String, Object>> carrito = orderService.buscarTodo(userEmail);
         Address direccion = addressService.buscarDir(paymentCC.getAddress_id(), userEmail);
-        PaymentCC pago = paymentCCService.findById((Integer) paymentCC.getCc_id());
+        PaymentCC pago = paymentCCService.findById(paymentCC.getCc_id());
 
         if (carrito.isEmpty()) {
             return new ResponseEntity<>("El carrito está vacío", HttpStatus.BAD_REQUEST);

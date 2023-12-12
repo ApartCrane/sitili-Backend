@@ -3,16 +3,17 @@ package mp.sitili.modules.order_detail.use_cases.service;
 import mp.sitili.modules.order_detail.use_cases.dto.*;
 import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
 import mp.sitili.modules.order_detail.use_cases.repository.IOrderDetailRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class OrderDetailService implements IOrderDetailRepository {
 
-    @Autowired
-    private OrderDetailRepository orderDetailRepository;
+    private final OrderDetailRepository orderDetailRepository;
+
+    public OrderDetailService(OrderDetailRepository orderDetailRepository) {
+        this.orderDetailRepository = orderDetailRepository;
+    }
 
     @Override
     public VentasDTO totalVentas(){
@@ -27,11 +28,6 @@ public class OrderDetailService implements IOrderDetailRepository {
     @Override
     public List<PedidosAnualesDTO> totalPedidosAnuales(){
         return orderDetailRepository.totalPedidosAnuales();
-    }
-
-    @Override
-    public List<DetailsDTO> details(String userEmail, Integer id){
-        return orderDetailRepository.details(userEmail, id);
     }
 
     @Override

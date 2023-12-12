@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Transactional
@@ -17,7 +16,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "FROM orders o\n" +
             "INNER JOIN order_details od ON o.id = od.order_id\n" +
             "WHERE o.status IN ('Entrega', 'Trafico')", nativeQuery = true)
-    public VentasDTO totalVentas();
+     VentasDTO totalVentas();
 
     @Query(value = "SELECT \n" +
             "    DAY(o.date_order) AS Day,\n" +
@@ -37,7 +36,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "WHERE \n" +
             "    (DAY(o.date_order) = DAY(NOW()) OR WEEK(o.date_order) = WEEK(NOW()) OR MONTH(o.date_order) = MONTH(NOW()) OR YEAR(o.date_order) = YEAR(NOW()))\n" +
             "GROUP BY Day, Week, Month, Anio;", nativeQuery = true)
-    public List<VentasAnualesDTO> totalVentasAnuales();
+     List<VentasAnualesDTO> totalVentasAnuales();
 
     @Query(value = "SELECT \n" +
             "    COALESCE(DAY(o.date_order), 0) AS Day,\n" +
@@ -53,7 +52,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "WHERE \n" +
             "    (DAY(o.date_order) = DAY(NOW()) OR WEEK(o.date_order) = WEEK(NOW()) OR MONTH(o.date_order) = MONTH(NOW()) OR YEAR(o.date_order) = YEAR(NOW()))\n" +
             "GROUP BY Day, Week, Month, Anio;", nativeQuery = true)
-    public List<PedidosAnualesDTO> totalPedidosAnuales();
+     List<PedidosAnualesDTO> totalPedidosAnuales();
 
     @Query(value = "SELECT od.quantity, od.price, p.name, SUM(od.quantity * od.price) AS total\n" +
             "FROM order_details od\n" +
@@ -61,14 +60,14 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "INNER JOIN orders o ON o.id = od.order_id\n" +
             "WHERE o.user_id = :userEmail AND o.id = :id\n" +
             "GROUP BY od.id, p.name, od.quantity, od.price", nativeQuery = true)
-    public List<DetailsDTO> details(@Param("userEmail")String userEmail, @Param("id") Integer id);
+     List<DetailsDTO> details(@Param("userEmail")String userEmail, @Param("id") Integer id);
 
     @Query(value = "SELECT o.id AS orden, od.id AS detalles, p.name AS producto, od.quantity AS cantidad, od.status AS estado\n" +
             "FROM orders o\n" +
             "INNER JOIN order_details od ON o.id = od.order_id\n" +
             "INNER JOIN product p ON p.id = od.product_id\n" +
             "WHERE p.user_id = :sellerEmail", nativeQuery = true)
-    public List<DetallesSellerDTO> detalle(@Param("sellerEmail") String sellerEmail);
+     List<DetallesSellerDTO> detalle(@Param("sellerEmail") String sellerEmail);
 
     @Modifying
     @Query(value = "UPDATE order_details SET status = :estado WHERE id = :id", nativeQuery = true)

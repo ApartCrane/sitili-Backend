@@ -12,17 +12,13 @@ import java.util.List;
 public interface AddressRepository extends JpaRepository<Address, String> {
 
     @Query(value = "SELECT * FROM addresses WHERE user_id = :user_id", nativeQuery = true)
-    public List<Address> dirXusuario(@Param("user_id") String user_id);
+    List<Address> dirXusuario(@Param("user_id") String user_id);
 
-    @Query(value = "SELECT * \n" +
-            "FROM addresses \n" +
-            "WHERE user_id = :user_id \n" +
-            "ORDER BY id DESC\n" +
-            "LIMIT 1;", nativeQuery = true)
-    public Address dirActXusuario(@Param("user_id") String user_id);
+    @Query(value = "SELECT * FROM addresses WHERE user_id = :user_id ORDER BY id DESC LIMIT 1", nativeQuery = true)
+    Address dirActXusuario(@Param("user_id") String user_id);
 
     @Query(value = "SELECT * FROM addresses WHERE id = :id && user_id = :user_id", nativeQuery = true)
-    public Address buscarDir(@Param("id") Integer id, @Param("user_id") String user_id);
+    Address buscarDir(@Param("id") Integer id, @Param("user_id") String user_id);
 
     @Modifying
     @Query(value = "DELETE FROM addresses WHERE id = :id AND user_id = :user_id", nativeQuery = true)

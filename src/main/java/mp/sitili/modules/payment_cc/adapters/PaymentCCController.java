@@ -5,7 +5,6 @@ import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
 import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,14 +18,17 @@ import java.util.List;
 @RequestMapping("/paymentcc")
 public class PaymentCCController {
 
-    @Autowired
-    private PaymentCCService paymentCCService;
+    private final PaymentCCService paymentCCService;
 
-    @Autowired
-    private PaymentCCRepository paymentCCRepository;
+    private final PaymentCCRepository paymentCCRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public PaymentCCController(PaymentCCService paymentCCService, PaymentCCRepository paymentCCRepository, UserRepository userRepository) {
+        this.paymentCCService = paymentCCService;
+        this.paymentCCRepository = paymentCCRepository;
+        this.userRepository = userRepository;
+    }
 
     @GetMapping("/lists")
     @PreAuthorize("hasRole('User')")
