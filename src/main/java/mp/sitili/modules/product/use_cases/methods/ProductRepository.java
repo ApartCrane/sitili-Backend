@@ -17,7 +17,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "    p.price AS precio, p.stock AS cantidad, p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion, p.status AS estado, c.name AS categoria,\n" +
             "    u.email AS vendedor, du.first_name AS nombreVendedor, du.last_name AS apellidoVendedor,\n" +
-            "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes\n" +
+            "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes, du.company AS compania\n" +
             "FROM product p\n" +
             "INNER JOIN categories c ON p.category_id = c.id\n" +
             "INNER JOIN users u ON u.email = p.user_id\n" +
@@ -41,7 +41,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "    u.email AS vendedor, \n" +
             "    du.first_name AS nombreVendedor, \n" +
             "    du.last_name AS apellidoVendedor,\n" +
-            "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes\n" +
+            "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes, du.company AS compania\n" +
             "FROM product p\n" +
             "INNER JOIN categories c ON p.category_id = c.id\n" +
             "INNER JOIN users u ON u.email = p.user_id\n" +
