@@ -1,6 +1,7 @@
 package mp.sitili.modules.category.adapters;
 
 import mp.sitili.modules.category.entities.Category;
+import mp.sitili.modules.category.use_cases.dto.CategoriasDTO;
 import mp.sitili.modules.category.use_cases.dto.ProductosxCategoriaDTO;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.service.CategoryService;
@@ -50,7 +51,7 @@ public class CategoryController {
     }
 
     @GetMapping("/listCategorie")
-    public ResponseEntity<List> obtenerCategoriaFree(@RequestBody Category category) {
+    public ResponseEntity<List> obtenerCategoriaFree(@RequestBody CategoriasDTO category) {
         List<Category> categories = categoryService.categoriasNombre(category.getName());
 
         if(categories != null){
@@ -61,7 +62,7 @@ public class CategoryController {
     }
 
     @PostMapping("/proxcat")
-    public ResponseEntity<List> productosPorCategoria(@RequestBody Category category) {
+    public ResponseEntity<List> productosPorCategoria(@RequestBody CategoriasDTO category) {
         List<Map<String, Object>> categories = categoryService.findAllProducts(category.getId());
 
         if(categories != null){
@@ -74,7 +75,7 @@ public class CategoryController {
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('Root') or hasRole('Admin')")
-    public ResponseEntity<String> createCategory(@RequestBody Category category) {
+    public ResponseEntity<String> createCategory(@RequestBody CategoriasDTO category) {
         Category cat = categoryRepository.save(new Category((int) categoryRepository.count() + 1, category.getName(), true));
         if(cat.getId() != null){
             return new ResponseEntity<>("Categoria creada exitosamente", HttpStatus.CREATED);
@@ -86,7 +87,7 @@ public class CategoryController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('Root') or hasRole('Admin')")
-    public ResponseEntity<String> actualizarCategory(@RequestBody Category category) {
+    public ResponseEntity<String> actualizarCategory(@RequestBody CategoriasDTO category) {
         if(categoryService.getCategoryById(category.getId())){
             if(categoryService.updateCategory(category.getId(), category.getName())){
                 return new ResponseEntity<>("Categoria Actualizada exitosamente", HttpStatus.CREATED);
@@ -101,7 +102,7 @@ public class CategoryController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('Root') or hasRole('Admin')")
-    public ResponseEntity<String> eliminarCategory(@RequestBody Category category) {
+    public ResponseEntity<String> eliminarCategory(@RequestBody CategoriasDTO category) {
         if (categoryService.getStatusCategory(category.getId())) {
             categoryService.deleteCategory(category.getId(), false);
             return new ResponseEntity<>("Categoria dada de baja exitosamente", HttpStatus.OK);

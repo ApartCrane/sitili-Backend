@@ -1,6 +1,7 @@
 package mp.sitili.modules.acept_seller.adapters;
 
 import mp.sitili.modules.acept_seller.entities.AceptSeller;
+import mp.sitili.modules.acept_seller.use_cases.dto.AceptSeller1DTO;
 import mp.sitili.modules.acept_seller.use_cases.dto.AceptSellerDTO;
 import mp.sitili.modules.acept_seller.use_cases.methods.AceptSellerRepository;
 import mp.sitili.modules.user.entities.User;
@@ -46,7 +47,7 @@ public class AceptSellerController {
 
     @PutMapping("/acept")
     @PreAuthorize("hasRole('Root') or hasRole('Admin')")
-    public ResponseEntity<String> aceptarVendedor(@RequestBody User data) {
+    public ResponseEntity<String> aceptarVendedor(@RequestBody AceptSeller1DTO data) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String adminEmail = authentication.getName();
         Optional<User> user = userRepository.findById(data.getEmail());

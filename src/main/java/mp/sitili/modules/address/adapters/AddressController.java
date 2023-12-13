@@ -1,6 +1,7 @@
 package mp.sitili.modules.address.adapters;
 
 import mp.sitili.modules.address.entities.Address;
+import mp.sitili.modules.address.use_cases.dto.AddressDTO;
 import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.address.use_cases.service.AddressService;
 import mp.sitili.modules.user.entities.User;
@@ -61,7 +62,7 @@ public class AddressController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> crearDireccionxUsuarios(@RequestBody Address address) {
+    public ResponseEntity<String> crearDireccionxUsuarios(@RequestBody AddressDTO address) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -85,7 +86,7 @@ public class AddressController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> updateDireccionxUsuarios(@RequestBody Address address) {
+    public ResponseEntity<String> updateDireccionxUsuarios(@RequestBody AddressDTO address) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -108,7 +109,7 @@ public class AddressController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> deleteDireccionxUsuarios(@RequestBody Address address) {
+    public ResponseEntity<String> deleteDireccionxUsuarios(@RequestBody AddressDTO address) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

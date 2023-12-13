@@ -1,6 +1,7 @@
 package mp.sitili.modules.data_user.adapters;
 
 import mp.sitili.modules.data_user.entities.DataUser;
+import mp.sitili.modules.data_user.use_cases.dto.DataUdto;
 import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
 import mp.sitili.modules.data_user.use_cases.dto.UsuariosxMesDTO;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
@@ -82,7 +83,7 @@ public class DataUserController {
 
     @PutMapping("/updateSeller")
     @PreAuthorize("hasRole('Seller')")
-    public ResponseEntity<String> actualizarPorSeller(@RequestBody DataUser dataUser) {
+    public ResponseEntity<String> actualizarPorSeller(@RequestBody DataUdto dataUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -106,7 +107,7 @@ public class DataUserController {
 
     @PutMapping("/updateCompany")
     @PreAuthorize("hasRole('Admin') or hasRole('Seller')")
-    public ResponseEntity<String> actualizarCompany(@RequestBody DataUser dataUser) {
+    public ResponseEntity<String> actualizarCompany(@RequestBody DataUdto dataUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

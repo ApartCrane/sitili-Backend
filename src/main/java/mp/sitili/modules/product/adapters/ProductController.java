@@ -6,6 +6,8 @@ import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.image_product.entities.ImageProduct;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.product.entities.Product;
+import mp.sitili.modules.product.use_cases.dto.PorduDTO;
+import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.raiting.entities.Raiting;
@@ -77,7 +79,7 @@ public class ProductController {
     }
 
     @PostMapping("/listProduct")
-    public ResponseEntity<List> obtenerProducto(@RequestBody Product product) {
+    public ResponseEntity<List> obtenerProducto(@RequestBody PorduDTO product) {
         List<Map<String, Object>> products = productService.findProduct(product.getId());
 
         if(products != null){
