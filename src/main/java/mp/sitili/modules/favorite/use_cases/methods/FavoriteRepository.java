@@ -13,7 +13,7 @@ import java.util.List;
 public interface FavoriteRepository extends JpaRepository<Favorite, String> {
 
     @Query(value = "SELECT \n" +
-            "    p.id AS fav_id, p.name AS producto,\n" +
+            "    f.id AS fav_id, p.name AS producto,\n" +
             "    p.price AS precio, \n" +
             "    p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion,\n" +
