@@ -73,6 +73,8 @@ public class PaymentCCController {
             String cvv = paymentDTO.getCvv();
             String expiryDate = paymentDTO.getExpiryDate();
             String[] parts = expiryDate.split("/");
+            String month = parts[0];
+            String year = parts[1];
 
             PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, cc, month, year, cvv));
 
