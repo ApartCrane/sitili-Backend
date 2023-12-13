@@ -80,10 +80,6 @@ public class ShoppingCarController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
 
-        if(producto.isEmpty()){
-            return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.NOT_FOUND);
-        }
-
         ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
 
         if(shopp == null){
