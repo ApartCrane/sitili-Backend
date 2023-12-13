@@ -80,7 +80,7 @@ public class OrderController {
     public ResponseEntity<List> obtenerTodasLasOrdenes() {
         List<Order> ordenes = orderRepository.findAll();
 
-        if(ordenes != null){
+        if(!ordenes.isEmpty()){
             return new ResponseEntity<>(ordenes, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(ordenes, HttpStatus.BAD_REQUEST);
@@ -92,7 +92,7 @@ public class OrderController {
     public ResponseEntity<List> contarTodasLasOrdenes() {
         List<Order> ordenes = orderRepository.findAll();
 
-        if(ordenes != null){
+        if(!ordenes.isEmpty()){
             return new ResponseEntity<>(ordenes, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(ordenes, HttpStatus.BAD_REQUEST);
@@ -161,9 +161,9 @@ public class OrderController {
                         Timestamp dateOrder = Timestamp.valueOf(sdf.format(timestamp));
 
                         Order orden = orderRepository.save(new Order((int) orderRepository.count() + 1, user, "Pendiente", "No asignado", address, dateOrder));
-                        if (orden != null) {
+                        if (orden.getId() != null && orden.getId() != 0) {
                             OrderDetail orderDetail = orderDetailRepository.save(new OrderDetail((int) orderRepository.count() + 1, orden, producto.get(), (Integer) productData.get("quantity"), producto.get().getPrice(), "Pendiente"));
-                            if (orderDetail != null) {
+                            if (orderDetail.getId() != null && orderDetail.getId() != 0) {
                                 producto.get().setStock(producto.get().getStock() - (Integer) productData.get("quantity"));
                                 productRepository.save(producto.get());
                                 return new ResponseEntity<>("Orden creada con exito, N. Orden " + orden.getId(), HttpStatus.OK);

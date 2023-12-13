@@ -71,11 +71,12 @@ public class AddressController {
                     address.getCountry(), address.getState(), address.getCity(),
                     address.getPostalCode(), address.getMainAddress(), address.getStreetAddress1(),
                     address.getStreetAddress2(), address.getDescription()));
-            if(address1 != null){
-                return new ResponseEntity<>("Direccion agregada correctamente ", HttpStatus.OK);
-            }else{
+            if (address1.getId() != 0 && address1.getId() != null) {
+                return new ResponseEntity<>("Direccion agregada correctamente", HttpStatus.OK);
+            } else {
                 return new ResponseEntity<>("Error al crear Direccion", HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
         }else{
             return new ResponseEntity<>("Datos incorrectos", HttpStatus.BAD_REQUEST);
         }

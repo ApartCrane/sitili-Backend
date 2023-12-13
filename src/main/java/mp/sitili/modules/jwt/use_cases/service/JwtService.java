@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -38,8 +39,16 @@ public class JwtService implements UserDetailsService {
         UserDetails userDetails = loadUserByUsername(email);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
 
-        User user = userRepository.findById(email).get();
-        return new JwtResponse(user, newGeneratedToken);
+        Optional<User> optionalUser = userRepository.findById(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return new JwtResponse(user, newGeneratedToken);
+        } else {
+            // Manejar el caso en el que no se encuentra el usuario
+        }
+
+        return new JwtResponse(null, newGeneratedToken);
+
     }
 
     public JwtResponse createJwtToken(String e, String p) throws Exception {
@@ -50,8 +59,15 @@ public class JwtService implements UserDetailsService {
         UserDetails userDetails = loadUserByUsername(email);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
 
-        User user = userRepository.findById(email).get();
-        return new JwtResponse(user, newGeneratedToken);
+        Optional<User> optionalUser = userRepository.findById(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return new JwtResponse(user, newGeneratedToken);
+        } else {
+            // Manejar el caso en el que no se encuentra el usuario
+        }
+
+        return new JwtResponse(null, newGeneratedToken);
     }
 
     @Override

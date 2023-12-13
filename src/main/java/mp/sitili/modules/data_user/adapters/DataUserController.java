@@ -68,7 +68,7 @@ public class DataUserController {
                 dataUser.getLastName(), dataUser.getPhone(),
                 usuarios.getId(), userEmail);
 
-        if(usuarios != null){
+        if(usuarios.getId() != null && usuarios.getId() != 0){
             if(revision){
                 return new ResponseEntity<>("Usuario actualizado", HttpStatus.OK);
             }else {
@@ -92,7 +92,7 @@ public class DataUserController {
                 dataUser.getLastName(), dataUser.getPhone(),
                 usuarios.getId(), userEmail);
 
-        if(usuarios != null){
+        if(usuarios.getId() != null && usuarios.getId() != 0){
             if(revision){
                 return new ResponseEntity<>("Vendedor actualizado", HttpStatus.OK);
             }else {

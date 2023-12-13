@@ -31,7 +31,7 @@ public class CategoryController {
     public ResponseEntity<List> obtenerTodasCategorias() {
         List<Category> categories = categoryRepository.findAll();
 
-        if(categories != null){
+        if(!categories.isEmpty()){
             return new ResponseEntity<>(categories, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(categories, HttpStatus.BAD_REQUEST);
@@ -76,7 +76,7 @@ public class CategoryController {
     @PreAuthorize("hasRole('Root') or hasRole('Admin')")
     public ResponseEntity<String> createCategory(@RequestBody Category category) {
         Category cat = categoryRepository.save(new Category((int) categoryRepository.count() + 1, category.getName(), true));
-        if(cat != null){
+        if(cat.getId() != null){
             return new ResponseEntity<>("Categoria creada exitosamente", HttpStatus.CREATED);
         }else{
             return new ResponseEntity<>("Error al crear Categoria", HttpStatus.INTERNAL_SERVER_ERROR);

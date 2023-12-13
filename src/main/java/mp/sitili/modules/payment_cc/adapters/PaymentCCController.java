@@ -78,7 +78,7 @@ public class PaymentCCController {
 
             PaymentCC pago = paymentCCRepository.save(new PaymentCC((int) (paymentCCRepository.count() + 1), user, cc, month, year, cvv));
 
-            if (pago != null) {
+            if (pago.getId() != null && pago.getId() != 0) {
                 return new ResponseEntity<>(pago, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(pago, HttpStatus.BAD_REQUEST);
@@ -100,7 +100,7 @@ public class PaymentCCController {
         if(user != null){
             if(paymentCC != null){
                 PaymentCC pago = paymentCCRepository.save(new PaymentCC(paymentCC.getId(), user, paymentCC.getCc(), paymentCC.getMonth(), paymentCC.getYear(), paymentCC.getCvv()));
-                if(pago != null){
+                if(pago.getId() != null){
                     return new ResponseEntity<>("Datos de pago actualizados exitosamente", HttpStatus.OK);
                 }else{
                     return new ResponseEntity<>("Error al actualizar datos de pago", HttpStatus.BAD_REQUEST);

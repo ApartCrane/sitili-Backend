@@ -27,7 +27,7 @@ public class Category {
     }
 
     public Category(String name, boolean status) {
-        this.id = id;
+        this.name = name;
         this.status = status;
     }
 

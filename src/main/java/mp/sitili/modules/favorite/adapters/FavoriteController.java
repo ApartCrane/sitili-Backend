@@ -70,7 +70,7 @@ public class FavoriteController {
         if(favorite == null){
             if(user != null && producto.isPresent()){
                 Favorite fav = favoriteRepository.save(new Favorite((int) (favoriteRepository.count() + 1), user, producto.get()));
-                if(fav != null){
+                if(fav.getId() != null && fav.getId() != 0){
                     return new ResponseEntity<>("Agregado a favoritos", HttpStatus.OK);
                 }else{
                     return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
