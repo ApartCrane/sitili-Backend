@@ -27,7 +27,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "    du.last_name AS apellidoVendedor,\n" +
             "    du.company AS compania,\n" +
             "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes,\n" +
-            "    companies.companies_list\n" +
+            "    COALESCE(companies.companies_list, 'No company') AS companies_list\n" +
             "FROM product p\n" +
             "INNER JOIN categories c ON p.category_id = c.id\n" +
             "INNER JOIN users u ON u.email = p.user_id\n" +
@@ -43,7 +43,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             ") AS companies ON p.id = companies.product_id\n" +
             "WHERE p.status = true \n" +
             "GROUP BY \n" +
-            "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name, du.company;\n", nativeQuery = true)
+            "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name, du.company, companies.companies_list;", nativeQuery = true)
      List<Object[]> findAllProducts();
 
     @Query(value = "SELECT \n" +
