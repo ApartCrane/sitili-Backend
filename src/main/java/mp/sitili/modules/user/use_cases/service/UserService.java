@@ -1,15 +1,22 @@
 package mp.sitili.modules.user.use_cases.service;
 
+import mp.sitili.modules.address.use_cases.methods.AddressRepository;
+import mp.sitili.modules.category.entities.Category;
+import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
+import mp.sitili.modules.product.use_cases.methods.ProductRepository;
+import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.resetPassword.use_cases.service.PasswordResetTokenService;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
+import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.repository.IUserRepository;
 import mp.sitili.utils.email.EmailService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
