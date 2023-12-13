@@ -9,14 +9,6 @@ services:
       - "8090:8090"
     depends_on:
       - db
-    environment:
-      spring.datasource.url: jdbc:mysql://db:3306/WONGSITO?serverTimezone=UTC
-      spring.datasource.username: root
-      spring.datasource.password: root
-      spring.jpa.database-platform: org.hibernate.dialect.MySQL8Dialect
-      spring.sql.init.mode: always
-      spring.jpa.hibernate.ddl-auto: create
-      server.port: 8090
     networks:
       - mi-red
 
@@ -30,7 +22,13 @@ services:
     hostname: db
     networks:
       - mi-red
+    volumes:
+      - db_data:/var/lib/mysql
 
 networks:
   mi-red:
     driver: bridge
+
+volumes:
+  db_data:
+    driver: local
