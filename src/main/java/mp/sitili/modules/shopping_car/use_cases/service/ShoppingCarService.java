@@ -33,8 +33,7 @@ public class ShoppingCarService implements IShoppingCarRepository {
             productData.put("comentarios", row[3]);
             productData.put("calificacion", row[4]);
             productData.put("categoria", row[5]);
-            productData.put("vendedor", row[6]);
-            String imagenesConcatenadas = (String) row[7];
+            String imagenesConcatenadas = (String) row[6];
             if(imagenesConcatenadas == null){
                 productData.put("imagenes", "Aun no cuenta con Imagenes");
             }else{
@@ -65,8 +64,7 @@ public class ShoppingCarService implements IShoppingCarRepository {
             productData.put("comentarios", row[4]);
             productData.put("calificacion", row[5]);
             productData.put("categoria", row[6]);
-            productData.put("vendedor", row[7]);
-            String imagenesConcatenadas = (String) row[8];
+            String imagenesConcatenadas = (String) row[7];
             if(imagenesConcatenadas == null){
                 productData.put("imagenes", "Aun no cuenta con Imagenes");
             }else{

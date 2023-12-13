@@ -35,8 +35,7 @@ public class FavoriteService implements IFavoriteRepository {
             productData.put("comentarios", row[3]);
             productData.put("calificacion", row[4]);
             productData.put("categoria", row[5]);
-            productData.put("vendedor", row[6]);
-            String imagenesConcatenadas = (String) row[7];
+            String imagenesConcatenadas = (String) row[6];
             if(imagenesConcatenadas == null){
                 productData.put("imagenes", "Aun no cuenta con Imagenes");
             }else{
