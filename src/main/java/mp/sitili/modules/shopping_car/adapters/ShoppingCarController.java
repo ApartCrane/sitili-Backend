@@ -8,7 +8,6 @@ import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,8 +25,7 @@ public class ShoppingCarController {
 
     private final ShoppingCarService shoppingCarService;
 
-    @Autowired
-    private ShoppingCarRepository shoppingCarRepository;
+    private final ShoppingCarRepository shoppingCarRepository;
 
     private final UserRepository userRepository;
 
@@ -35,8 +33,9 @@ public class ShoppingCarController {
 
     private final ProductService productService;
 
-    public ShoppingCarController(ShoppingCarService shoppingCarService, UserRepository userRepository, ProductRepository productRepository, ProductService productService) {
+    public ShoppingCarController(ShoppingCarService shoppingCarService,ShoppingCarRepository shoppingCarRepository, UserRepository userRepository, ProductRepository productRepository, ProductService productService) {
         this.shoppingCarService = shoppingCarService;
+        this.shoppingCarRepository = shoppingCarRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.productService = productService;

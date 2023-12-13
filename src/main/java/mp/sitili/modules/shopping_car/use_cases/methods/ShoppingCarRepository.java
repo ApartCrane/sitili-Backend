@@ -18,7 +18,6 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "    p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion,\n" +
             "    c.name AS categoria,\n" +
-            "    du.company AS vendedor, \n" +
             "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes\n" +
             "FROM product p\n" +
             "INNER JOIN categories c ON p.category_id = c.id\n" +
@@ -28,7 +27,7 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "INNER JOIN shopping_car sc ON sc.product_id = p.id\n" +
             "WHERE sc.user_id = :email && p.status = TRUE\n" +
-            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, sc.id", nativeQuery = true)
+            "GROUP BY p.id, p.name, p.price, p.features, c.name, sc.id", nativeQuery = true)
      List<Object[]> carXusuario(@Param("email") String email);
 
     @Query(value = "SELECT \n" +
@@ -37,7 +36,6 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "    p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion,\n" +
             "    c.name AS categoria,\n" +
-            "    du.company AS vendedor, \n" +
             "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes\n" +
             "FROM product p\n" +
             "INNER JOIN categories c ON p.category_id = c.id\n" +
@@ -47,7 +45,7 @@ public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "INNER JOIN shopping_car sc ON sc.product_id = p.id\n" +
             "WHERE sc.user_id = :email && p.status = TRUE\n" +
-            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, sc.id", nativeQuery = true)
+            "GROUP BY p.id, p.name, p.price, p.features, c.name, sc.id", nativeQuery = true)
      List<Object[]> carXusuariob(@Param("email") String email);
 
     @Modifying
