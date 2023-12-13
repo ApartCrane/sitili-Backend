@@ -46,7 +46,6 @@ public class ProductService implements IProductRepository {
                 List<String> listaImagenes = Arrays.asList(imagenesConcatenadas.split(","));
                 productData.put("imagenes", listaImagenes);
             }
-            productData.put("compania", row[12]);
             productList.add(productData);
         }
         return productList;
@@ -82,7 +81,6 @@ public class ProductService implements IProductRepository {
                 List<String> listaImagenes = Arrays.asList(imagenesConcatenadas.split(","));
                 productData.put("imagenes", listaImagenes);
             }
-            productData.put("compania", row[12]);
             productList.add(productData);
         }
         return productList;
