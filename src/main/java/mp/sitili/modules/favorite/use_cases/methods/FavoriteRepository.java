@@ -18,7 +18,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, String> {
             "    p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion,\n" +
             "    c.name AS categoria,\n" +
-            "    du.company AS vendedor, \n" +
             "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes\n" +
             "FROM product p\n" +
             "INNER JOIN categories c ON p.category_id = c.id\n" +
@@ -28,7 +27,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, String> {
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "INNER JOIN favorities f ON f.product_id = p.id\n" +
             "WHERE f.user_id = :email && p.status = TRUE\n" +
-            "GROUP BY p.id, p.name, p.price, p.features, c.name, du.company, f.id", nativeQuery = true)
+            "GROUP BY p.id, p.name, p.price, p.features, c.name, f.id", nativeQuery = true)
      List<Object[]> favXusuario(@Param("email") String email);
 
     @Modifying
