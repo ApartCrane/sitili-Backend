@@ -13,7 +13,7 @@ import java.util.List;
 public interface ShoppingCarRepository extends JpaRepository<ShoppingCar, String> {
 
     @Query(value = "SELECT \n" +
-            "    sc.id AS car_id, p.name AS producto,\n" +
+            "    p.id AS car_id, p.name AS producto,\n" +
             "    p.price AS precio, \n" +
             "    p.features AS comentarios,\n" +
             "    AVG(r.raiting) AS calificacion,\n" +
