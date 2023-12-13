@@ -26,7 +26,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "WHERE p.status = true \n" +
             "GROUP BY \n" +
-            "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
+            "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name, du.company", nativeQuery = true)
      List<Object[]> findAllProducts();
 
     @Query(value = "SELECT \n" +
@@ -49,7 +49,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
             "INNER JOIN data_users du ON u.email = du.user_id\n" +
             "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
             "WHERE p.id = :product_id\n" +
-            "GROUP BY p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
+            "GROUP BY p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name, du.company", nativeQuery = true)
      List<Object[]> findProduct(@Param("product_id") Integer product_id);
 
     @Query(value = "SELECT p.id AS product_id, p.name AS producto,\n" +
