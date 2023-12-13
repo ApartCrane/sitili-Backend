@@ -13,20 +13,38 @@ import java.util.List;
 @Transactional
 public interface ProductRepository extends CrudRepository<Product, Integer> {
 
-    @Query(value = "SELECT p.id AS product_id, p.name AS producto,\n" +
-            "    p.price AS precio, p.stock AS cantidad, p.features AS comentarios,\n" +
-            "    AVG(r.raiting) AS calificacion, p.status AS estado, c.name AS categoria,\n" +
-            "    u.email AS vendedor, du.first_name AS nombreVendedor, du.last_name AS apellidoVendedor,\n" +
-            "    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes, du.company AS compania\n" +
-            "FROM product p\n" +
-            "INNER JOIN categories c ON p.category_id = c.id\n" +
-            "INNER JOIN users u ON u.email = p.user_id\n" +
-            "LEFT JOIN raiting r ON p.id = r.product_id\n" +
-            "INNER JOIN data_users du ON u.email = du.user_id\n" +
-            "LEFT JOIN images_products ip ON p.id = ip.product_id\n" +
-            "WHERE p.status = true \n" +
-            "GROUP BY \n" +
-            "    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name", nativeQuery = true)
+    @Query(value = "SELECT 
+    p.id AS product_id,
+    p.name AS producto,
+    p.price AS precio,
+    p.stock AS cantidad,
+    p.features AS comentarios,
+    AVG(r.raiting) AS calificacion,
+    p.status AS estado,
+    c.name AS categoria,
+    u.email AS vendedor,
+    du.first_name AS nombreVendedor,
+    du.last_name AS apellidoVendedor,
+    du.company AS compania,
+    GROUP_CONCAT(DISTINCT ip.image_url) AS imagenes,
+    companies.companies_list
+FROM product p
+INNER JOIN categories c ON p.category_id = c.id
+INNER JOIN users u ON u.email = p.user_id
+LEFT JOIN raiting r ON p.id = r.product_id
+INNER JOIN data_users du ON u.email = du.user_id
+LEFT JOIN images_products ip ON p.id = ip.product_id
+LEFT JOIN (
+    SELECT p.id AS product_id, GROUP_CONCAT(DISTINCT du.company) AS companies_list
+    FROM product p
+    INNER JOIN users u ON u.email = p.user_id
+    INNER JOIN data_users du ON u.email = du.user_id
+    GROUP BY p.id
+) AS companies ON p.id = companies.product_id
+WHERE p.status = true 
+GROUP BY 
+    p.id, p.name, p.price, p.stock, p.features, p.status, c.name, u.email, du.first_name, du.last_name, du.company
+", nativeQuery = true)
      List<Object[]> findAllProducts();
 
     @Query(value = "SELECT \n" +
