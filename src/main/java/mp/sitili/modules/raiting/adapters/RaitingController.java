@@ -3,6 +3,7 @@ package mp.sitili.modules.raiting.adapters;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.raiting.entities.Raiting;
+import mp.sitili.modules.raiting.use_cases.dto.RaitingDTO;
 import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
 import mp.sitili.modules.raiting.use_cases.service.RaitingService;
 import mp.sitili.modules.user.entities.User;
@@ -36,7 +37,7 @@ public class RaitingController {
 
     @PostMapping("/rate")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> calificarProducto(@RequestBody Raiting raiting) {
+    public ResponseEntity<String> calificarProducto(@RequestBody RaitingDTO raiting) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

@@ -15,9 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Controller
 @RequestMapping("/orderDetail")
@@ -25,7 +25,7 @@ public class OrderDetailController {
 
     private final List<String> shippingCompanies = new ArrayList<>();
 
-    private final Random random = new Random();
+    private final SecureRandom secureRandom = new SecureRandom();
 
     private final OrderDetailRepository orderDetailRepository;
 
@@ -101,7 +101,7 @@ public class OrderDetailController {
         Integer order_id = orderDetailService.validarOrden(orderDetail.getId());
         RevisionpendientesDTO orden = orderDetailService.revisarPendientes(order_id);
         if (orden.getEntregas() == 0) {
-            int indiceAleatorio = random.nextInt(shippingCompanies.size());
+            int indiceAleatorio = secureRandom.nextInt(shippingCompanies.size());
             String empresaRepartoAleatoria = shippingCompanies.get(indiceAleatorio);
             orderService.updateDelivery(order_id, empresaRepartoAleatoria, "Trafico");
         }

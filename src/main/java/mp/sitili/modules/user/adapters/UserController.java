@@ -2,6 +2,7 @@ package mp.sitili.modules.user.adapters;
 
 import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.service.UserService;
@@ -12,9 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.PostConstruct;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +35,7 @@ public class UserController {
     }
 
     @PostConstruct
-    public void initRoleAndUser() throws ParseException {
+    public void initRoleAndUser(){
         userService.initRoleAndUser();
     }
 
@@ -132,7 +131,7 @@ public class UserController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> obtenerUsuarios(@RequestBody User user) {
+    public ResponseEntity<String> obtenerUsuarios(@RequestBody SelectVendedorDTO user) {
         Optional<User> usuario = userRepository.findById(user.getEmail());
 
         if(usuario.isPresent()){

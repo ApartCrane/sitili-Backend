@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -38,9 +39,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors();
-        httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate",
+        httpSecurity
+                .cors().and().csrf() // Habilitando CORS y CSRF
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // Configurando CSRF para usar cookies
+                .and()
+                .authorizeRequests()
+                .antMatchers("/authenticate",
                         "/registerNewUser",
                         "/categories/listAll",
                         "/product/listAll",
@@ -55,8 +59,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        ;
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
