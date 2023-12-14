@@ -1,5 +1,7 @@
 package mp.sitili.modules.shopping_car.adapters;
 
+import mp.sitili.modules.favorite.entities.Favorite;
+import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
@@ -33,12 +35,15 @@ public class ShoppingCarController {
 
     private final ProductService productService;
 
-    public ShoppingCarController(ShoppingCarService shoppingCarService,ShoppingCarRepository shoppingCarRepository, UserRepository userRepository, ProductRepository productRepository, ProductService productService) {
+    private final FavoriteRepository favoriteRepository;
+
+    public ShoppingCarController(ShoppingCarService shoppingCarService, ShoppingCarRepository shoppingCarRepository, UserRepository userRepository, ProductRepository productRepository, ProductService productService, FavoriteRepository favoriteRepository) {
         this.shoppingCarService = shoppingCarService;
         this.shoppingCarRepository = shoppingCarRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.productService = productService;
+        this.favoriteRepository = favoriteRepository;
     }
 
     @GetMapping("/list")
@@ -87,6 +92,41 @@ public class ShoppingCarController {
                 if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
                     ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
                     if(shoppingCar != null){
+                        return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }else{
+                    return new ResponseEntity<>("Cantidad excedente", HttpStatus.BAD_REQUEST);
+                }
+            }else{
+                return new ResponseEntity<>("Prodcuto no encontrado", HttpStatus.NOT_FOUND);
+            }
+        }else{
+            return new ResponseEntity<>("Prodcuto repetido", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping("/create2")
+    @PreAuthorize("hasRole('User')")
+    public ResponseEntity<String> addCarxUsuariosF(@RequestBody Product product) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
+        Favorite fav = favoriteRepository.findById1(product.getId());
+        Optional<Product> producto = productRepository.findById(fav.getProduct().getId());
+        if(producto.isEmpty()){
+            return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
+
+        if(shopp == null){
+            if(user != null && producto.isPresent()){
+                if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
+                    ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
+                    if(shoppingCar.getId() != null && shoppingCar.getId() != 0){
                         return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
                     }else{
                         return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
