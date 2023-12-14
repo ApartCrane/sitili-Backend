@@ -1,15 +1,20 @@
 package mp.sitili.modules.favorite.use_cases.service;
 
 
+import mp.sitili.modules.data_user.use_cases.service.DataUserService;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.favorite.use_cases.repository.IFavoriteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class FavoriteService implements IFavoriteRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(DataUserService.class.getName());
 
     private final FavoriteRepository favoriteRepository;
 
@@ -23,7 +28,7 @@ public class FavoriteService implements IFavoriteRepository {
         try {
             rawProducts = favoriteRepository.favXusuario(email);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " + email, e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 
@@ -53,6 +58,7 @@ public class FavoriteService implements IFavoriteRepository {
             favoriteRepository.deleteFav(user_id, fav_id);
             return true;
         }catch (Exception e){
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " + user_id, e);
             return false;
         }
     }

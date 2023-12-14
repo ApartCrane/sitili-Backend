@@ -6,9 +6,13 @@ import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.category.use_cases.repository.ICategoryRepository;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class CategoryService implements ICategoryRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(CategoryService.class.getName());
 
     private final CategoryRepository categoryRepository;
 
@@ -47,7 +51,7 @@ public class CategoryService implements ICategoryRepository {
         try {
             categoryRepository.deleteCategory(id, status);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " + id, e);
         }
     }
 
@@ -57,7 +61,7 @@ public class CategoryService implements ICategoryRepository {
             categoryRepository.updateCategory(id, name);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " + id, e);
             return false;
         }
     }
@@ -78,7 +82,7 @@ public class CategoryService implements ICategoryRepository {
         try {
             rawProducts = categoryRepository.findAllProducts(id);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " + id, e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 

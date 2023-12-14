@@ -1,5 +1,6 @@
 package mp.sitili.modules.resetPassword.adapter;
 
+import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.resetPassword.entities.PasswordResetToken;
 import mp.sitili.modules.resetPassword.use_cases.service.PasswordResetTokenService;
 import mp.sitili.modules.user.entities.User;
@@ -14,10 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/resetPassword")
 public class ResetPasswordController {
+
+
+    private static final Logger LOGGER = Logger.getLogger(ResetPasswordController.class.getName());
 
     private final UserService userService;
     private final UserRepository userRepository;
@@ -47,7 +53,7 @@ public class ResetPasswordController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.badRequest().body("Correo electrónico no encontrado.");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar la solicitud.");
         }
     }
@@ -64,7 +70,7 @@ public class ResetPasswordController {
                 return ResponseEntity.badRequest().body("Token inválido o expirado.");
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Agrega este logging
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID ", e);// Agrega este logging
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar la solicitud.");
         }
     }

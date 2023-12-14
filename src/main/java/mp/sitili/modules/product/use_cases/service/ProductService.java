@@ -1,14 +1,19 @@
 package mp.sitili.modules.product.use_cases.service;
 
+import mp.sitili.modules.data_user.use_cases.service.DataUserService;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.repository.IProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class ProductService implements IProductRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(ProductService.class.getName());
 
     private final ProductRepository productRepository;
 
@@ -22,7 +27,7 @@ public class ProductService implements IProductRepository {
         try {
             rawProducts = productRepository.findAllProducts();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID ", e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 
@@ -57,7 +62,7 @@ public class ProductService implements IProductRepository {
         try {
             rawProducts = productRepository.findProduct(product_id);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " , e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 
@@ -92,7 +97,7 @@ public class ProductService implements IProductRepository {
         try {
             rawProducts = productRepository.findAllxVend(email);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " + email, e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 

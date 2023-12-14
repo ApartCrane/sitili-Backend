@@ -1,13 +1,18 @@
 package mp.sitili.modules.shopping_car.use_cases.service;
 
+import mp.sitili.modules.resetPassword.adapter.ResetPasswordController;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.repository.IShoppingCarRepository;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class ShoppingCarService implements IShoppingCarRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(ShoppingCarService.class.getName());
 
     private final ShoppingCarRepository shoppingCarRepository;
 
@@ -21,7 +26,7 @@ public class ShoppingCarService implements IShoppingCarRepository {
         try {
             rawProducts = shoppingCarRepository.carXusuario(email);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID ", e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 
@@ -51,7 +56,7 @@ public class ShoppingCarService implements IShoppingCarRepository {
         try {
             rawProducts = shoppingCarRepository.carXusuariob(email);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID ", e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 
@@ -82,6 +87,7 @@ public class ShoppingCarService implements IShoppingCarRepository {
             shoppingCarRepository.deleteCar(user_id, product_id);
             return true;
         }catch (Exception e){
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID ", e);
             return false;
         }
     }
@@ -92,6 +98,7 @@ public class ShoppingCarService implements IShoppingCarRepository {
             shoppingCarRepository.updateCar(car_id, quantity);
             return true;
         }catch (Exception e){
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID ", e);
             return false;
         }
     }
