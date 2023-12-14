@@ -1,6 +1,5 @@
 package mp.sitili.modules.order_detail.adapters;
 
-import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.service.OrderService;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
@@ -23,6 +22,10 @@ import java.util.Random;
 @Controller
 @RequestMapping("/orderDetail")
 public class OrderDetailController {
+
+    private final List<String> shippingCompanies = new ArrayList<>();
+
+    private final Random random = new Random();
 
     private final OrderDetailRepository orderDetailRepository;
 
@@ -83,7 +86,6 @@ public class OrderDetailController {
     @PutMapping("/statusOrderDetails")
     @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<String> cambiarEstadoOrderDetails(@RequestBody OrdersDTO orderDetail) {
-        List<String> shippingCompanies = new ArrayList<>();
 
         shippingCompanies.add("UPS");
         shippingCompanies.add("FedEx");
@@ -98,8 +100,7 @@ public class OrderDetailController {
 
         Integer order_id = orderDetailService.validarOrden(orderDetail.getId());
         RevisionpendientesDTO orden = orderDetailService.revisarPendientes(order_id);
-        if(orden.getEntregas() == 0){
-            Random random = new Random();
+        if (orden.getEntregas() == 0) {
             int indiceAleatorio = random.nextInt(shippingCompanies.size());
             String empresaRepartoAleatoria = shippingCompanies.get(indiceAleatorio);
             orderService.updateDelivery(order_id, empresaRepartoAleatoria, "Trafico");

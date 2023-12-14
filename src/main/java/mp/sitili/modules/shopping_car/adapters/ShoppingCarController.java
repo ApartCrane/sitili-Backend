@@ -3,9 +3,11 @@ package mp.sitili.modules.shopping_car.adapters;
 import mp.sitili.modules.favorite.entities.Favorite;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.product.entities.Product;
+import mp.sitili.modules.product.use_cases.dto.PorduDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.shopping_car.entities.ShoppingCar;
+import mp.sitili.modules.shopping_car.use_cases.dto.ShoppCarDTO;
 import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.shopping_car.use_cases.service.ShoppingCarService;
 import mp.sitili.modules.user.entities.User;
@@ -15,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -80,7 +81,7 @@ public class ShoppingCarController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> addCarxUsuarios(@RequestBody Product product) {
+    public ResponseEntity<String> addCarxUsuarios(@RequestBody PorduDTO product) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -116,7 +117,7 @@ public class ShoppingCarController {
 
     @PostMapping("/create2")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> addCarxUsuariosF(@RequestBody Product product) {
+    public ResponseEntity<String> addCarxUsuariosF(@RequestBody PorduDTO product) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -151,7 +152,7 @@ public class ShoppingCarController {
 
     @PostMapping("/createF")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> addCarxUsuariosf(@RequestBody Product product) {
+    public ResponseEntity<String> addCarxUsuariosf(@RequestBody PorduDTO product) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -182,7 +183,7 @@ public class ShoppingCarController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> delCarxUsuarios(@RequestBody ShoppingCar shoppingCar) {
+    public ResponseEntity<String> delCarxUsuarios(@RequestBody ShoppCarDTO shoppingCar) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -205,7 +206,7 @@ public class ShoppingCarController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> actualizarCarrito(@RequestBody ShoppingCar shoppingCar) {
+    public ResponseEntity<String> actualizarCarrito(@RequestBody ShoppCarDTO shoppingCar) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

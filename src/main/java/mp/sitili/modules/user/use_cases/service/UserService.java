@@ -1,25 +1,17 @@
 package mp.sitili.modules.user.use_cases.service;
 
-import mp.sitili.modules.address.use_cases.methods.AddressRepository;
-import mp.sitili.modules.category.entities.Category;
-import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
-import mp.sitili.modules.product.use_cases.methods.ProductRepository;
-import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.resetPassword.use_cases.service.PasswordResetTokenService;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
-import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
 import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.repository.IUserRepository;
 import mp.sitili.utils.email.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.text.ParseException;
 import java.util.*;
 
 
@@ -47,7 +39,7 @@ public class UserService implements IUserRepository {
         this.tokenService = tokenService;
     }
 
-    public void initRoleAndUser() throws ParseException {
+    public void initRoleAndUser() {
 
         // Crear roles
         Role rootRole = new Role();
@@ -124,44 +116,57 @@ public class UserService implements IUserRepository {
 
 }
 
-    public User registerNewUser(String email, String password, String first_name, String last_name, Integer rol) throws Exception {
-        Role role = null;
+    public User registerNewUser(String email, String password, String first_name, String last_name, Integer rol) {
+        Role role;
         Set<Role> userRoles = new HashSet<>();
         User usuario = null;
         User user = null;
+        Optional<Role> optionalRole;
 
         switch (rol) {
             case 1:
-                role = roleRepository.findById("Root").get();
-                userRoles.add(role);
-                usuario = new User(email,
-                        passwordEncoder.encode(password),
-                        true,
-                        userRoles);
+                optionalRole = roleRepository.findById("Root");
+                if (optionalRole.isPresent()){
+                    role = optionalRole.get();
+                    userRoles.add(role);
+                    usuario = new User(email,
+                            passwordEncoder.encode(password),
+                            true,
+                            userRoles);
+                }
                 break;
             case 2:
-                role = roleRepository.findById("Admin").get();
-                userRoles.add(role);
-                usuario = new User(email,
-                        passwordEncoder.encode(password),
-                        true,
-                        userRoles);
+                optionalRole = roleRepository.findById("Admin");
+                if (optionalRole.isPresent()){
+                    role = optionalRole.get();
+                    userRoles.add(role);
+                    usuario = new User(email,
+                            passwordEncoder.encode(password),
+                            true,
+                            userRoles);
+                }
                 break;
             case 3:
-                role = roleRepository.findById("Seller").get();
-                userRoles.add(role);
-                usuario = new User(email,
-                        passwordEncoder.encode(password),
-                        false,
-                        userRoles);
+                optionalRole = roleRepository.findById("Seller");
+                if (optionalRole.isPresent()){
+                    role = optionalRole.get();
+                    userRoles.add(role);
+                    usuario = new User(email,
+                            passwordEncoder.encode(password),
+                            false,
+                            userRoles);
+                }
                 break;
             case 4:
-                role = roleRepository.findById("User").get();
-                userRoles.add(role);
-                usuario = new User(email,
-                        passwordEncoder.encode(password),
-                        true,
-                        userRoles);
+                optionalRole = roleRepository.findById("User");
+                if (optionalRole.isPresent()){
+                    role = optionalRole.get();
+                    userRoles.add(role);
+                    usuario = new User(email,
+                            passwordEncoder.encode(password),
+                            true,
+                            userRoles);
+                }
                 break;
             default:
 

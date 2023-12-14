@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@CrossOrigin
 public class JwtController {
 
     private final JwtService jwtService;

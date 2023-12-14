@@ -3,11 +3,11 @@ package mp.sitili.modules.product.adapters;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
-import mp.sitili.modules.image_product.entities.ImageProduct;
+import mp.sitili.modules.image_product.use_cases.dto.ImageDTO;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.dto.PorduDTO;
-import mp.sitili.modules.product.use_cases.dto.ProductDTO;
+import mp.sitili.modules.product.use_cases.dto.UserEmailDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
 import mp.sitili.modules.raiting.entities.Raiting;
@@ -127,7 +127,7 @@ public class ProductController {
     }
 
     @GetMapping("/listSeller")
-    public ResponseEntity<List> obtenerTodoProductosxVendedorPublico(@RequestBody User user) {
+    public ResponseEntity<List> obtenerTodoProductosxVendedorPublico(@RequestBody UserEmailDTO user) {
         String sellerEmail = user.getEmail();
         return getListResponseEntity(sellerEmail);
     }
@@ -240,7 +240,7 @@ public class ProductController {
 
             Product productSaved = productRepository.save(new Product(product_id, name, stock, price1, features, prod.get().getCategory(), user, registerProduct, true));
 
-            if (productSaved != null) {
+            if (productSaved.getId() != null && productSaved.getId() != 0) {
                 System.out.println(files);
                 if (files != null && !files.isEmpty()) {
                     for (MultipartFile file : files) {
@@ -265,7 +265,7 @@ public class ProductController {
 
     @PutMapping("/deleteImages")
     @PreAuthorize("hasRole('Seller')")
-    public ResponseEntity<String> eliminarImages(@RequestBody ImageProduct imageProduct) {
+    public ResponseEntity<String> eliminarImages(@RequestBody ImageDTO imageProduct) {
         if (imageProduct != null) {
             Integer product_id = imageProduct.getId();
             String image_url = imageProduct.getImageUrl();
@@ -290,7 +290,7 @@ public class ProductController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('Seller')")
-    public ResponseEntity<String> bajaLogica(@RequestBody Product product) {
+    public ResponseEntity<String> bajaLogica(@RequestBody PorduDTO product) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
 
