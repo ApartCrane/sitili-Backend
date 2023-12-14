@@ -8,7 +8,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Empaqueta la aplicación en un archivo JAR sin ejecutar los tests
+# Empaqueta la aplicación en un archivo JAR sin ejecutar los test
 RUN mvn clean package -DskipTests
 
 # Utiliza una imagen de Java 17 como base para la etapa de ejecución
