@@ -8,4 +8,5 @@ public interface FavoriteDTO {
     String getCategoria();
     String getVendedor();
     String getImagenes();
+    Integer getId();
 }

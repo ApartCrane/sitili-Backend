@@ -1,6 +1,8 @@
 package mp.sitili.modules.image_product.adapters;
 
 import mp.sitili.modules.image_product.entities.ImageProduct;
+import mp.sitili.modules.image_product.use_cases.dto.ImageDTO;
+import mp.sitili.modules.image_product.use_cases.dto.ImagesDTO;
 import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.jwt.entities.JwtResponse;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,7 @@ public class ImageProductController {
 
     @DeleteMapping({"/delete"})
     @PreAuthorize("hasRole('Seller')")
-    public ResponseEntity<JwtResponse> borrarImagen(@RequestBody ImageProduct imageProduct){
+    public ResponseEntity<JwtResponse> borrarImagen(@RequestBody ImageDTO imageProduct){
 
         boolean revision = imageProductService.deleteImage(imageProduct.getImageUrl(), imageProduct.getId());
 

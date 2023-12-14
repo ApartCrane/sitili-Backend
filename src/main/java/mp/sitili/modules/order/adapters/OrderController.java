@@ -5,6 +5,7 @@ import mp.sitili.modules.address.use_cases.service.AddressService;
 import mp.sitili.modules.order.entities.Order;
 import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
 import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
+import mp.sitili.modules.order.use_cases.dto.PaymentCCDTO;
 import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
 import mp.sitili.modules.order.use_cases.methods.OrderRepository;
 import mp.sitili.modules.order.use_cases.service.OrderService;
@@ -248,7 +249,7 @@ public class OrderController {
 
     @PostMapping("/saleCar")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> comprarCarrito(@RequestBody PaymentCC paymentCC) {
+    public ResponseEntity<String> comprarCarrito(@RequestBody PaymentCCDTO paymentCC) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         User user = userRepository.findById(userEmail).orElse(null);
@@ -311,7 +312,7 @@ public class OrderController {
 
     @PostMapping("/delivery")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> asignarRepartidor(@RequestBody Order order) {
+    public ResponseEntity<String> asignarRepartidor(@RequestBody OrdersDTO order) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -331,7 +332,7 @@ public class OrderController {
 
     @PostMapping("/recive")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> pedidoEntregado(@RequestBody Order order) {
+    public ResponseEntity<String> pedidoEntregado(@RequestBody OrdersDTO order) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

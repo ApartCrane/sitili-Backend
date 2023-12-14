@@ -1,6 +1,7 @@
 package mp.sitili.modules.order_detail.adapters;
 
 import mp.sitili.modules.order.entities.Order;
+import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.service.OrderService;
 import mp.sitili.modules.order_detail.entities.OrderDetail;
 import mp.sitili.modules.order_detail.use_cases.dto.DetailsDTO;
@@ -50,7 +51,7 @@ public class OrderDetailController {
 
     @PostMapping("/listDetails")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<List<DetailsDTO>> obtenerDetallesOrden(@RequestBody Order order) {
+    public ResponseEntity<List<DetailsDTO>> obtenerDetallesOrden(@RequestBody OrdersDTO order) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -81,7 +82,7 @@ public class OrderDetailController {
 
     @PutMapping("/statusOrderDetails")
     @PreAuthorize("hasRole('Seller')")
-    public ResponseEntity<String> cambiarEstadoOrderDetails(@RequestBody OrderDetail orderDetail) {
+    public ResponseEntity<String> cambiarEstadoOrderDetails(@RequestBody OrdersDTO orderDetail) {
         List<String> shippingCompanies = new ArrayList<>();
 
         shippingCompanies.add("UPS");

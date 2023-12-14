@@ -1,9 +1,11 @@
 package mp.sitili.modules.favorite.adapters;
 
 import mp.sitili.modules.favorite.entities.Favorite;
+import mp.sitili.modules.favorite.use_cases.dto.FavoriteDTO;
 import mp.sitili.modules.favorite.use_cases.methods.FavoriteRepository;
 import mp.sitili.modules.favorite.use_cases.service.FavoriteService;
 import mp.sitili.modules.product.entities.Product;
+import mp.sitili.modules.product.use_cases.dto.ProductDTO;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
@@ -54,7 +56,7 @@ public class FavoriteController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> addFavxUsuarios(@RequestBody Product product) {
+    public ResponseEntity<String> addFavxUsuarios(@RequestBody FavoriteDTO product) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -86,7 +88,7 @@ public class FavoriteController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> delFavxUsuarios(@RequestBody Favorite favorite) {
+    public ResponseEntity<String> delFavxUsuarios(@RequestBody FavoriteDTO favorite) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

@@ -59,7 +59,7 @@ public class DataUserController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> actualizarPorUsuario(@RequestBody DataUser dataUser) {
+    public ResponseEntity<String> actualizarPorUsuario(@RequestBody DataUdto dataUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 

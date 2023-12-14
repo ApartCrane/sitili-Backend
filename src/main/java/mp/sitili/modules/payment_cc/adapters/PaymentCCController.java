@@ -1,6 +1,8 @@
 package mp.sitili.modules.payment_cc.adapters;
 
+import mp.sitili.modules.order.use_cases.dto.PaymentCCDTO;
 import mp.sitili.modules.payment_cc.entities.PaymentCC;
+import mp.sitili.modules.payment_cc.use_cases.dto.PaymentCC1DTO;
 import mp.sitili.modules.payment_cc.use_cases.methods.PaymentCCRepository;
 import mp.sitili.modules.payment_cc.use_cases.service.PaymentCCService;
 import mp.sitili.modules.user.entities.User;
@@ -62,7 +64,7 @@ public class PaymentCCController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<PaymentCC> asociarPago(@RequestBody PaymentCC paymentDTO) {
+    public ResponseEntity<PaymentCC> asociarPago(@RequestBody PaymentCC1DTO paymentDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
@@ -84,14 +86,14 @@ public class PaymentCCController {
                 return new ResponseEntity<>(pago, HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity<>(paymentDTO, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
     }
 
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('User')")
-    public ResponseEntity<String> actualizarPago(@RequestBody PaymentCC paymentCC) {
+    public ResponseEntity<String> actualizarPago(@RequestBody PaymentCC1DTO paymentCC) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
