@@ -96,7 +96,7 @@ public class AddressController {
                     address.getCountry(), address.getState(), address.getCity(),
                     address.getPostalCode(), address.getMainAddress(), address.getStreetAddress1(),
                     address.getStreetAddress2(), address.getDescription()));
-            if(address1 != null){
+            if(address1.getId() != 0 && address1.getId() != null){
                 return new ResponseEntity<>("Direccion actualizada correctamente ", HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("Error al actualizar Direccion", HttpStatus.INTERNAL_SERVER_ERROR);

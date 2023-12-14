@@ -162,7 +162,9 @@ public class ProductController {
         String sellerEmail = authentication.getName();
         int contador = 0;
 
+
         if (!productData.isEmpty()) {
+            int contador2 = files.size();
             String name = (String) productData.get("name");
             int stock = (int) productData.get("stock");
             System.out.println(productData.get("price"));
@@ -178,7 +180,7 @@ public class ProductController {
             Timestamp registerProduct = Timestamp.valueOf(sdf.format(timestamp));
 
             Product productSaved = productRepository.save(new Product(name, stock, price1, features, category, user, registerProduct, true));
-            if (productSaved != null) {
+            if (productSaved.getId() != null && productSaved.getId() != 0) {
                 raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 0.0, productSaved, user));
                 if (files != null && !files.isEmpty()) {
 
@@ -192,7 +194,7 @@ public class ProductController {
 
                     }
                 }
-                return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ files.size() + " imagenes correctamente", HttpStatus.OK);
+                return new ResponseEntity<>("Producto creado exitosamente, se cargaron " + contador + " de "+ contador2 + " imagenes correctamente", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("Error al guardar producto", HttpStatus.INTERNAL_SERVER_ERROR);
             }

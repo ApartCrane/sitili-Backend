@@ -87,13 +87,17 @@ public class ShoppingCarController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
 
+        if(producto.isEmpty()){
+            return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
 
         if(shopp == null){
             if(user != null && producto.isPresent()){
                 if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
                     ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
-                    if(shoppingCar != null){
+                    if(shoppingCar.getId() != null && shoppingCar.getId() != 0){
                         return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
                     }else{
                         return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -119,13 +123,16 @@ public class ShoppingCarController {
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Favorite fav = favoriteRepository.findById1(product.getId());
         Optional<Product> producto = productRepository.findById(fav.getProduct().getId());
+        if(producto.isEmpty()){
+            return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         ShoppingCar shopp = shoppingCarService.validarExis(producto.get().getId(), userEmail);
 
         if(shopp == null){
             if(user != null && producto.isPresent()){
                 if(product.getStock() < producto.get().getStock() && product.getStock() > 0){
                     ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), product.getStock()));
-                    if(shoppingCar != null){
+                    if(shoppingCar.getId() != null && shoppingCar.getId() != 0){
                         return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
                     }else{
                         return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -160,7 +167,7 @@ public class ShoppingCarController {
         if(shopp == null){
             if(user != null && producto.isPresent()){
                     ShoppingCar shoppingCar = shoppingCarRepository.save(new ShoppingCar((int) shoppingCarRepository.count() + 1,user , producto.get(), 1));
-                    if(shoppingCar != null){
+                    if(shoppingCar.getId() != null && shoppingCar.getId() != 0){
                         return new ResponseEntity<>("Agregado a carrito de compras", HttpStatus.OK);
                     }else{
                         return new ResponseEntity<>("Error al agregar", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -202,16 +209,13 @@ public class ShoppingCarController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
 
-        System.out.println(shoppingCar.getQuantity());
-        System.out.println(shoppingCar.getId());
-
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         ShoppingCar shoppingCar1 = shoppingCarService.findById1(shoppingCar.getId());
         Product producto = productService.findOnlyById(shoppingCar1.getProduct().getId());
-        System.out.println(producto);
+
 
         if(user != null){
-            if(shoppingCar1 != null){
+            if(shoppingCar1.getId() != null && shoppingCar1.getId() != 0){
                 if(producto != null){
                     if(shoppingCar.getQuantity() < producto.getStock()){
 

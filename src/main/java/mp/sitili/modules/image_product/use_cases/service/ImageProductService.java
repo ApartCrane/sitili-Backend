@@ -1,11 +1,17 @@
 package mp.sitili.modules.image_product.use_cases.service;
 
+import mp.sitili.modules.data_user.use_cases.service.DataUserService;
 import mp.sitili.modules.image_product.use_cases.methods.ImageProductRepository;
 import mp.sitili.modules.image_product.use_cases.repository.IImageProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @Service
 public class ImageProductService implements IImageProductRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(ImageProductService.class.getName());
 
     private final ImageProductRepository imageProductRepository;
 
@@ -19,7 +25,7 @@ public class ImageProductService implements IImageProductRepository {
             imageProductRepository.saveImgs(image_url, product_id);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " , e);
             return false;
         }
     }
@@ -30,7 +36,7 @@ public class ImageProductService implements IImageProductRepository {
             imageProductRepository.deleteImage(image_url, produc_id);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " , e);
             return false;
         }
     }

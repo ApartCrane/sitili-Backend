@@ -45,7 +45,7 @@ public class UserController {
     public ResponseEntity<List> obtenerTodosUsuarios() {
         List<User> usuarios = userRepository.findAll();
 
-        if(usuarios != null){
+        if(!usuarios.isEmpty()){
             return new ResponseEntity<>(usuarios, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(usuarios, HttpStatus.BAD_REQUEST);

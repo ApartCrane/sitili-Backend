@@ -179,7 +179,7 @@ public class Product {
         return status;
     }
 
-    public void setStatus(Boolean enabled) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 }

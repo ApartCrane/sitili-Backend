@@ -1,13 +1,18 @@
 package mp.sitili.modules.order_detail.use_cases.service;
 
+import mp.sitili.modules.image_product.use_cases.service.ImageProductService;
 import mp.sitili.modules.order_detail.use_cases.dto.*;
 import mp.sitili.modules.order_detail.use_cases.methods.OrderDetailRepository;
 import mp.sitili.modules.order_detail.use_cases.repository.IOrderDetailRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class OrderDetailService implements IOrderDetailRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(OrderDetailService.class.getName());
 
     private final OrderDetailRepository orderDetailRepository;
 
@@ -41,7 +46,7 @@ public class OrderDetailService implements IOrderDetailRepository {
             orderDetailRepository.detalleUpdate(estado, id);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " , e);
             return false;
         }
     }

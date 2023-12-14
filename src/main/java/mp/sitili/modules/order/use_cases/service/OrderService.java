@@ -1,5 +1,6 @@
 package mp.sitili.modules.order.use_cases.service;
 
+import mp.sitili.modules.data_user.use_cases.service.DataUserService;
 import mp.sitili.modules.order.use_cases.dto.EntregasMesDTO;
 import mp.sitili.modules.order.use_cases.dto.OrdersDTO;
 import mp.sitili.modules.order.use_cases.dto.VentasMesDTO;
@@ -10,9 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class OrderService implements IOrederRepository {
+
+    private static final Logger LOGGER = Logger.getLogger(OrderService.class.getName());
 
     private final OrderRepository orderRepository;
 
@@ -26,7 +31,7 @@ public class OrderService implements IOrederRepository {
             orderRepository.updateDelivery(id, repartidor, status);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " , e);
             return false;
         }
     }
@@ -37,7 +42,7 @@ public class OrderService implements IOrederRepository {
             orderRepository.updateRecive(id, status);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " , e);
             return false;
         }
     }
@@ -60,7 +65,7 @@ public class OrderService implements IOrederRepository {
         try {
             rawProducts = orderRepository.buscarTodo(userEmail);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error al eliminar la categoría con ID " , e);
         }
         List<Map<String, Object>> productList = new ArrayList<>();
 
