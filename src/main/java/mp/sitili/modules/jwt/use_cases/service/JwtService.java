@@ -5,7 +5,6 @@ import mp.sitili.modules.jwt.entities.JwtResponse;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.utils.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -21,30 +20,21 @@ import java.util.Set;
 @Service
 public class JwtService implements UserDetailsService {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+
+    public JwtService(JwtUtil jwtUtil, UserRepository userRepository, AuthenticationManager authenticationManager) {
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
+    }
 
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
         String email = jwtRequest.getEmail();
         String password = jwtRequest.getPassword();
-        authenticate(email, password);
-
-        UserDetails userDetails = loadUserByUsername(email);
-        String newGeneratedToken = jwtUtil.generateToken(userDetails);
-
-        User user = userRepository.findById(email).get();
-        return new JwtResponse(user, newGeneratedToken);
-    }
-
-    public JwtResponse createJwtToken(String e, String p) throws Exception {
-        String email = e;
-        String password = p;
         authenticate(email, password);
 
         UserDetails userDetails = loadUserByUsername(email);
