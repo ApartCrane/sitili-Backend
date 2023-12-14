@@ -46,7 +46,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         "/product/listAll",
                         "/categories/listCategorie",
                         "/product/listSeller",
-                        "/product/selectSeller",
                         "/api/resetPassword/request",
                         "/api/resetPassword/confirm",
                         "/product/selectSeller",

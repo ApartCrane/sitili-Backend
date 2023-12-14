@@ -5,6 +5,7 @@ import mp.sitili.modules.jwt.entities.JwtResponse;
 import mp.sitili.modules.user.entities.User;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.utils.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -15,22 +16,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class JwtService implements UserDetailsService {
 
-    private final JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    private final AuthenticationManager authenticationManager;
-
-    public JwtService(JwtUtil jwtUtil, UserRepository userRepository, AuthenticationManager authenticationManager) {
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        this.authenticationManager = authenticationManager;
-    }
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
         String email = jwtRequest.getEmail();
@@ -40,19 +39,46 @@ public class JwtService implements UserDetailsService {
         UserDetails userDetails = loadUserByUsername(email);
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
 
-        User user = userRepository.findById(email).get();
-        return new JwtResponse(user, newGeneratedToken);
+        Optional<User> optionalUser = userRepository.findById(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return new JwtResponse(user, newGeneratedToken);
+        } else {
+            // Manejar el caso en el que no se encuentra el usuario
+        }
+
+        return new JwtResponse(null, newGeneratedToken);
+
+    }
+
+    public JwtResponse createJwtToken(String e, String p) throws Exception {
+        String email = e;
+        String password = p;
+        authenticate(email, password);
+
+        UserDetails userDetails = loadUserByUsername(email);
+        String newGeneratedToken = jwtUtil.generateToken(userDetails);
+
+        Optional<User> optionalUser = userRepository.findById(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return new JwtResponse(user, newGeneratedToken);
+        } else {
+            // Manejar el caso en el que no se encuentra el usuario
+        }
+
+        return new JwtResponse(null, newGeneratedToken);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findById(email).get();
+        Optional<User> user = userRepository.findById(email);
 
-        if (user != null) {
+        if (user.isPresent()) {
             return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    getAuthority(user)
+                    user.get().getEmail(),
+                    user.get().getPassword(),
+                    getAuthority(user.get())
             );
         } else {
             throw new UsernameNotFoundException("User not found with username: " + email);
