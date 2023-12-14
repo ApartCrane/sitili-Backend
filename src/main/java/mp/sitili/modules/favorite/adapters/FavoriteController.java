@@ -57,6 +57,7 @@ public class FavoriteController {
     public ResponseEntity<String> addFavxUsuarios(@RequestBody Product product) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
+        System.out.println(userEmail);
 
         User user = userRepository.findById(String.valueOf(userEmail)).orElse(null);
         Optional<Product> producto = productRepository.findById(product.getId());
