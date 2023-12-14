@@ -1,10 +1,19 @@
 package mp.sitili.modules.product.use_cases.repository;
 
-import mp.sitili.modules.category.entities.Category;
-import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.product.entities.Product;
+import java.util.List;
+import java.util.Map;
 
 public interface IProductRepository {
 
-    boolean saveCategory(String name, Double price, Integer stock, String features, Category category, User user);
+     List<Map<String, Object>> findAllProducts();
+
+     List<Map<String, Object>> findProduct(Integer product_id);
+
+     List<Map<String, Object>> findAllxVend(String email);
+
+     Integer countProSel(String sellerEmail);
+
+     Product findOnlyById(Integer id);
 
 }

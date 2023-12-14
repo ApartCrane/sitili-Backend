@@ -1,61 +1,55 @@
 package mp.sitili.modules.user.use_cases.service;
 
+import mp.sitili.modules.address.use_cases.methods.AddressRepository;
 import mp.sitili.modules.category.entities.Category;
 import mp.sitili.modules.category.use_cases.methods.CategoryRepository;
 import mp.sitili.modules.data_user.use_cases.methods.DataUserRepository;
-import mp.sitili.modules.jwt.entities.JwtRegister;
-import mp.sitili.modules.product.entities.Product;
 import mp.sitili.modules.product.use_cases.methods.ProductRepository;
 import mp.sitili.modules.product.use_cases.service.ProductService;
-import mp.sitili.modules.raiting.entities.Raiting;
-import mp.sitili.modules.raiting.use_cases.methods.RaitingRepository;
+import mp.sitili.modules.resetPassword.use_cases.service.PasswordResetTokenService;
 import mp.sitili.modules.role.entities.Role;
 import mp.sitili.modules.role.use_cases.methods.RoleRepository;
+import mp.sitili.modules.shopping_car.use_cases.methods.ShoppingCarRepository;
 import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.user.use_cases.dto.SelectVendedorDTO;
+import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.repository.IUserRepository;
 import mp.sitili.utils.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.text.ParseException;
+import java.util.*;
 
 
 @Service
 public class UserService implements IUserRepository {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    @Autowired
-    private DataUserRepository dataUserRepository;
+    private final DataUserRepository dataUserRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final PasswordResetTokenService tokenService;
 
-    @Autowired
-    private ProductService productService;
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailService emailService, DataUserRepository dataUserRepository, PasswordResetTokenService tokenService) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+        this.dataUserRepository = dataUserRepository;
+        this.tokenService = tokenService;
+    }
 
-    @Autowired
-    private ProductRepository productRepository;
+    public void initRoleAndUser() throws ParseException {
 
-    @Autowired
-    private RaitingRepository raitingRepository;
-
-    public void initRoleAndUser() {
-
+        // Crear roles
         Role rootRole = new Role();
         rootRole.setRoleName("Root");
         rootRole.setRoleDescription("Root role");
@@ -75,7 +69,6 @@ public class UserService implements IUserRepository {
         vendedorRole.setRoleName("Seller");
         vendedorRole.setRoleDescription("Seller role");
         roleRepository.save(vendedorRole);
-
 
         User rootUser = new User();
         rootUser.setEmail("root@root");
@@ -107,73 +100,66 @@ public class UserService implements IUserRepository {
         User vendedorUser = new User();
         vendedorUser.setEmail("vendedor@vendedor");
         vendedorUser.setPassword(getEncodedPassword("root"));
-        vendedorUser.setStatus(false);
+        vendedorUser.setStatus(true);
         Set<Role> vendedorRoles = new HashSet<>();
         vendedorRoles.add(vendedorRole);
         vendedorUser.setRole(vendedorRoles);
         userRepository.save(vendedorUser);
 
-        dataUserRepository.asociarUserData("root@root");
-        dataUserRepository.asociarUserData("admin@admin");
-        dataUserRepository.asociarUserData("user@user");
-        dataUserRepository.asociarUserData("vendedor@vendedor");
+        User vendedorUser1 = new User();
+        vendedorUser1.setEmail("vend@vend");
+        vendedorUser1.setPassword(getEncodedPassword("root"));
+        vendedorUser1.setStatus(true);
+        Set<Role> vendedorRoles1 = new HashSet<>();
+        vendedorRoles1.add(vendedorRole);
+        vendedorUser1.setRole(vendedorRoles1);
+        userRepository.save(vendedorUser1);
 
-        categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Zapatos", true));
-        categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Ropa", true));
-        categoryRepository.save(new Category((int) categoryRepository.count() + 1, "Higiene", true));
+        // Asociar datos a usuarios
+        dataUserRepository.asociarUserData("root@root", "Carlo", "Yael");
+        dataUserRepository.asociarUserData("admin@admin", "Daniel", "Wong");
+        dataUserRepository.asociarUserData("user@user", "Diego", "Garcia");
+        dataUserRepository.asociarUserData("vendedor@vendedor", "Hector", "Marquina");
+        dataUserRepository.asociarUserData("vend@vend", "wongsito", "wongsito");
 
-        Category category = categoryRepository.getCatById(1);
-        User user = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
-        productService.saveCategory("Tennis", 1200.00, 12, "Tennis chidos", category, user);
+}
 
-        Category category1 = categoryRepository.getCatById(3);
-        User user1 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
-        productService.saveCategory("Pasta de Dientes", 30.00, 8, "Pasta dentifrica colgate", category1, user1);
-
-        User user2 = userRepository.findById(String.valueOf("vendedor@vendedor")).orElse(null);
-        Optional<Product> product = productRepository.findById(1);
-        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product.get(), user2));
-        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 3.7, product.get(), user2));
-        product = productRepository.findById(2);
-        raitingRepository.save(new Raiting((int) raitingRepository.count() + 1, 4.5, product.get(), user2));
-    }
-
-    public User registerNewUser(JwtRegister jwtRegister) throws Exception {
+    public User registerNewUser(String email, String password, String first_name, String last_name, Integer rol) throws Exception {
         Role role = null;
         Set<Role> userRoles = new HashSet<>();
         User usuario = null;
         User user = null;
 
-        switch (jwtRegister.getRole()) {
+        switch (rol) {
             case 1:
                 role = roleRepository.findById("Root").get();
                 userRoles.add(role);
-                usuario = new User(jwtRegister.getEmail(),
-                        passwordEncoder.encode(jwtRegister.getPassword()),
+                usuario = new User(email,
+                        passwordEncoder.encode(password),
                         true,
                         userRoles);
                 break;
             case 2:
                 role = roleRepository.findById("Admin").get();
                 userRoles.add(role);
-                usuario = new User(jwtRegister.getEmail(),
-                        passwordEncoder.encode(jwtRegister.getPassword()),
+                usuario = new User(email,
+                        passwordEncoder.encode(password),
                         true,
                         userRoles);
                 break;
             case 3:
                 role = roleRepository.findById("Seller").get();
                 userRoles.add(role);
-                usuario = new User(jwtRegister.getEmail(),
-                        passwordEncoder.encode(jwtRegister.getPassword()),
+                usuario = new User(email,
+                        passwordEncoder.encode(password),
                         false,
                         userRoles);
                 break;
             case 4:
                 role = roleRepository.findById("User").get();
                 userRoles.add(role);
-                usuario = new User(jwtRegister.getEmail(),
-                        passwordEncoder.encode(jwtRegister.getPassword()),
+                usuario = new User(email,
+                        passwordEncoder.encode(password),
                         true,
                         userRoles);
                 break;
@@ -181,11 +167,12 @@ public class UserService implements IUserRepository {
 
         }
 
-        Optional<User> validador = userRepository.findById(usuario.getEmail());
+        Optional<User> validador = userRepository.findById(email);
 
         if(validador.isEmpty()){
+            assert usuario != null;
             user = userRepository.save(usuario);
-            switch (jwtRegister.getRole()){
+            switch (rol){
                 case 1:
                     sendEmail(user.getEmail(), "Bienvenido Super Admin", "Te registraron como SuperAdmin de SITILI");
                     break;
@@ -200,9 +187,9 @@ public class UserService implements IUserRepository {
                     break;
                 default:
             }
-            dataUserRepository.asociarUserData(user.getEmail());
+            dataUserRepository.asociarUserData(user.getEmail(), first_name, last_name);
         }else{
-            user = null;
+            return user;
         }
 
         return user;
@@ -211,12 +198,7 @@ public class UserService implements IUserRepository {
 
     @Override
     public String sendEmail(String username, String title, String bob) {
-        String to = username;
-        String subject = title;
-        String body = bob;
-
-        String result = emailService.sendMail(to, subject, body);
-        return result;
+        return emailService.sendMail(username, title, bob);
     }
 
     public String getEncodedPassword(String password) {
@@ -224,14 +206,21 @@ public class UserService implements IUserRepository {
     }
 
     @Override
-    public boolean bajaLogica(String email, boolean status) {
-        try {
-            userRepository.bajaLogica(email, status);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public List<SelectVendedorDTO> findSellers(){
+        return userRepository.findSellers();
+    }
+
+
+    public void updatePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        tokenService.deleteToken(user);
+        emailService.sendPasswordChangeConfirmation(user.getEmail());
+    }
+  
+    @Override
+    public ValidSellerDTO validateCompany(String user_id){
+        return userRepository.validateCompany(user_id);
     }
 
 }

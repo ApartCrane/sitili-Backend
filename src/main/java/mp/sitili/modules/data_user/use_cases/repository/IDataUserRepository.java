@@ -1,14 +1,14 @@
 package mp.sitili.modules.data_user.use_cases.repository;
 
-import mp.sitili.modules.data_user.entities.DataUser;
-import mp.sitili.modules.data_user.use_cases.dto.DataUserDTO;
-
+import mp.sitili.modules.data_user.use_cases.dto.UsuariosxMesDTO;
 import java.util.List;
 
 public interface IDataUserRepository {
 
-    public void asociarUserData(String email);
+     boolean setCompany(String userEmail, String company, String phone);
 
-    List<DataUserDTO> findAllDataUsers();
+     boolean update(String company, String first_name, String last_name, String phone, Integer id, String user_id);
+
+     List<UsuariosxMesDTO> usuXmes();
 
 }

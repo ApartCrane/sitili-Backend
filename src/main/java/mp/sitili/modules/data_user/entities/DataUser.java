@@ -27,7 +27,6 @@ public class DataUser {
     @Column(name = "register_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date registerDate;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "email")
     private User user;

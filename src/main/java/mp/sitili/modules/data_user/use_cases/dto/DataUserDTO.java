@@ -3,7 +3,7 @@ package mp.sitili.modules.data_user.use_cases.dto;
 import java.util.Date;
 
 public interface DataUserDTO {
-
+    Integer getId();
     String getCompany();
     String getFirst_name();
     String getLast_name();

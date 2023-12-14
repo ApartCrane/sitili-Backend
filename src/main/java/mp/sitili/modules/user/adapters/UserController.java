@@ -2,16 +2,19 @@ package mp.sitili.modules.user.adapters;
 
 import mp.sitili.modules.jwt.entities.JwtRegister;
 import mp.sitili.modules.user.entities.User;
+import mp.sitili.modules.user.use_cases.dto.ValidSellerDTO;
 import mp.sitili.modules.user.use_cases.methods.UserRepository;
 import mp.sitili.modules.user.use_cases.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,17 +23,20 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserController(PasswordEncoder passwordEncoder, UserService userService, UserRepository userRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
+        this.userRepository = userRepository;
+    }
 
     @PostConstruct
-    public void initRoleAndUser() {
+    public void initRoleAndUser() throws ParseException {
         userService.initRoleAndUser();
     }
 
@@ -82,6 +88,34 @@ public class UserController {
         }
     }
 
+    @GetMapping("/totalUsers")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<Long> totalUsuarios() {
+        Long total = userRepository.count();
+
+        if(total != 0){
+            return new ResponseEntity<>(total, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(total, HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/validateCompany")
+    @PreAuthorize("hasRole('Seller')")
+    public ResponseEntity<ValidSellerDTO> companiaNull() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+
+        ValidSellerDTO dataUser = userService.validateCompany(sellerEmail);
+
+        if(dataUser.getCompany() == null){
+            return new ResponseEntity<>(dataUser, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(dataUser, HttpStatus.NO_CONTENT);
+        }
+    }
+
+
     @PutMapping("/update")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<String> obtenerUsuarios(@RequestBody JwtRegister jwtRegister) {
@@ -98,8 +132,9 @@ public class UserController {
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<String> obtenerUsuarios(@RequestBody String email) {
-        Optional<User> usuario = userRepository.findById(email);
+    public ResponseEntity<String> obtenerUsuarios(@RequestBody User user) {
+        Optional<User> usuario = userRepository.findById(user.getEmail());
+
         if(usuario.isPresent()){
             if(usuario.get().getStatus()){
                 userRepository.bajaLogica(usuario.get().getEmail(), false);
